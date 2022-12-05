@@ -48,23 +48,23 @@ Top Critics user can
 - view the history of its own top critics reviews
 - modify its own top critics reviews
 - change its account information
+- see the number of followers
 
 > (possible extra function: add a landing home screen page for top critic users)
 
-Admin user
+Admin user can 
 
-- can act as a non-admin registered user
-- can browse users
-- can grant/remove "top critics" status
-- can add/remove films
-- can add/remove/modify modify films details
-- can remove reviews
-- can ban users
+- browse _users- & _top critics_
+- add/remove films
+- add/remove/modify modify films details
+- remove reviews
+- ban _users_ & _top critics_
+- register _top critics_ user
 - admin must be able to see most active users in terms of review
 
 General
 
-- Reviews by top critics are the firsts to be shown for each film
+- Reviews by _top critics_ are the firsts to be shown for each film
 
 ### Non functional requirements
 
@@ -72,8 +72,8 @@ General
 
 - the service must be built with OOP language
 
-- user must have 16 or more years
+- user must have 16 or more years to register into the service
 
-- (Da confermare: service must be implemented through a responsive website)
+> (possible extra function:service must be implemented through a responsive website)
 
   
