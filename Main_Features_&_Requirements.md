@@ -26,13 +26,15 @@ Guest (Unregistered) users can
 - login/register into the service
 - search movies by search bar
 - view movies, their details and relative reviews
+- view the personal page of the author of a selected _top critic_ review
 
-Registered user can
+Normal user can
 
 - logout from the service
 - search movies by search bar and other filters
 - view movies, their details and relative reviews
 - write a review for a selected film
+- view the personal page of the author of a selected _top critic_ review
 - follow a _top critics_ user
 - view the feed of latest reviews from the followed _top critics_
 - view the history of its own reviews
