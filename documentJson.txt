@@ -1,0 +1,29 @@
+Registerd user
+{
+ _id: ObjectId(«id_field»),
+username:  "username",
+password:  "hashed_password",
+firstName:  "Name",
+lastName  "LastName",
+registrationDate:  "1970-01-01 00:00:00",
+birthdayDate:  "1970-01-01 00:00:00",
+followerCount:  100,
+last3Reviews:  
+[ 
+    {author: "username",
+    isTopReview: 1,
+    content: "Lorem ipsum",
+    vote: "8/10"},
+        
+    {author: "username",
+    isTopReview: 1,
+    content: "dolor sit amet",
+    vote: "B+"},
+    
+    {author: "username",
+    isTopReview: 1,
+    content: "consectetur adipisci elit",
+    vote: "3.5/5"},
+    
+    ]
+}
