@@ -39,6 +39,7 @@ Normal user can
 - view the feed of latest reviews from the followed _top critics_
 - view the history of its own reviews
 - modify its own reviews
+- delete its own reviews
 - change its account information
 
 Top Critics user can
@@ -49,16 +50,16 @@ Top Critics user can
 - write a top critic review for a selected film
 - view the history of its own top critics reviews
 - modify its own top critics reviews
+- delete its own top critics reviews
 - change its account information
 - see the number of followers
 
-> (possible extra function: add a landing home screen page for top critic users)
 
 Admin user can 
-
+- logout
 - browse _users- & _top critics_
 - add/remove films
-- add/remove/modify modify films details
+- modify films details
 - remove reviews
 - ban _users_ & _top critics_
 - register _top critics_ user
