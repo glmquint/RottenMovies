@@ -7,3 +7,7 @@ GDrive Folder for the dataset : https://drive.google.com/drive/folders/1jDUUmqnG
 ## Use Case Diagram
 
 ![](UseCasesDiagram.png)
+
+## Class Diagram
+
+![](ClassDiagram.png)
