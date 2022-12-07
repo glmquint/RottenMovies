@@ -1,0 +1,38 @@
+// movie collection
+[
+    {
+        "title": "titolo",
+        "year": 1989,
+        "personnel": [
+            {
+                "name": "nome reale",
+                "category": "producer",
+                "job": "writer"
+            },
+            {
+                "name": "nome reale2",
+                "category": "actor",
+                "character": "fictional name"
+            },
+            ...
+        ]
+    },
+    {
+        "title": "titolo secondo",
+        "year": 1997,
+        "personnel": [
+            {
+                "name": "nome reale",
+                "category": "producer",
+                "job": "writer"
+            },
+            {
+                "name": "nome reale2",
+                "category": "actor",
+                "character": "fictional name"
+            },
+            ...
+        ]
+    },
+    ...
+]

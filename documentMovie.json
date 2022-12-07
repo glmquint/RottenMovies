@@ -1,0 +1,34 @@
+// Movie
+{
+    "_id"               : ObjectId(<<id_field>>),
+    "primaryTitle"          :"AntonyE",
+    "year"          :"hashed_password",
+    "runtimeMinutes"         :"Anton",
+    "genres"        :"Ego",
+    "registrationDate"  :"2019-06-29",
+    "followerCount"     : 9001,
+    "last3Reviews":  
+        [ 
+            {
+                "author"        : "AntonyE",
+                "movieTitle"    : "Star Wars: A new Hope",
+                "isTopReview"   : 1,
+                "content"       : "I really liked it!",
+                "vote"          : "8/10"
+            },
+            {
+                "author"        : "AntonyE",
+                "movieTitle"    : "Ratatouille",
+                "isTopReview"   : 1,
+                "content"       : "The director was also controlled by a rat",
+                "vote"          : "D+"
+            },
+            {
+                "author"        : "AntonyE",
+                "movieTitle"    : "300",
+                "isTopReview"   : 1,
+                "content"       : "Too much slow motion",
+                "vote"          : "3.5/5"
+            }
+        ]
+}
