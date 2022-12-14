@@ -1,0 +1,42 @@
+// Top critic user
+{
+    "_id"               : ObjectId(<<id_field>>),
+    "username"          :"AntonyE",
+    "password"          :"hashed_password",
+    "firstName"         :"Anton",
+    "lastName  "        :"Ego",
+    "registrationDate"  :"2019-06-29",
+    "followerCount"     : 9001,
+    "last3Reviews":  
+        [ 
+            {
+                "author"        : "AntonyE",
+                "movieTitle"    : "Star Wars: A new Hope",
+                "date"          : "2018-12-07",
+                "freshness"     : "fresh",
+                "isTopReview"   : 1,
+                "content"       : "I really liked it!",
+                "vote"          : "8/10"
+            },
+            {
+                "author"        : "AntonyE",
+                "movieTitle"    : "Ratatouille",
+                "date"          : "2019-02-17",
+                "freshness"     : "rotten",
+                "isTopReview"   : 1,
+                "content"       : "The director was also controlled by a rat",
+                "vote"          : "D+"
+            },
+            {
+                "author"        : "AntonyE",
+                "movieTitle"    : "300",
+                "date"          : "2020-02-15",
+                "freshness"     : "fresh",
+                "isTopReview"   : 1,
+                "content"       : "Too much slow motion",
+                "vote"          : "3.5/5"
+            }
+        ],
+    "otherReview": ["movieId4", "movieId5"]
+    
+}

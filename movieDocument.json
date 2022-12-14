@@ -1,0 +1,66 @@
+// movie document
+
+{
+    "_id"               : ObjectId(<<id_field>>),
+    "title": "The first ever movie",
+    "year": 1989,
+    "runtimeMinutes": 70,
+    "genres": [
+        "Crime", "Drama", "Romantic"
+    ],
+    "productionCompany": "Dingo Picture Production" ,
+    "personnel": [
+        {
+            "name": "John Doe",
+            "category": "producer",
+            "job": "writer"
+        },
+        {
+            "name": "Christopher Lee",
+            "category": "actor",
+            "character": ["The one"]
+        },
+        ...
+    ],
+    "criticConsensus": "The first ever movie cannot be paired with previous ones",
+    "topCriticFreshness": "Rotten",
+    "topCriticRating": 6,
+    "topCriticFreshCount": 1,
+    "topCriticRottenCount": 16,
+    
+    "audienceFreshness": "Spilled",
+    "audienceRating": 48,
+    "audienceCount": 100,
+    "review":
+    [ 
+        {
+            "author"        : "AntonyE",
+            "date"          : "2018-12-07",
+            "freshness"     : "Rotten",
+            "isTopReview"   : 1,
+            "content"       : "I really didn't liked it!",
+            "vote"          : "1/10"
+        },
+        {
+            "author"        : "Albran",
+            "date"          : "2020-02-07",
+            "freshness"     : "Rotten",
+            "isTopReview"   : 0,
+            "content"       : "The director is a rat",
+            "vote"          : "E+"
+        },
+        {
+            "author"        : "MovieLiker2000",
+            "date"          : "2019-12-17",
+            "freshness"     : "Fresh",
+            "isTopReview"   : 0,
+            "content"       : "Really good paicing",
+            "vote"          : "4.5/5"
+        },
+        ...
+    ]
+    
+
+}
+
+
