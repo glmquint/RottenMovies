@@ -141,7 +141,7 @@ db.test.find().limit(5).forEach(
 )
 ```
 
-### personnel JSON
+### genre JSON
 
 ```py
 db.test.find().limit(5).forEach(
@@ -159,7 +159,7 @@ db.test.find().limit(5).forEach(
 )
 ```
 
-### personnel update query
+### genre update query
 
 ```py
 db.test.find().limit(5).forEach(
@@ -199,17 +199,19 @@ db.test.find().forEach(
                 .replaceAll("\\x", "x");
         
         x.review = JSON.parse(x.review);
-        
+
         x.personnel = x.personnel.replaceAll('"\'', '"')
                 .replaceAll('\'"', '"')
                 .replaceAll('"None"', 'null')
-                .replaceAll("##single-quote##", '\\"')
+                .replaceAll("##single-quote##", '\'')
                 .replaceAll("##double-quote##", '\\"')
                 .replaceAll('"[\'', '["')
+                .replaceAll('"[\\"', '["')
                 .replaceAll('\']"', '"]')
-                .replaceAll("', \"", '", "')
-                .replaceAll("\", '", '", "')
-                .replaceAll("', '", '", "');
+                .replaceAll('\\"]"', '"]')
+                .replaceAll(/(\[[^[:]*)\\", \\"([^]:]*\])/g, '$1", "$2')
+                .replaceAll(/(\[[^[:]*)\', \\"([^]:]*\])/g, '$1", "$2')
+                .replaceAll(/(\[[^[:]*)\\", \'([^]:]*\])/g, '$1", "$2');
         
         x.personnel = JSON.parse(x.personnel);
         x.genres = x.genres.replaceAll('"\'', '"')
@@ -219,6 +221,57 @@ db.test.find().forEach(
                     .replaceAll("##double-quote##", '\\"');
         
         x.genres = JSON.parse(x.genres);
+    }
+);
+```
+
+#### this is final for entire dataset (this is the one)
+
+```py
+db.test.find().forEach(
+    x => {
+        x.review = JSON.parse(
+            x.review.replaceAll('"\'', '"')
+                .replaceAll('\'"', '"')
+                .replaceAll('"false"', 'false')
+                .replaceAll('"true"', 'true')
+                .replaceAll('"None"', 'null')
+                .replaceAll(/\\x\d{2}/g, "")
+                .replaceAll("##single-quote##", "\'")
+                .replaceAll("##double-quote##", '\\"')
+                .replaceAll("\\x", "x")
+        );
+        x.personnel = JSON.parse(
+            x.personnel.replaceAll('"\'', '"')
+                .replaceAll('\'"', '"')
+                .replaceAll('"None"', 'null')
+                .replaceAll("##single-quote##", '\'')
+                .replaceAll("##double-quote##", '\\"')
+                .replaceAll('"[\'', '["')
+                .replaceAll('"[\\"', '["')
+                .replaceAll('\']"', '"]')
+                .replaceAll('\\"]"', '"]')
+                .replaceAll(/(\[[^[:]*)\\", \\"([^]:]*\])/g, '$1", "$2')
+                .replaceAll(/(\[[^[:]*)\', \\"([^]:]*\])/g, '$1", "$2')
+                .replaceAll(/(\[[^[:]*)\\", \'([^]:]*\])/g, '$1", "$2')
+        );
+        x.genres = JSON.parse(
+            x.genres = x.genres.replaceAll('"\'', '"')
+                    .replaceAll('\'"', '"')
+                    .replaceAll('"None"', 'null')
+                    .replaceAll("##single-quote##", "\'")
+                    .replaceAll("##double-quote##", '\\"')
+        );
+        db.test.updateOne(
+            {"_id": x._id}, 
+            {$set: 
+                {
+                    "review": x.review,
+                    "personnel": x.personnel,
+                    "genres": x.genres
+                }
+            }
+        );
     }
 );
 ```
