@@ -287,6 +287,23 @@ translates to
 
 `db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach((x) => {print(x, db.test.find({ "review.critic_name": x }, { primaryTitle: 1, _id:0 }).count() )})`
 
+checkpoint
+```
+db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(x => {
+    db.test.find(
+        { "review.critic_name": x }, { primaryTitle: 1, _id:0 }
+    ).forEach(y => {
+        db.test.find(
+            {primaryTitle: y.primaryTitle}, 
+            {"review.critic_name": 1} 
+        ).review.forEach(z =>{
+            print(z)
+        }
+        )
+    }) 
+})
+```
+
 #### an imposter (find the error)
 
 ```py
