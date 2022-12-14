@@ -276,6 +276,17 @@ db.test.find().forEach(
 );
 ```
 
+(remember to drop `tconst` as we use `_id` as the final index in mongo)
+
+```
+SELECT test.primary_title
+FROM test
+WHERE test.review.critic_name = "$x"
+```
+translates to
+
+`db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach((x) => {print(x, db.test.find({ "review.critic_name": x }, { primaryTitle: 1, _id:0 }).count() )})`
+
 #### an imposter (find the error)
 
 ```py
