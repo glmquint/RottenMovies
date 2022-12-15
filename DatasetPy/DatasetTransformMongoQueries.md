@@ -305,7 +305,18 @@ WHERE test.review.critic_name = "$x"
 ```
 translates to
 
-`db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach((x) => {print(x, db.test.find({ "review.critic_name": x }, { primaryTitle: 1, _id:0 }).count() )})`
+```
+db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(
+    (x) => {
+        print(x, 
+            db.test.find(
+                { "review.critic_name": x }, 
+                { _id:1 }
+            )
+        )
+    }
+)
+```
 
 checkpoint
 ```
@@ -323,17 +334,42 @@ db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(x 
     }) 
 })
 ```
-#### find for each user the reviewed movies and the indexes of the reviews
+#### for each user get their review for each reviewed movie
 ```py 
-    db.runCommand(
-    { distinct: "test", key: "review.critic_name" }).values.forEach(
-        (x) => {print(x,db.test.find({"review.critic_name":x},{primaryTitle:1}),db.test.aggregate(
-                [{ $project: { index: { $indexOfArray: ["$review.critic_name", x]}}},
-                {$match:{index:{$gt:0}}}]
-                ))}
-            )
+db.runCommand(
+{ distinct: "test", key: "review.critic_name" }).values.forEach(
+    (x) => {
+        print(x)
+        db.test.aggregate(
+            [
+                { $project: 
+                    {
+                        index: { $indexOfArray: ["$review.critic_name", x]}
+                    }},
+                {$match:{index:{$gt:-1}}}
+            ]
+        ).forEach(y => {
+            db.test.aggregate([
+                {
+                    $project:
+                    {
+                        review_content: {
+                            $arrayElemAt: ["$review", y.index]
+                        }
+                    }
+                },
+                {
+                    $match:{_id:{$eq:y._id}}
+                }
+            ])
+        })
+    }   
+)
                 
 ```
+
+next step: create new new user in `forEach(x)`, then append found aggregated review to list of reviews for that user
+
 #### an imposter (find the error)
 
 ```py
