@@ -13,7 +13,7 @@
                 "movieTitle"    : "Star Wars: A new Hope",
                 "date"          : "2018-12-07",
                 "freshness"     : "fresh",
-                "isTopReview"   : 1,
+                "isTopReview"   : true,
                 "content"       : "I really liked it!",
                 "vote"          : "8/10"
             },
@@ -22,7 +22,7 @@
                 "movieTitle"    : "Ratatouille",
                 "date"          : "2019-02-17",
                 "freshness"     : "rotten",
-                "isTopReview"   : 1,
+                "isTopReview"   : true,
                 "content"       : "The director was also controlled by a rat",
                 "vote"          : "D+"
             },
@@ -31,7 +31,7 @@
                 "movieTitle"    : "300",
                 "date"          : "2020-02-15",
                 "freshness"     : "fresh",
-                "isTopReview"   : 1,
+                "isTopReview"   : true,
                 "content"       : "Too much slow motion",
                 "vote"          : "3.5/5"
             }
