@@ -303,7 +303,17 @@ db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(x 
     }) 
 })
 ```
-
+#### find for each user the reviewed movies and the indexes of the reviews
+```py 
+    db.runCommand(
+    { distinct: "test", key: "review.critic_name" }).values.forEach(
+        (x) => {print(x,db.test.find({"review.critic_name":x},{primaryTitle:1}),db.test.aggregate(
+                [{ $project: { index: { $indexOfArray: ["$review.critic_name", x]}}},
+                {$match:{index:{$gt:0}}}]
+                ))}
+            )
+                
+```
 #### an imposter (find the error)
 
 ```py

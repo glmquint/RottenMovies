@@ -1,4 +1,4 @@
-// Top critic user
+// "Normal" user
 {
     "_id"               : ObjectId(<<id_field>>),
     "username"          :"AntonyE",
@@ -6,6 +6,7 @@
     "firstName"         :"Anton",
     "lastName  "        :"Ego",
     "registrationDate"  :"2019-06-29",
+    "date of birth"     :"2002-07-16",
     "last3Reviews":  
         [ 
             {
