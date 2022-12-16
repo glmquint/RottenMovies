@@ -1,6 +1,6 @@
 ## review
 ```py
-db.test.find().limit(5).forEach(
+db.movie.find().limit(5).forEach(
     x => {
         print(
             x.review.replaceAll('"\'', '"')
@@ -18,7 +18,7 @@ db.test.find().limit(5).forEach(
 ### review JSON
 
 ```py
-db.test.find().limit(5).forEach(
+db.movie.find().limit(5).forEach(
     x => {
         print(
             JSON.parse(
@@ -38,7 +38,7 @@ db.test.find().limit(5).forEach(
 ### review update query
 
 ```py
-db.test.find().limit(5).forEach(
+db.movie.find().limit(5).forEach(
     x => {
         x.review = JSON.parse(
             x.review.replaceAll('"\'', '"')
@@ -49,7 +49,7 @@ db.test.find().limit(5).forEach(
                 .replaceAll("##single-quote##", "\'")
                 .replaceAll("##double-quote##", '\\"')
         );
-        db.test.updateOne(
+        db.movie.updateOne(
             {"_id": x._id}, 
             {$set: 
                 {"review": x.review}
@@ -64,7 +64,7 @@ db.test.find().limit(5).forEach(
 ## personnel
 
 ```py
-db.test.find().limit(5).forEach(
+db.movie.find().limit(5).forEach(
     x => {
         print(
             x.personnel.replaceAll('"\'', '"')
@@ -82,7 +82,7 @@ db.test.find().limit(5).forEach(
 ### personnel JSON
 
 ```py
-db.test.find().limit(5).forEach(
+db.movie.find().limit(5).forEach(
     x => {
         print(
             JSON.parse(
@@ -102,7 +102,7 @@ db.test.find().limit(5).forEach(
 ### personnel update query
 
 ```py
-db.test.find().limit(5).forEach(
+db.movie.find().limit(5).forEach(
     x => {
         x.personnel = JSON.parse(
             x.personnel.replaceAll('"\'', '"')
@@ -113,7 +113,7 @@ db.test.find().limit(5).forEach(
                 .replaceAll('"[\'', '["')
                 .replaceAll('\']"', '"]')
         );
-        db.test.updateOne(
+        db.movie.updateOne(
             {"_id": x._id}, 
             {$set: 
                 {"personnel": x.personnel}
@@ -128,7 +128,7 @@ db.test.find().limit(5).forEach(
 ## genre
 
 ```py
-db.test.find().limit(5).forEach(
+db.movie.find().limit(5).forEach(
     x => {
         print(
             x.genres.replaceAll('"\'', '"')
@@ -144,7 +144,7 @@ db.test.find().limit(5).forEach(
 ### genre JSON
 
 ```py
-db.test.find().limit(5).forEach(
+db.movie.find().limit(5).forEach(
     x => {
         print(
             JSON.parse(
@@ -162,7 +162,7 @@ db.test.find().limit(5).forEach(
 ### genre update query
 
 ```py
-db.test.find().limit(5).forEach(
+db.movie.find().limit(5).forEach(
     x => {
         x.genres = JSON.parse(
             x.genres.replaceAll('"\'', '"')
@@ -171,7 +171,7 @@ db.test.find().limit(5).forEach(
                     .replaceAll("##single-quote##", "\'")
                     .replaceAll("##double-quote##", '\\"')
         );
-        db.test.updateOne(
+        db.movie.updateOne(
             {"_id": x._id}, 
             {$set: 
                 {"genres": x.genres}
@@ -183,10 +183,10 @@ db.test.find().limit(5).forEach(
 
 ---
 
-### test final
+### movie final
 
 ```py
-db.test.find().forEach(
+db.movie.find().forEach(
     x => {
         x.review = x.review.replaceAll('"\'', '"')
                 .replaceAll('\'"', '"')
@@ -228,7 +228,7 @@ db.test.find().forEach(
 #### this is final for entire dataset (this is the one)
 
 ```py
-db.test.find().forEach(
+db.movie.find().forEach(
     x => {
         x.review = JSON.parse(
             x.review.replaceAll('"\'', '"')
@@ -262,7 +262,7 @@ db.test.find().forEach(
                     .replaceAll("##single-quote##", "\'")
                     .replaceAll("##double-quote##", '\\"')
         );
-        db.test.updateOne(
+        db.movie.updateOne(
             {"_id": x._id}, 
             {$set: 
                 {
@@ -276,20 +276,56 @@ db.test.find().forEach(
 );
 ```
 
-(remember to drop `tconst` as we use `_id` as the final index in mongo)
+#### parse strings to floats and integers
+```py
+db.movie.find().forEach(
+    (x)=>{
+        db.movie.updateOne(
+            {"_id":x._id},
+            {"$set":{
+                "runtimeMinutes":parseInt(x.runtimeMinutes),
+                "year":parseInt(x.year), 
+                "tomatometer_rating":parseFloat(x.tomatometer_rating), 
+                "audience_rating":parseFloat(x.audience_rating), 
+                "audience_count":parseFloat(x.audience_count), 
+                "tomatometer_fresh_critics_count":parseInt(x.tomatometer_fresh_critics_count), 
+                "tomatometer_rotten_critics_count":parseInt(x.tomatometer_rotten_critics_count)
+                }
+            }
+        )
+    }
+) ;
+
+# or alternatively:
+
+db.movie.updateMany({}, 
+    {"$set":{
+        "runtimeMinutes":parseInt(x.runtimeMinutes),
+        "year":parseInt(x.year), 
+        "tomatometer_rating":parseFloat(x.tomatometer_rating), 
+        "audience_rating":parseFloat(x.audience_rating), 
+        "audience_count":parseFloat(x.audience_count), 
+        "tomatometer_fresh_critics_count":parseInt(x.tomatometer_fresh_critics_count), 
+        "tomatometer_rotten_critics_count":parseInt(x.tomatometer_rotten_critics_count)
+        }
+    }
+);
+```
+
+---
 
 ```sql
-SELECT COUNT(test.primary_title)
-FROM test
-WHERE test.review.critic_name = "$x"
+SELECT COUNT(movie.primary_title)
+FROM movie
+WHERE movie.review.critic_name = "$x"
 ```
 translates to
 
 ```
-db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(
+db.runCommand({ distinct: "movie", key: "review.critic_name" }).values.forEach(
     (x) => {
         print(x, 
-            db.test.find(
+            db.movie.find(
                 { "review.critic_name": x }, 
                 { primaryTitle: 1, _id:0 }
             ).count() 
@@ -299,17 +335,17 @@ db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(
 ```
 
 ```sql
-SELECT test._id
-FROM test
-WHERE test.review.critic_name = "$x"
+SELECT movie._id
+FROM movie
+WHERE movie.review.critic_name = "$x"
 ```
 translates to
 
 ```
-db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(
+db.runCommand({ distinct: "movie", key: "review.critic_name" }).values.forEach(
     (x) => {
         print(x, 
-            db.test.find(
+            db.movie.find(
                 { "review.critic_name": x }, 
                 { _id:1 }
             )
@@ -320,11 +356,11 @@ db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(
 
 checkpoint
 ```
-db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(x => {
-    db.test.find(
+db.runCommand({ distinct: "movie", key: "review.critic_name" }).values.forEach(x => {
+    db.movie.find(
         { "review.critic_name": x }, { primaryTitle: 1, _id:0 }
     ).forEach(y => {
-        db.test.find(
+        db.movie.find(
             {primaryTitle: y.primaryTitle}, 
             {"review.critic_name": 1} 
         ).review.forEach(z =>{
@@ -337,10 +373,10 @@ db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(x 
 #### for each user get their review for each reviewed movie
 ```py 
 db.runCommand(
-{ distinct: "test", key: "review.critic_name" }).values.forEach(
+{ distinct: "movie", key: "review.critic_name" }).values.forEach(
     (x) => {
         print(x)
-        db.test.aggregate(
+        db.movie.aggregate(
             [
                 { $project: 
                     {
@@ -349,7 +385,7 @@ db.runCommand(
                 {$match:{index:{$gt:-1}}}
             ]
         ).forEach(y => {
-            db.test.aggregate([
+            db.movie.aggregate([
                 {
                     $project:
                     {
@@ -373,7 +409,7 @@ next step: create new new user in `forEach(x)`, then append found aggregated rev
 #### an imposter (find the error)
 
 ```py
-db.test.find().forEach(
+db.movie.find().forEach(
     x => {
         x.review = JSON.parse(
             x.review.replaceAll('"\'', '"')
@@ -405,7 +441,7 @@ db.test.find().forEach(
                     .replaceAll("##single-quote##", "\'")
                     .replaceAll("##double-quote##", '\\"')
         );
-        db.test.updateOne(
+        db.movie.updateOne(
             {"_id": x._id}, 
             {$set: 
                 {
@@ -419,10 +455,10 @@ db.test.find().forEach(
 );
 ```
 
-### another test
+### another movie
 
 ```py
-db.test.find().forEach(
+db.movie.find().forEach(
     x => {
         print(x.review);
         x.review = JSON.parse(
@@ -460,7 +496,7 @@ db.test.find().forEach(
 ## final script (this works on head)
 
 ```py
-db.test.find().forEach(
+db.movie.find().forEach(
     x => {
         x.review = JSON.parse(
             x.review.replaceAll('"\'', '"')
@@ -487,7 +523,7 @@ db.test.find().forEach(
                     .replaceAll("##single-quote##", "\'")
                     .replaceAll("##double-quote##", '\\"')
         );
-        db.test.updateOne(
+        db.movie.updateOne(
             {"_id": x._id}, 
             {$set: 
                 {
