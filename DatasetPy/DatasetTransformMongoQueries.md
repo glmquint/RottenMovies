@@ -8,8 +8,11 @@ db.movie.find().limit(5).forEach(
                 .replaceAll('"false"', 'false')
                 .replaceAll('"true"', 'true')
                 .replaceAll('"None"', 'null')
+                .replaceAll(/\\x\d{2}/g, "")
+                .replaceAll(/"([0-9-]{10}T[0-9:.+]{18})"/g, "$1")
                 .replaceAll("##single-quote##", "\'")
                 .replaceAll("##double-quote##", '\\"')
+                .replaceAll("\\x", "x")
         )
     }
 )
@@ -23,12 +26,14 @@ db.movie.find().limit(5).forEach(
         print(
             JSON.parse(
                 x.review.replaceAll('"\'', '"')
-                    .replaceAll('\'"', '"')
-                    .replaceAll('"false"', 'false')
-                    .replaceAll('"true"', 'true')
-                    .replaceAll('"None"', 'null')
-                    .replaceAll("##single-quote##", "\'")
-                    .replaceAll("##double-quote##", '\\"')
+                .replaceAll('\'"', '"')
+                .replaceAll('"false"', 'false')
+                .replaceAll('"true"', 'true')
+                .replaceAll('"None"', 'null')
+                .replaceAll(/\\x\d{2}/g, "")
+                .replaceAll("##single-quote##", "\'")
+                .replaceAll("##double-quote##", '\\"')
+                .replaceAll("\\x", "x")
             )
         )
     }
@@ -46,8 +51,10 @@ db.movie.find().limit(5).forEach(
                 .replaceAll('"false"', 'false')
                 .replaceAll('"true"', 'true')
                 .replaceAll('"None"', 'null')
+                .replaceAll(/\\x\d{2}/g, "")
                 .replaceAll("##single-quote##", "\'")
                 .replaceAll("##double-quote##", '\\"')
+                .replaceAll("\\x", "x")
         );
         db.movie.updateOne(
             {"_id": x._id}, 
@@ -225,11 +232,12 @@ db.movie.find().forEach(
 );
 ```
 
-#### this is final for entire dataset (this is the one)
+#### this is final for entire dataset (this is the real one)
 
 ```py
 db.movie.find().forEach(
     x => {
+        print(m.primaryTitle);
         x.review = JSON.parse(
             x.review.replaceAll('"\'', '"')
                 .replaceAll('\'"', '"')
@@ -268,7 +276,14 @@ db.movie.find().forEach(
                 {
                     "review": x.review,
                     "personnel": x.personnel,
-                    "genres": x.genres
+                    "genres": x.genres,
+                    "runtimeMinutes":parseInt(x.runtimeMinutes),
+                    "year":parseInt(x.year), 
+                    "tomatometer_rating":parseFloat(x.tomatometer_rating), 
+                    "audience_rating":parseFloat(x.audience_rating), 
+                    "audience_count":parseFloat(x.audience_count), 
+                    "tomatometer_fresh_critics_count":parseInt(x.tomatometer_fresh_critics_count), 
+                    "tomatometer_rotten_critics_count":parseInt(x.tomatometer_rotten_critics_count)
                 }
             }
         );
@@ -276,7 +291,7 @@ db.movie.find().forEach(
 );
 ```
 
-#### parse strings to floats and integers
+#### parse type strings to floats and integers
 ```py
 db.movie.find().forEach(
     (x)=>{
@@ -316,9 +331,10 @@ db.movie.updateMany({},
 ```py
 db.movie.find().forEach(
     m => {
+        print(m.primaryTitle);
         m.review.forEach(
             r => {
-                r.review_date = new Date(r.review_date + "T00:00:00Z");
+                r.review_date = new Date(r.review_date);
                 db.movie.updateOne(
                     {
                         _id: m._id, 
@@ -333,6 +349,9 @@ db.movie.find().forEach(
     }
 )
 ```
+
+`r.review_date = new Date(r.review_date + "T00:00:00Z");`
+
 ---
 
 ```sql
@@ -391,6 +410,15 @@ db.runCommand({ distinct: "movie", key: "review.critic_name" }).values.forEach(x
     }) 
 })
 ```
+
+```
+i = 0;
+db.movie.find().forEach({
+    i=i+1;
+    print(i)
+})
+```
+
 #### for each user get their review for each reviewed movie
 ```py 
 db.runCommand(
