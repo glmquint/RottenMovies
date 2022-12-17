@@ -237,7 +237,7 @@ db.movie.find().forEach(
 ```py
 db.movie.find().forEach(
     x => {
-        print(m.primaryTitle);
+        print(x.primaryTitle);
         x.review = JSON.parse(
             x.review.replaceAll('"\'', '"')
                 .replaceAll('\'"', '"')
