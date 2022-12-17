@@ -1,14 +1,13 @@
 package it.unipi.dii.lsmsdb.rottenMovies;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import it.unipi.dii.lsmsdb.rottenMovies.dbConnection.MongoDBConnector;
+import it.unipi.dii.lsmsdb.rottenMovies.backend.base.MongoDBConnector;
 //@SpringBootApplication
 public class RottenMoviesApplication {
 
 	public  static void main(String[] args){
-		MongoDBConnector test = new MongoDBConnector();
-		test.testConnection();
+		//MongoDBConnector test = new MongoDBConnector();
+		//test.testConnection();
+		//test.returnMovieByTitle("Evidence");
 	}
 	/*public static void main(String[] args) {
 		SpringApplication.run(RottenMoviesApplication.class, args);

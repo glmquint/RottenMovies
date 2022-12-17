@@ -142,4 +142,25 @@ public class Movie {
     public void setReviews(ArrayList<Review> reviews) {
         this.reviews = reviews;
     }
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "primaryTitle='" + primaryTitle + '\'' +
+                ", year=" + year +
+                ", runtimeMinutes=" + runtimeMinutes +
+                ", genres=" + genres +
+                ", productionCompany='" + productionCompany + '\'' +
+                ", tomatometerStatus='" + tomatometerStatus + '\'' +
+                ", tomatometerRatings=" + tomatometerRatings +
+                ", audienceStatus=" + audienceStatus +
+                ", audienceRatings=" + audienceRatings +
+                ", audienceCount=" + audienceCount +
+                ", tomatometerFreshCriticsCount=" + tomatometerFreshCriticsCount +
+                ", tomatometerRottenCriticsCount=" + tomatometerRottenCriticsCount +
+                ", personnels=" + personnels +
+                ", reviews=" + reviews +
+                ", criticConsensus='" + criticConsensus + '\'' +
+                '}';
+    }
 }
