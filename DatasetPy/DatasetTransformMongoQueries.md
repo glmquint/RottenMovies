@@ -312,6 +312,27 @@ db.movie.updateMany({},
 );
 ```
 
+#### review_date parsing
+```py
+db.movie.find().forEach(
+    m => {
+        m.review.forEach(
+            r => {
+                r.review_date = new Date(r.review_date + "T00:00:00Z");
+                db.movie.updateOne(
+                    {
+                        _id: m._id, 
+                        "review.critic_name": r.critic_name
+                    },
+                    {
+                        $set: {"review.$.review_date": r.review_date}
+                    }
+                );
+            }
+        );
+    }
+)
+```
 ---
 
 ```sql
