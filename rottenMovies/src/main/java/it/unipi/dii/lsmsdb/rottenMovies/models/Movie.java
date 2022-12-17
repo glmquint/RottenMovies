@@ -1,24 +1,41 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 
 public class Movie {
-    private String primaryTitle;
-    private int year;
-    private int runtimeMinutes;
-    private ArrayList<String> genres;
-    private String productionCompany;
-    private String tomatometerStatus;
-    private int tomatometerRatings;
-    private int audienceStatus;
-    private int audienceRatings;
-    private int audienceCount;
-    private int tomatometerFreshCriticsCount;
-    private int tomatometerRottenCriticsCount;
 
-    private ArrayList<Personnel> personnels;
+    //@JsonProperty("primaryTitle")
+    private String primaryTitle;
+    //@JsonProperty("year")
+    private int year;
+    @JsonProperty("runtimeMinutes")
+    private int runtimeMinutes;
+    @JsonProperty("genres")
+    private ArrayList<String> genres;
+    @JsonProperty("production_company")
+    private String productionCompany;
+    //@JsonProperty("tomatometer_status")
+    private String tomatometerStatus;
+    @JsonProperty("tomatometer_rating")
+    private int tomatometerRating;
+    @JsonProperty("audience_status")
+    private int audienceStatus;
+    @JsonProperty("audience_rating")
+    private int audienceRating;
+    @JsonProperty("audience_count")
+    private int audienceCount;
+    @JsonProperty("tomatometer_fresh_critics_count")
+    private int tomatometerFreshCriticsCount;
+    @JsonProperty("tomatometer_rotten_critics_count")
+    private int tomatometerRottenCriticsCount;
+    @JsonProperty("personnel")
+    private ArrayList<Personnel> personnel;
+    @JsonProperty("review")
     private ArrayList<Review> reviews;
 
+    @JsonProperty("critic_consensus")
     private String criticConsensus;
 
     public Movie() {}
@@ -71,12 +88,12 @@ public class Movie {
         this.tomatometerStatus = tomatometerStatus;
     }
 
-    public int getTomatometerRatings() {
-        return tomatometerRatings;
+    public int gettomatometerRating() {
+        return tomatometerRating;
     }
 
-    public void setTomatometerRatings(int tomatometerRatings) {
-        this.tomatometerRatings = tomatometerRatings;
+    public void settomatometerRating(int tomatometerRating) {
+        this.tomatometerRating = tomatometerRating;
     }
 
     public int getAudienceStatus() {
@@ -87,12 +104,12 @@ public class Movie {
         this.audienceStatus = audienceStatus;
     }
 
-    public int getAudienceRatings() {
-        return audienceRatings;
+    public int getaudienceRating() {
+        return audienceRating;
     }
 
-    public void setAudienceRatings(int audienceRatings) {
-        this.audienceRatings = audienceRatings;
+    public void setaudienceRating(int audienceRating) {
+        this.audienceRating = audienceRating;
     }
 
     public int getAudienceCount() {
@@ -127,12 +144,12 @@ public class Movie {
         this.criticConsensus = criticConsensus;
     }
 
-    public ArrayList<Personnel> getPersonnels() {
-        return personnels;
+    public ArrayList<Personnel> getpersonnel() {
+        return personnel;
     }
 
-    public void setPersonnels(ArrayList<Personnel> personnels) {
-        this.personnels = personnels;
+    public void setpersonnel(ArrayList<Personnel> personnel) {
+        this.personnel = personnel;
     }
 
     public ArrayList<Review> getReviews() {
@@ -152,13 +169,13 @@ public class Movie {
                 ", genres=" + genres +
                 ", productionCompany='" + productionCompany + '\'' +
                 ", tomatometerStatus='" + tomatometerStatus + '\'' +
-                ", tomatometerRatings=" + tomatometerRatings +
+                ", tomatometerRating=" + tomatometerRating +
                 ", audienceStatus=" + audienceStatus +
-                ", audienceRatings=" + audienceRatings +
+                ", audienceRating=" + audienceRating +
                 ", audienceCount=" + audienceCount +
                 ", tomatometerFreshCriticsCount=" + tomatometerFreshCriticsCount +
                 ", tomatometerRottenCriticsCount=" + tomatometerRottenCriticsCount +
-                ", personnels=" + personnels +
+                ", personnel=" + personnel +
                 ", reviews=" + reviews +
                 ", criticConsensus='" + criticConsensus + '\'' +
                 '}';

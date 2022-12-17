@@ -14,7 +14,7 @@ import javax.print.Doc;
 public abstract class MongoDBConnector {
     private static final String connectionString = "mongodb://localhost:27017";
     private static final String databaseString = "rottenMovies";
-    private static final String collectionStringMovie = "movie";
+
 
     public MongoClient getClient(){
         ConnectionString uri = new ConnectionString(connectionString);
@@ -34,7 +34,7 @@ public abstract class MongoDBConnector {
 
     public void returnMovieByTitle(String title){
         MongoClient myClient = getClient();
-        MongoCollection<Document> collection = returnCollection(myClient, collectionStringMovie);
+        MongoCollection<Document> collection = returnCollection(myClient, "movie");
 
         //Usare questo codice se si ritorna con certezza un singolo elemento
          Document doc =  collection.find(Filters.eq("primaryTitle", title)).first();
