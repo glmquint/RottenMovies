@@ -1,41 +1,45 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie {
 
-    //@JsonProperty("primaryTitle")
+    @SerializedName("primaryTitle")
     private String primaryTitle;
-    //@JsonProperty("year")
+    @SerializedName("year")
     private int year;
-    @JsonProperty("runtimeMinutes")
+    @SerializedName("runtimeMinutes")
     private int runtimeMinutes;
-    @JsonProperty("genres")
+    @SerializedName("genres")
     private ArrayList<String> genres;
-    @JsonProperty("production_company")
+    @SerializedName("production_company")
     private String productionCompany;
     //@JsonProperty("tomatometer_status")
+    @SerializedName("tomatometer_status")
     private String tomatometerStatus;
-    @JsonProperty("tomatometer_rating")
+    @SerializedName("tomatometer_rating")
     private int tomatometerRating;
-    @JsonProperty("audience_status")
-    private int audienceStatus;
-    @JsonProperty("audience_rating")
+    @SerializedName("audience_status")
+    private String audienceStatus;
+    @SerializedName("audience_rating")
     private int audienceRating;
-    @JsonProperty("audience_count")
+    @SerializedName("audience_count")
     private int audienceCount;
-    @JsonProperty("tomatometer_fresh_critics_count")
+    @SerializedName("tomatometer_fresh_critics_count")
     private int tomatometerFreshCriticsCount;
-    @JsonProperty("tomatometer_rotten_critics_count")
+    @SerializedName("tomatometer_rotten_critics_count")
     private int tomatometerRottenCriticsCount;
-    @JsonProperty("personnel")
+    @SerializedName("personnel")
     private ArrayList<Personnel> personnel;
-    @JsonProperty("review")
+    @SerializedName("review")
     private ArrayList<Review> reviews;
 
-    @JsonProperty("critic_consensus")
+    @SerializedName("critic_consensus")
     private String criticConsensus;
 
     public Movie() {}
@@ -96,11 +100,11 @@ public class Movie {
         this.tomatometerRating = tomatometerRating;
     }
 
-    public int getAudienceStatus() {
+    public String getAudienceStatus() {
         return audienceStatus;
     }
 
-    public void setAudienceStatus(int audienceStatus) {
+    public void setAudienceStatus(String audienceStatus) {
         this.audienceStatus = audienceStatus;
     }
 
