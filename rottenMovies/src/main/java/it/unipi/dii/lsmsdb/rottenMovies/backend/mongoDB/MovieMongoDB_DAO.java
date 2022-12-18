@@ -3,11 +3,6 @@ package it.unipi.dii.lsmsdb.rottenMovies.backend.mongoDB;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -16,24 +11,31 @@ import it.unipi.dii.lsmsdb.rottenMovies.backend.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import org.bson.Document;
 
-import java.util.Map;
 
+/**
+ * @author Fabio
+ * <class>MovieMongoDB_DAO</class> is the DAO class that queries the DB
+ * based on different parameters like, title, year, topUserRating, topCriticsRatings
+ */
 public class MovieMongoDB_DAO extends MongoDBConnector implements MovieDAO {
+
     private static final String collectionStringMovie = "movie";
+
+    /**
+     * <method>searchByTitle</method> queries the DB for a specific movie base on the title
+     * @param title is the title of the movie to search
+     * @return a movie object
+     */
     public Movie searchByTitle(String title){
         MongoClient myClient = getClient();
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
-
         ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         try {
-            //Map<String,Object> map = mapper.readValue(returnMovieByTitle(collection, title), Map.class);
             movie = mapper.readValue(returnMovieByTitle(collection, title), Movie.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
         /*Gson gson = new Gson(); // Or use new GsonBuilder().create();
         movie = gson.fromJson(returnMovieByTitle(collection, title), Movie.class);
         */
