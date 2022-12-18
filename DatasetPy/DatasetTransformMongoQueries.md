@@ -1,5 +1,5 @@
 ## review
-```py
+```js
 db.movie.find().limit(5).forEach(
     x => {
         print(
@@ -20,7 +20,7 @@ db.movie.find().limit(5).forEach(
 
 ### review JSON
 
-```py
+```js
 db.movie.find().limit(5).forEach(
     x => {
         print(
@@ -42,7 +42,7 @@ db.movie.find().limit(5).forEach(
 
 ### review update query
 
-```py
+```js
 db.movie.find().limit(5).forEach(
     x => {
         x.review = JSON.parse(
@@ -70,7 +70,7 @@ db.movie.find().limit(5).forEach(
 
 ## personnel
 
-```py
+```js
 db.movie.find().limit(5).forEach(
     x => {
         print(
@@ -88,7 +88,7 @@ db.movie.find().limit(5).forEach(
 
 ### personnel JSON
 
-```py
+```js
 db.movie.find().limit(5).forEach(
     x => {
         print(
@@ -108,7 +108,7 @@ db.movie.find().limit(5).forEach(
 
 ### personnel update query
 
-```py
+```js
 db.movie.find().limit(5).forEach(
     x => {
         x.personnel = JSON.parse(
@@ -134,7 +134,7 @@ db.movie.find().limit(5).forEach(
 
 ## genre
 
-```py
+```js
 db.movie.find().limit(5).forEach(
     x => {
         print(
@@ -150,7 +150,7 @@ db.movie.find().limit(5).forEach(
 
 ### genre JSON
 
-```py
+```js
 db.movie.find().limit(5).forEach(
     x => {
         print(
@@ -168,7 +168,7 @@ db.movie.find().limit(5).forEach(
 
 ### genre update query
 
-```py
+```js
 db.movie.find().limit(5).forEach(
     x => {
         x.genres = JSON.parse(
@@ -192,7 +192,7 @@ db.movie.find().limit(5).forEach(
 
 ## movie final
 
-```py
+```js
 db.movie.find().forEach(
     x => {
         x.review = x.review.replaceAll('"\'', '"')
@@ -234,7 +234,7 @@ db.movie.find().forEach(
 
 ### this is final for entire dataset (this is the real one)
 
-```py
+```js
 db.movie.find().forEach(
     x => {
         print(x.primaryTitle);
@@ -292,7 +292,7 @@ db.movie.find().forEach(
 ```
 
 #### parse type strings to floats and integers
-```py
+```js
 db.movie.find().forEach(
     (x)=>{
         db.movie.updateOne(
@@ -328,7 +328,7 @@ db.movie.updateMany({},
 ```
 
 #### review_date parsing
-```py
+```js
 db.movie.find().forEach(
     m => {
         print(m.primaryTitle);
@@ -423,7 +423,7 @@ db.movie.find().forEach(
 ```
 
 #### split first_name and last name from username
-```py
+```js
 i = 0;
 db.runCommand({distinct: "movie", key: "review.critic_name"}).values.forEach(
     x => {
@@ -436,7 +436,7 @@ db.runCommand({distinct: "movie", key: "review.critic_name"}).values.forEach(
 ```
 
 #### for each user get their review for each reviewed movie
-```py 
+```js 
 db.runCommand(
 { distinct: "movie", key: "review.critic_name" }).values.forEach(
     (x) => {
@@ -472,7 +472,7 @@ db.runCommand(
 next step: create new new user in `forEach(x)`, then append found aggregated review to list of reviews for that user
 
 #### get if user is top_critic from all its reviews
-```py 
+```js 
 i = 0;
 db.runCommand(
 { distinct: "movie", key: "review.critic_name" }).values.forEach(
@@ -507,7 +507,7 @@ db.runCommand(
                 
 ```
 
-```py 
+```js 
 db.runCommand(
 { distinct: "movie", key: "review.critic_name" }).values.forEach(
     (x) => {
@@ -559,7 +559,7 @@ db.runCommand(
 ```
 
 ### user creation
-```py 
+```js 
 i = 0;
 db.runCommand(
 { distinct: "movie", key: "review.critic_name" }).values.forEach(
@@ -643,7 +643,7 @@ db.runCommand(
 ```
 #### an imposter (find the error)
 
-```py
+```js
 db.movie.find().forEach(
     x => {
         x.review = JSON.parse(
@@ -692,7 +692,7 @@ db.movie.find().forEach(
 
 ### another movie
 
-```py
+```js
 db.movie.find().forEach(
     x => {
         print(x.review);
@@ -730,7 +730,7 @@ db.movie.find().forEach(
 
 ## final script (this works on head)
 
-```py
+```js
 db.movie.find().forEach(
     x => {
         x.review = JSON.parse(
