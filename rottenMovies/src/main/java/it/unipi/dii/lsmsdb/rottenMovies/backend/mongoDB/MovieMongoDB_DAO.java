@@ -1,6 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.backend.mongoDB;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.Gson;
@@ -25,6 +26,7 @@ public class MovieMongoDB_DAO extends MongoDBConnector implements MovieDAO {
         Movie movie = null;
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         try {
             //Map<String,Object> map = mapper.readValue(returnMovieByTitle(collection, title), Map.class);
             movie = mapper.readValue(returnMovieByTitle(collection, title), Movie.class);

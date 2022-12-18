@@ -3,14 +3,15 @@ package it.unipi.dii.lsmsdb.rottenMovies.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
-
-
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 public class Review {
     @JsonProperty("critic_name")
@@ -24,7 +25,7 @@ public class Review {
     @JsonProperty("review_score")
     private String reviewScore;
     @JsonProperty("review_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SS")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     //@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale="en_GB")
     private Date reviewDate;
     @JsonProperty("review_content")
@@ -78,8 +79,21 @@ public class Review {
     }
 
 
-    public void setReviewDate(Date reviewDate) {
+    public void setReviewDate(LinkedHashMap reviewDate) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            this.reviewDate = formatter.parse(reviewDate.get("$date").toString());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        //System.out.println(reviewDate.get("$date").getClass());
+        //DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        //this.reviewDate = Date.parse(reviewDate.get("$date").toString(), formatter)
 
+        //this.reviewDate = reviewDate;
+    }
+
+    public void setReviewDate_date(Date reviewDate) {
         this.reviewDate = reviewDate;
     }
 
