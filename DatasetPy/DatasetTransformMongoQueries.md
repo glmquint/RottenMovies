@@ -190,7 +190,7 @@ db.movie.find().limit(5).forEach(
 
 ---
 
-### movie final
+## movie final
 
 ```py
 db.movie.find().forEach(
@@ -232,7 +232,7 @@ db.movie.find().forEach(
 );
 ```
 
-#### this is final for entire dataset (this is the real one)
+### this is final for entire dataset (this is the real one)
 
 ```py
 db.movie.find().forEach(
@@ -374,6 +374,7 @@ db.runCommand({ distinct: "movie", key: "review.critic_name" }).values.forEach(
 )
 ```
 
+#### get all reviewed movies for each user
 ```sql
 SELECT movie._id
 FROM movie
@@ -413,10 +414,25 @@ db.runCommand({ distinct: "movie", key: "review.critic_name" }).values.forEach(x
 
 ```
 i = 0;
-db.movie.find().forEach({
-    i=i+1;
-    print(i)
+total = db.movie.find().count();
+db.movie.find().forEach(
+    x => {
+        i++;
+        print(100 * i/total)
 })
+```
+
+#### split first_name and last name from username
+```py
+i = 0;
+db.runCommand({distinct: "movie", key: "review.critic_name"}).values.forEach(
+    x => {
+        name_parts = x.split(/[^.]\s/)
+        first_name = name_parts.splice(0, 1)[0]
+        last_name = name_parts.join(' ')
+        print(100*i++/total, first_name, ':', last_name)
+    }
+)
 ```
 
 #### for each user get their review for each reviewed movie
@@ -455,6 +471,176 @@ db.runCommand(
 
 next step: create new new user in `forEach(x)`, then append found aggregated review to list of reviews for that user
 
+#### get if user is top_critic from all its reviews
+```py 
+i = 0;
+db.runCommand(
+{ distinct: "movie", key: "review.critic_name" }).values.forEach(
+    (x) => {
+        is_top = false
+        db.movie.aggregate(
+            [
+                { $project: 
+                    {
+                        index: { $indexOfArray: ["$review.critic_name", x]}
+                    }},
+                {$match:{index:{$gt:-1}}}
+            ]
+        ).forEach(y => {
+            is_top |= db.movie.aggregate([
+                {
+                    $project:
+                    {
+                        is_top_critic: {
+                            $arrayElemAt: ["$review.top_critic", y.index]
+                        }
+                    }
+                },
+                {
+                    $match:{_id:{$eq:y._id}}
+                }
+            ]).toArray()[0].is_top_critic
+        })
+        print(100*i++/total, x, is_top)
+    }   
+)
+                
+```
+
+```py 
+db.runCommand(
+{ distinct: "movie", key: "review.critic_name" }).values.forEach(
+    (x) => {
+        arr = []
+        db.movie.aggregate(
+            [
+                { $project: 
+                    {
+                        index: { $indexOfArray: ["$review.critic_name", x]}
+                    }},
+                {$match:{index:{$gt:-1}}}
+            ]
+        ).forEach(
+            y => {
+                arr.push(db.movie.aggregate([
+                    {
+                        $project:
+                        {
+                            movie_id: 1,
+                            top_critic: {
+                                $arrayElemAt: ["$review.top_critic", y.index]
+                            },
+                            critic_name: {
+                                $arrayElemAt: ["$review.critic_name", y.index]
+                            },
+                            review_type: {
+                                $arrayElemAt: ["$review.review_type", y.index]
+                            },
+                            review_score: {
+                                $arrayElemAt: ["$review.review_score", y.index]
+                            },
+                            review_date: {
+                                $arrayElemAt: ["$review.review_date", y.index]
+                            },
+                            review_content: {
+                                $arrayElemAt: ["$review.review_content", y.index]
+                            }
+                        }
+                    },
+                    {
+                        $match:{_id:{$eq:y._id}}
+                    }
+                ]).toArray()[0])
+            })
+        print(x, arr)
+    }   
+)
+                
+```
+
+### user creation
+```py 
+i = 0;
+db.runCommand(
+{ distinct: "movie", key: "review.critic_name" }).values.forEach(
+    (x) => {
+        review_arr = []
+        movie_arr = []
+        is_top = false
+        db.movie.aggregate(
+            [
+                { $project: 
+                    {
+                        index: { $indexOfArray: ["$review.critic_name", x]}
+                    }},
+                {$match:{index:{$gt:-1}}}
+            ]
+        ).forEach(
+            y => {
+                tmp = db.movie.aggregate([
+                    {
+                        $project:
+                        {
+                            top_critic: {
+                                $arrayElemAt: ["$review.top_critic", y.index]
+                            },
+                            critic_name: {
+                                $arrayElemAt: ["$review.critic_name", y.index]
+                            },
+                            review_type: {
+                                $arrayElemAt: ["$review.review_type", y.index]
+                            },
+                            review_score: {
+                                $arrayElemAt: ["$review.review_score", y.index]
+                            },
+                            review_date: {
+                                $arrayElemAt: ["$review.review_date", y.index]
+                            },
+                            review_content: {
+                                $arrayElemAt: ["$review.review_content", y.index]
+                            }
+                        }
+                    },
+                    {
+                        $match:{_id:{$eq:y._id}}
+                    }
+                ]).toArray()[0];
+                is_top |= tmp.top_critic;
+                review_arr.push(tmp)
+                movie_arr.push(tmp._id)
+            })
+        name_parts = x.split(/\s/)
+        first_name = name_parts.splice(0, 1)[0]
+        last_name = name_parts.join(' ')
+
+        print(100*i++/total, x, is_top)
+        //print(first_name, ':', last_name)
+        //print(review_arr)
+        //print(movie_arr)
+        db.user.insertOne(
+            {
+                "username": x,
+                "password": "",
+                "first_name": first_name,
+                "last_name": last_name,
+                "registration_date": new Date("2000-01-01"),
+                "last_3_reviews": review_arr,
+                "reviews" : movie_arr
+            }
+        );
+        if (!is_top){
+            db.user.updateOne(
+                {"username": x},
+                {$set: 
+                    {"date_of_birth": new Date("1969-07-20")}
+                }
+            )
+        }
+        print("================================")
+    }   
+)
+                
+```
 #### an imposter (find the error)
 
 ```py
