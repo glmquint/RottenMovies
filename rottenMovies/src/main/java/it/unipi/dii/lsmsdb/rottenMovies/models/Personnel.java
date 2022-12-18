@@ -1,18 +1,18 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
+
 
 import java.util.ArrayList;
 
 public class Personnel {
-    @SerializedName("primaryName")
+    @JsonProperty("primaryName")
     private String primaryName;
-    @SerializedName("category")
+    @JsonProperty("category")
     private String category;
-    @SerializedName("job")
+    @JsonProperty("job")
     private String job;
-    @SerializedName("characters")
+    @JsonProperty("characters")
     private ArrayList<String> characters;
 
     public Personnel() {

@@ -2,44 +2,44 @@ package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie {
 
-    @SerializedName("primaryTitle")
+    @JsonProperty("primaryTitle")
     private String primaryTitle;
-    @SerializedName("year")
+    //@JsonProperty("year")
+    @JsonProperty("year")
     private int year;
-    @SerializedName("runtimeMinutes")
+    @JsonProperty("runtimeMinutes")
     private int runtimeMinutes;
-    @SerializedName("genres")
+    @JsonProperty("genres")
     private ArrayList<String> genres;
-    @SerializedName("production_company")
+    @JsonProperty("production_company")
     private String productionCompany;
     //@JsonProperty("tomatometer_status")
-    @SerializedName("tomatometer_status")
+    @JsonProperty("tomatometer_status")
     private String tomatometerStatus;
-    @SerializedName("tomatometer_rating")
+    @JsonProperty("tomatometer_rating")
     private int tomatometerRating;
-    @SerializedName("audience_status")
+    @JsonProperty("audience_status")
     private String audienceStatus;
-    @SerializedName("audience_rating")
+    @JsonProperty("audience_rating")
     private int audienceRating;
-    @SerializedName("audience_count")
+    @JsonProperty("audience_count")
     private int audienceCount;
-    @SerializedName("tomatometer_fresh_critics_count")
+    @JsonProperty("tomatometer_fresh_critics_count")
     private int tomatometerFreshCriticsCount;
-    @SerializedName("tomatometer_rotten_critics_count")
+    @JsonProperty("tomatometer_rotten_critics_count")
     private int tomatometerRottenCriticsCount;
-    @SerializedName("personnel")
+    @JsonProperty("personnel")
     private ArrayList<Personnel> personnel;
-    @SerializedName("review")
+    @JsonProperty("review")
     private ArrayList<Review> reviews;
 
-    @SerializedName("critic_consensus")
+    @JsonProperty("critic_consensus")
     private String criticConsensus;
 
     public Movie() {}

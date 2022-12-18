@@ -2,30 +2,32 @@ package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.internal.bind.util.ISO8601Utils;
-import org.springframework.data.mongodb.core.aggregation.DateOperators;
+import org.joda.time.DateTime;
+
+
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Review {
-    @SerializedName("critic_name")
+    @JsonProperty("critic_name")
     private String criticName;
-    @SerializedName("movie")
+    @JsonProperty("movie")
     private String movie;
-    @SerializedName("top_critic")
+    @JsonProperty("top_critic")
     private boolean topCritic;
-    @SerializedName("review_type")
+    @JsonProperty("review_type")
     private String reviewType;
-    @SerializedName("review_score")
+    @JsonProperty("review_score")
     private String reviewScore;
-    @SerializedName("review_date")
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-    private ISO8601Utils reviewDate;
-    @SerializedName("review_content")
+    @JsonProperty("review_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SS")
+    //@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale="en_GB")
+    private Date reviewDate;
+    @JsonProperty("review_content")
     private String reviewContent;
 
     public Review() {
@@ -71,11 +73,13 @@ public class Review {
         this.reviewScore = reviewScore;
     }
 
-    public ISO8601Utils getReviewDate() {
+    public Date getReviewDate() {
         return reviewDate;
     }
 
-    public void setReviewDate(ISO8601Utils reviewDate) {
+
+    public void setReviewDate(Date reviewDate) {
+
         this.reviewDate = reviewDate;
     }
 
@@ -91,7 +95,6 @@ public class Review {
     public String toString() {
         Date date = new Date();
         DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
-        reviewDate.format(date,false);
         return "Review{" +
                 "criticName='" + criticName + '\'' +
                 ", movie='" + movie + '\'' +

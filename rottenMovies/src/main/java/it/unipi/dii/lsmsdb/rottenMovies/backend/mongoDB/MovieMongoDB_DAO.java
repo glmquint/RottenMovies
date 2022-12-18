@@ -2,6 +2,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.backend.mongoDB;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -22,17 +23,18 @@ public class MovieMongoDB_DAO extends MongoDBConnector implements MovieDAO {
         MongoClient myClient = getClient();
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
-        /*ObjectMapper mapper = new ObjectMapper();
+
+        ObjectMapper mapper = new ObjectMapper();
         try {
-            Map<String,Object> map = mapper.readValue(returnMovieByTitle(collection, title), Map.class);
+            //Map<String,Object> map = mapper.readValue(returnMovieByTitle(collection, title), Map.class);
             movie = mapper.readValue(returnMovieByTitle(collection, title), Movie.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        }*/
+        }
 
-        Gson gson = new Gson(); // Or use new GsonBuilder().create();
+        /*Gson gson = new Gson(); // Or use new GsonBuilder().create();
         movie = gson.fromJson(returnMovieByTitle(collection, title), Movie.class);
-
+        */
         closeConnection(myClient);
         return movie;
     }
