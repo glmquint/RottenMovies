@@ -559,10 +559,11 @@ db.runCommand(
 ```
 
 ### user creation
-```js 
+```js
+total = db.movie.find().count();
 i = 0;
 db.runCommand(
-{ distinct: "movie", key: "review.critic_name" }).values.forEach(
+{ distinct: "movie", key: "review.critic_name", query: {"review.critic_name":{$ne:null}}}).values.forEach(
     (x) => {
         review_arr = []
         movie_arr = []
@@ -609,6 +610,7 @@ db.runCommand(
                 review_arr.push(tmp)
                 movie_arr.push(tmp._id)
             })
+
         name_parts = x.split(/\s/)
         first_name = name_parts.splice(0, 1)[0]
         last_name = name_parts.join(' ')
