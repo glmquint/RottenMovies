@@ -560,7 +560,7 @@ db.runCommand(
 
 ### user creation
 ```js
-total = db.movie.find().count();
+total = db.runCommand({ distinct: "movie", key: "review.critic_name", query: {"review.critic_name":{$ne:null}}}).values.length
 i = 0;
 db.runCommand(
 { distinct: "movie", key: "review.critic_name", query: {"review.critic_name":{$ne:null}}}).values.forEach(
