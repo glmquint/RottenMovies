@@ -190,7 +190,7 @@ db.movie.find().limit(5).forEach(
 
 ---
 
-### movie final
+## movie final
 
 ```py
 db.movie.find().forEach(
@@ -232,7 +232,7 @@ db.movie.find().forEach(
 );
 ```
 
-#### this is final for entire dataset (this is the real one)
+### this is final for entire dataset (this is the real one)
 
 ```py
 db.movie.find().forEach(
@@ -413,10 +413,24 @@ db.runCommand({ distinct: "movie", key: "review.critic_name" }).values.forEach(x
 
 ```
 i = 0;
-db.movie.find().forEach({
-    i=i+1;
-    print(i)
+total = db.movie.find().count();
+db.movie.find().forEach(
+    x => {
+        i++;
+        print(100 * i/total)
 })
+```
+
+```py
+i = 0;
+db.runCommand({distinct: "movie", key: "review.critic_name"}).values.forEach(
+    x => {
+        name_parts = x.split(/[^.]\s/)
+        first_name = name_parts.splice(0, 1)[0]
+        last_name = name_parts.join(' ')
+        print(100*i++/total, first_name, ':', last_name)
+    }
+)
 ```
 
 #### for each user get their review for each reviewed movie
@@ -454,6 +468,42 @@ db.runCommand(
 ```
 
 next step: create new new user in `forEach(x)`, then append found aggregated review to list of reviews for that user
+
+#### get if user is top_critic from all its reviews
+```py 
+i = 0;
+db.runCommand(
+{ distinct: "movie", key: "review.critic_name" }).values.forEach(
+    (x) => {
+        is_top = false
+        db.movie.aggregate(
+            [
+                { $project: 
+                    {
+                        index: { $indexOfArray: ["$review.critic_name", x]}
+                    }},
+                {$match:{index:{$gt:-1}}}
+            ]
+        ).forEach(y => {
+            is_top |= db.movie.aggregate([
+                {
+                    $project:
+                    {
+                        is_top_critic: {
+                            $arrayElemAt: ["$review.top_critic", y.index]
+                        }
+                    }
+                },
+                {
+                    $match:{_id:{$eq:y._id}}
+                }
+            ]).toArray()[0].is_top_critic
+        })
+        print(100*i++/total, x, is_top)
+    }   
+)
+                
+```
 
 #### an imposter (find the error)
 
