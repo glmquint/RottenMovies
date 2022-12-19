@@ -6,6 +6,9 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
+import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Sorts.*;
+
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
@@ -13,6 +16,8 @@ import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 
 /**
@@ -50,17 +55,20 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         closeConnection(myClient);
         return movie;
     }
-    public List<Movie> searchByYear(int year){
+
+    public List<Movie> searchByYearRange(int startYear, int endYear){
         MongoClient myClient = getClient();
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         String json_movie;
         ObjectMapper mapper = new ObjectMapper();
-        MongoCursor<Document> cursor =  collection.find(Filters.eq("year", year)).iterator();
+        MongoCursor<Document> cursor =  collection.find(and(
+                gte("year", endYear), lte("year", startYear)
+            )).iterator();
         List<Movie> movie_list = new ArrayList<>();
         while(cursor.hasNext()){
             json_movie = cursor.next().toJson();
-            System.out.println(json_movie);
+            //System.out.println(json_movie);
             try {
                 movie = mapper.readValue(json_movie, Movie.class);
             } catch (JsonProcessingException e) {
@@ -70,6 +78,91 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return movie_list;
     }
-    public Movie searchByTopRatings(int rating){return null;}
-    public Movie searchByUserRatings(int rating){return null;}
+    public List<Movie> searchByTopRatings(int rating, boolean type){
+        MongoClient myClient = getClient();
+        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
+        Movie movie = null;
+        String json_movie;
+        ObjectMapper mapper = new ObjectMapper();
+        MongoCursor<Document> cursor;
+        if(type)
+            cursor =  collection.find(
+                    gte("tomatometer_rating", rating)
+            ).sort(orderBy(descending("tomatometer_rating")))
+                    .iterator();
+        else{
+            cursor =  collection.find(
+                    lte("tomatometer_rating", rating)
+            ).sort(orderBy(descending("tomatometer_rating")))
+                    .iterator();
+        }
+        List<Movie> movie_list = new ArrayList<>();
+        while(cursor.hasNext()){
+            json_movie = cursor.next().toJson();
+            //System.out.println(json_movie);
+            try {
+                movie = mapper.readValue(json_movie, Movie.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            movie_list.add(movie);
+        }
+        return movie_list;
+    }
+    public List<Movie> searchByUserRatings(int rating, boolean type){
+        MongoClient myClient = getClient();
+        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
+        Movie movie = null;
+        String json_movie;
+        ObjectMapper mapper = new ObjectMapper();
+        MongoCursor<Document> cursor;
+        if(type)
+            cursor =  collection.find(
+                    gte("audience_rating", rating)
+                ).sort(orderBy(descending("audience_rating")))
+                    .iterator();
+        else{
+            cursor =  collection.find(
+                    lte("audience_rating", rating)
+            ).sort(orderBy(descending("audience_rating")))
+                    .iterator();
+        }
+        List<Movie> movie_list = new ArrayList<>();
+        while(cursor.hasNext()){
+            json_movie = cursor.next().toJson();
+            //System.out.println(json_movie);
+            try {
+                movie = mapper.readValue(json_movie, Movie.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            movie_list.add(movie);
+        }
+        return movie_list;
+    }
+/*
+    funzione per cercare movie in un solo anno, è un sottocaso di searchByYearRange dove
+    startYear == endYear
+   public List<Movie> searchByYear(int year){
+        MongoClient myClient = getClient();
+        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
+        Movie movie = null;
+        String json_movie;
+        ObjectMapper mapper = new ObjectMapper();
+        MongoCursor<Document> cursor =  collection.find(Filters.eq("year", year)).iterator();
+        List<Movie> movie_list = new ArrayList<>();
+        while(cursor.hasNext()){
+            json_movie = cursor.next().toJson();
+            //System.out.println(json_movie);
+            try {
+                movie = mapper.readValue(json_movie, Movie.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            movie_list.add(movie);
+        }
+        return movie_list;
+    }
+ */
+
 }

@@ -3,7 +3,9 @@ package it.unipi.dii.lsmsdb.rottenMovies.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.print.attribute.standard.JobKOctets;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie {
@@ -48,16 +50,28 @@ public class Movie {
         return primaryTitle;
     }
 
-    public void setPrimaryTitle(String primaryTitle) {
-        this.primaryTitle = primaryTitle;
+    public void setPrimaryTitle(Object primaryTitle) {
+        if(primaryTitle instanceof LinkedHashMap<?,?>){
+            LinkedHashMap link = (LinkedHashMap)primaryTitle;
+            this.primaryTitle = link.get("$numberDouble").toString();
+        }
+        else if(primaryTitle instanceof Integer) {
+            this.primaryTitle = Integer.toString(((int)primaryTitle));
+        }
+        else{
+            this.primaryTitle = (String)primaryTitle;
+        }
     }
 
     public int getYear() {
         return year;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setYear(Object year) {
+        if(year instanceof Integer)
+            this.year = (int)year;
+        else
+            this.year = -1;
     }
 
     public int getRuntimeMinutes() {
@@ -99,8 +113,11 @@ public class Movie {
         return tomatometerRating;
     }
 
-    public void settomatometerRating(int tomatometerRating) {
-        this.tomatometerRating = tomatometerRating;
+    public void settomatometerRating(Object tomatometerRating) {
+        if(tomatometerRating instanceof  Integer)
+            this.tomatometerRating = (int)tomatometerRating;
+        else
+            this.tomatometerRating = 0;
     }
 
     public String getAudienceStatus() {
@@ -115,16 +132,22 @@ public class Movie {
         return audienceRating;
     }
 
-    public void setaudienceRating(int audienceRating) {
-        this.audienceRating = audienceRating;
+    public void setaudienceRating(Object audienceRating) {
+        if(audienceRating instanceof  Integer)
+            this.audienceRating = (int)audienceRating;
+        else
+            this.audienceRating = 0;
     }
 
     public int getAudienceCount() {
         return audienceCount;
     }
 
-    public void setAudienceCount(int audienceCount) {
-        this.audienceCount = audienceCount;
+    public void setAudienceCount(Object audienceCount) {
+        if(audienceCount instanceof  Integer)
+            this.audienceCount = (int)audienceCount;
+        else
+            this.audienceCount = 0;
     }
 
     public int getTomatometerFreshCriticsCount() {
@@ -186,5 +209,21 @@ public class Movie {
                 ", reviews=" + reviews +
                 ", criticConsensus='" + criticConsensus + '\'' +
                 '}';
+    }
+
+    public String lessDataString(){
+        return "Movie{"+'\n'+
+                "primaryTitle='" + primaryTitle + '\n' +
+                "year=" + year + '\n' +
+                "runtimeMinutes=" + runtimeMinutes + '\n' +
+                "genres=" + genres + '\n' +
+                "productionCompany='" + productionCompany + '\n' +
+                "tomatometerStatus='" + tomatometerStatus + '\n' +
+                "tomatometerRating=" + tomatometerRating + '\n' +
+                "audienceStatus=" + audienceStatus + '\n' +
+                "audienceRating=" + audienceRating + '\n' +
+                "audienceCount=" + audienceCount + '\n' +
+                "tomatometerFreshCriticsCount=" + tomatometerFreshCriticsCount + '\n' +
+                "tomatometerRottenCriticsCount=" + tomatometerRottenCriticsCount;
     }
 }

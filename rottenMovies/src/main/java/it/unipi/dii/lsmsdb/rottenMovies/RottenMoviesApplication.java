@@ -11,8 +11,15 @@ public class RottenMoviesApplication {
 	public  static void main(String[] args) throws JsonProcessingException {
 		MovieDAO test = DAOLocator.getMovieDAO();
 		System.out.println(test.searchByTitle("Evidence"));
-		for (Movie movie : test.searchByYear(1929)){
-			System.out.println(movie);
+		/*for(int i  = 2001; i<2022; ++i) {
+			for (Movie movie : test.searchByYear(i)) {
+				//System.out.println(movie);
+			}
+		}*/
+		//test.searchByYearRange(2000, 2000);
+		for(Movie movie : test.searchByUserRatings(10, false)){
+			System.out.println(movie.lessDataString());
+			System.out.println("=============================");
 		}
 	}
 	/*public static void main(String[] args) {

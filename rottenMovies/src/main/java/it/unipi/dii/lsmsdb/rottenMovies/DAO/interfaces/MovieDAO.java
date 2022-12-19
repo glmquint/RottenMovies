@@ -10,7 +10,9 @@ import java.util.List;
  */
 public interface MovieDAO {
     Movie searchByTitle(String title);
-    List<Movie> searchByYear(int year);
-    Movie searchByTopRatings(int rating);
-    Movie searchByUserRatings(int rating);
+    List<Movie> searchByYearRange(int startYear, int endYear);
+    List<Movie> searchByTopRatings(int rating, boolean type);
+    List<Movie> searchByUserRatings(int rating, boolean type);
+
+    //List<Movie> searchByYear(int year);
 }

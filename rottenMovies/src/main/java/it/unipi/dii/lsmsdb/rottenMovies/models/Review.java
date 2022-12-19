@@ -79,12 +79,12 @@ public class Review {
         if(reviewDate instanceof LinkedHashMap<?,?>)
             try {
                 LinkedHashMap link = (LinkedHashMap)reviewDate;
-                System.out.println(link.get("$date"));
+                //System.out.println(link.get("$date"));
                 //System.out.println(link.get("$numberLong"));
-                System.out.println(link.get("$date").getClass());
+                //System.out.println(link.get("$date").getClass());
                 if(link.get("$date")!=null) {
                     if(link.get("$date") instanceof LinkedHashMap<?,?>) {
-                        this.reviewDate = null;
+                        this.reviewDate = new Date(1970, 1, 1);
                         /*
                         Cannot resolv the long to instant to string
                         pls end my suffering
