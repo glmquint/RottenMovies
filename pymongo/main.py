@@ -11,9 +11,14 @@ if __name__ == "__main__":
     dbname = get_database()
     collection = dbname['user']
     total = collection.count_documents({})
-    for i, item in enumerate(collection.find()):
-        filter = { 'username': item['username']}
-        result = hashlib.md5(item["username"].encode()).hexdigest()        
-        newvalues = { "$set": { 'password': result } }
+    for i, user in enumerate(collection.find()):
+        all_reviews = user['last_3_reviews']
+        sorted_list = sorted(all_reviews, key=lambda t: t['review_date'])[-3:]
+
+        hashed = hashlib.md5(user["username"].encode()).hexdigest()        
+
+        newvalues = { "$set": { 'password': hashed, 'last_3_reviews': sorted_list } }
+        filter = { 'username': user['username']}
         collection.update_one(filter, newvalues)
         print(f"{i/total:%}\r", end='')
+    print()
