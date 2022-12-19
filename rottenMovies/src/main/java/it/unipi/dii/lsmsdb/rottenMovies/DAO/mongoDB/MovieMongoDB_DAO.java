@@ -214,7 +214,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             collectionUser.updateOne(filter, deleteReview);
             result3reviews=collectionUser.updateOne(filter,deletelast3);
             if(result3reviews.getModifiedCount()==1){
-                // also remember to update the last_3_reviews after a removal
+                // also remember to update the last_3_reviews field after deleting a movie
                 System.out.println("Last3review modified");
             }
         }
