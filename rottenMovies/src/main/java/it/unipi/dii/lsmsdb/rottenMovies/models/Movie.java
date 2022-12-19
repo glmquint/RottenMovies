@@ -3,7 +3,6 @@ package it.unipi.dii.lsmsdb.rottenMovies.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.print.attribute.standard.JobKOctets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -224,6 +223,7 @@ public class Movie {
                 "audienceRating=" + audienceRating + '\n' +
                 "audienceCount=" + audienceCount + '\n' +
                 "tomatometerFreshCriticsCount=" + tomatometerFreshCriticsCount + '\n' +
-                "tomatometerRottenCriticsCount=" + tomatometerRottenCriticsCount;
+                "tomatometerRottenCriticsCount=" + tomatometerRottenCriticsCount + '\n' +
+                "}";
     }
 }
