@@ -572,7 +572,8 @@ db.runCommand(
             [
                 { $project: 
                     {
-                        index: { $indexOfArray: ["$review.critic_name", x]}
+                        index: { $indexOfArray: ["$review.critic_name", x]},
+                        primaryTitle: 1
                     }},
                 {$match:{index:{$gt:-1}}}
             ]
@@ -608,7 +609,8 @@ db.runCommand(
                 ]).toArray()[0];
                 is_top |= tmp.top_critic;
                 review_arr.push(tmp)
-                movie_arr.push(tmp._id)
+                //movie_arr.push(tmp._id)
+                movie_arr.push({"_id": tmp._id, "primaryTitle": y.primaryTitle, "review_index": y.index})
             })
 
         name_parts = x.split(/\s/)
