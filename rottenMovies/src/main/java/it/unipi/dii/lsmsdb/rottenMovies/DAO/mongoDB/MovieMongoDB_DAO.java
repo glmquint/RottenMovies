@@ -2,6 +2,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.mongoDB;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -9,10 +10,15 @@ import com.mongodb.client.model.Filters;
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Sorts.*;
 
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +34,7 @@ import java.util.List;
 public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
 
     private static final String collectionStringMovie = "movie";
-
+    private static final String collectionStringUser = "user";
     /**
      * <method>searchByTitle</method> queries the DB for a specific movie base on the title
      * @param title is the title of the movie to search
@@ -76,6 +82,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             }
             movie_list.add(movie);
         }
+        closeConnection(myClient);
         return movie_list;
     }
     public List<Movie> searchByTopRatings(int rating, boolean type){
@@ -107,6 +114,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             }
             movie_list.add(movie);
         }
+        closeConnection(myClient);
         return movie_list;
     }
     public List<Movie> searchByUserRatings(int rating, boolean type){
@@ -138,6 +146,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             }
             movie_list.add(movie);
         }
+        closeConnection(myClient);
         return movie_list;
     }
 /*
@@ -163,6 +172,57 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return movie_list;
     }
+    public
  */
+    public void deleteMovie(String title){
+        MongoClient myClient = getClient();
+        MongoCollection<Document>  collectionMovie = returnCollection(myClient, collectionStringMovie);
+        MongoCollection<Document>  collectionUser = returnCollection(myClient, collectionStringUser);
+        Movie movie = null;
+        ObjectMapper mapper = new ObjectMapper();
+        Document doc =  collectionMovie.find(Filters.eq("primaryTitle", title)).first();
+        String json_movie=null;
+        if (doc == null) {
+            System.out.println("No results found.");
+        } else {
+            json_movie = doc.toJson();
+        }
+        try {
+            movie = mapper.readValue(json_movie, Movie.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        Bson queryMovie = eq("primaryTitle", title);
+
+        try { // now I delete the movie from collection movie
+            DeleteResult result = collectionMovie.deleteOne(queryMovie);
+            System.out.println("Deleted document count: " + result.getDeletedCount());
+        } catch (MongoException me) {
+            System.err.println("Unable to delete due to an error: " + me);
+        }
+        ArrayList<Review> reviews = movie.getReviews(); // getting all the reviews
+        Bson filter,deleteReview,deletelast3; // now i delete the movie for the user collection, both in last_3 and reviews
+        UpdateResult result3reviews;
+        for (Review r:
+             reviews) {
+            String username=r.getCriticName();
+            System.out.println(username);
+            filter=eq("username", username);
+            deleteReview = Updates.pull("reviews", new Document("primaryTitle", title));
+            deletelast3 = Updates.pull("last_3_reviews", new Document("primaryTitle", title));
+            collectionUser.updateOne(filter, deleteReview);
+            result3reviews=collectionUser.updateOne(filter,deletelast3);
+            if(result3reviews.getModifiedCount()==1){
+                // also remember to update the last_3_reviews after a removal
+                System.out.println("Last3review modified");
+            }
+        }
+        closeConnection(myClient);
+    }
+
+    public Boolean updateMovie(Movie updated){return true;} // needs implementation
+
+    public Boolean insertMovie(Movie newOne){return true;} // needs implementation
 
 }

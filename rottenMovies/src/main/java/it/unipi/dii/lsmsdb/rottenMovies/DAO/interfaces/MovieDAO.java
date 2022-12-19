@@ -13,6 +13,8 @@ public interface MovieDAO {
     List<Movie> searchByYearRange(int startYear, int endYear);
     List<Movie> searchByTopRatings(int rating, boolean type);
     List<Movie> searchByUserRatings(int rating, boolean type);
-
+    void deleteMovie(String title);
+    Boolean updateMovie(Movie updated);
+    Boolean insertMovie(Movie newOne);
     //List<Movie> searchByYear(int year);
 }

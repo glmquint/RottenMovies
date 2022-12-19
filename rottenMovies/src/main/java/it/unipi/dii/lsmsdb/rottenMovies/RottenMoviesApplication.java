@@ -17,10 +17,15 @@ public class RottenMoviesApplication {
 			}
 		}*/
 		//test.searchByYearRange(2000, 2000);
+		/*
 		for(Movie movie : test.searchByUserRatings(10, false)){
 			System.out.println(movie.lessDataString());
 			System.out.println("=============================");
 		}
+
+		 */
+
+		test.deleteMovie("The Midnight Man");
 	}
 	/*public static void main(String[] args) {
 		SpringApplication.run(RottenMoviesApplication.class, args);
