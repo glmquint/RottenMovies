@@ -1,4 +1,4 @@
-package it.unipi.dii.lsmsdb.rottenMovies.backend.base;
+package it.unipi.dii.lsmsdb.rottenMovies.DAO.base;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.client.*;
@@ -12,7 +12,7 @@ import org.bson.Document;
  * get a collection from the DB (getCollection) and close the connection
  * to the database (closeConnection)
  */
-public abstract class MongoDBConnector {
+public abstract class BaseMongoDAO {
     private static final String connectionString = "mongodb://localhost:27017";
     private static final String databaseString = "rottenMovies";
 

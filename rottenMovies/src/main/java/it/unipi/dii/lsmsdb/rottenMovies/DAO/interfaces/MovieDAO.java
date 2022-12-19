@@ -1,6 +1,8 @@
-package it.unipi.dii.lsmsdb.rottenMovies.backend.interfaces;
+package it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces;
 
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
+
+import java.util.List;
 
 /**
  * @author Fabio
@@ -8,7 +10,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
  */
 public interface MovieDAO {
     Movie searchByTitle(String title);
-    Movie searchByYear(int year);
+    List<Movie> searchByYear(int year);
     Movie searchByTopRatings(int rating);
     Movie searchByUserRatings(int rating);
 }

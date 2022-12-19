@@ -88,6 +88,14 @@ public class Review {
         //this.reviewDate = reviewDate;
     }
 
+    public void setReviewDate_string(String reviewDate) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            this.reviewDate = formatter.parse(reviewDate);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public void setReviewDate_date(Date reviewDate) {
         this.reviewDate = reviewDate;
     }
