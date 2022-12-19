@@ -586,9 +586,7 @@ db.runCommand(
                             top_critic: {
                                 $arrayElemAt: ["$review.top_critic", y.index]
                             },
-                            critic_name: {
-                                $arrayElemAt: ["$review.critic_name", y.index]
-                            },
+                            primaryTitle: y.primaryTitle,
                             review_type: {
                                 $arrayElemAt: ["$review.review_type", y.index]
                             },
