@@ -73,8 +73,16 @@ public class Review {
         return reviewDate;
     }
 
+    public void setReviewDate(Object obj){
+        if (obj instanceof String){
+            setReviewDate_string(obj.toString());
+        } else if (obj instanceof LinkedHashMap){
+            setReviewDate_hm((LinkedHashMap) obj);
+        }
+    }
 
-    public void setReviewDate(LinkedHashMap reviewDate) {
+    public void setReviewDate_hm(LinkedHashMap reviewDate) {
+        System.out.println("hm called");
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         try {
             this.reviewDate = formatter.parse(reviewDate.get("$date").toString());
@@ -89,6 +97,7 @@ public class Review {
     }
 
     public void setReviewDate_string(String reviewDate) {
+        System.out.println("string called");
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         try {
             this.reviewDate = formatter.parse(reviewDate);

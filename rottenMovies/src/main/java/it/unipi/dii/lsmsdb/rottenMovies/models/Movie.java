@@ -64,7 +64,7 @@ public class Movie {
         return runtimeMinutes;
     }
 
-    public void setRuntimeMinutes(int runtimeMinutes) {
+    public void setRuntimeMinutes(Object runtimeMinutes) {
         this.runtimeMinutes = runtimeMinutes;
     }
 
