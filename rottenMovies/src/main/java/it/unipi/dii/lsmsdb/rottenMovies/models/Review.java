@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -73,22 +74,45 @@ public class Review {
         return reviewDate;
     }
 
-    public void setReviewDate(Object obj){
-        if (obj instanceof String){
-            setReviewDate_string(obj.toString());
-        } else if (obj instanceof LinkedHashMap){
-            setReviewDate_hm((LinkedHashMap) obj);
-        }
-    }
-
-    public void setReviewDate_hm(LinkedHashMap reviewDate) {
-        System.out.println("hm called");
+    public void setReviewDate(Object reviewDate) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            this.reviewDate = formatter.parse(reviewDate.get("$date").toString());
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
+        if(reviewDate instanceof LinkedHashMap<?,?>)
+            try {
+                LinkedHashMap link = (LinkedHashMap)reviewDate;
+                System.out.println(link.get("$date"));
+                //System.out.println(link.get("$numberLong"));
+                System.out.println(link.get("$date").getClass());
+                if(link.get("$date")!=null) {
+                    if(link.get("$date") instanceof LinkedHashMap<?,?>) {
+                        this.reviewDate = null;
+                        /*
+                        Cannot resolv the long to instant to string
+                        pls end my suffering
+                        LinkedHashMap linkDate = (LinkedHashMap) link.get("$date");
+                        System.out.println(linkDate.get("$numberLong"));
+                        System.out.println(linkDate.get("$numberLong").getClass());
+                        this.reviewDate = Date.from((Instant) linkDate.get("$numberLong"));
+                        String formattedDate = formatter.format(this.reviewDate);
+                        this.reviewDate = formatter.parse(formattedDate);*/
+                    }
+                    else{
+                        this.reviewDate = formatter.parse(link.get("$date").toString());
+                    }
+                }
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
         }
+        else if (reviewDate instanceof String) {
+            try {
+                this.reviewDate = formatter.parse((String) reviewDate);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else if (reviewDate instanceof Date){
+            setReviewDate_date((Date)reviewDate);
+        }
+
         //System.out.println(reviewDate.get("$date").getClass());
         //DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
         //this.reviewDate = Date.parse(reviewDate.get("$date").toString(), formatter)
@@ -96,15 +120,7 @@ public class Review {
         //this.reviewDate = reviewDate;
     }
 
-    public void setReviewDate_string(String reviewDate) {
-        System.out.println("string called");
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            this.reviewDate = formatter.parse(reviewDate);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
     public void setReviewDate_date(Date reviewDate) {
         this.reviewDate = reviewDate;
     }
