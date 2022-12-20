@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 
 public class BaseUser extends User{
-    @JsonProperty("birthday_date")
+    @JsonProperty("date_of_birth")
     private Date birthdayDate;
 
     public Date getBirthdayDate() {
