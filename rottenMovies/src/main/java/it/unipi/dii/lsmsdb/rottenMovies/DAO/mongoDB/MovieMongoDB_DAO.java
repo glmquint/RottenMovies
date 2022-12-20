@@ -28,6 +28,9 @@ import java.util.List;
 
 /**
  * @author Fabio
+ * @author Giacomo
+ * @author Guillaume
+ *
  * <class>MovieMongoDB_DAO</class> is the DAO class that queries the DB
  * based on different parameters like, title, year, topUserRating, topCriticsRatings
  */
