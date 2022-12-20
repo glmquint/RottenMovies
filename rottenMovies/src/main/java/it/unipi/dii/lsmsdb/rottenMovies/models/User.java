@@ -52,15 +52,6 @@ public abstract class User extends RegistratedUser{
                 if(link.get("$date")!=null) {
                     if(link.get("$date") instanceof LinkedHashMap<?,?>) {
                         this.registrationDate = new Date(1970, 1, 1);
-                        /*
-                        Cannot resolv the long to instant to string
-                        pls end my suffering
-                        LinkedHashMap linkDate = (LinkedHashMap) link.get("$date");
-                        System.out.println(linkDate.get("$numberLong"));
-                        System.out.println(linkDate.get("$numberLong").getClass());
-                        this.registrationDate = Date.from((Instant) linkDate.get("$numberLong"));
-                        String formattedDate = formatter.format(this.registrationDate);
-                        this.registrationDate = formatter.parse(formattedDate);*/
                     }
                     else{
                         this.registrationDate = formatter.parse(link.get("$date").toString());
@@ -79,12 +70,6 @@ public abstract class User extends RegistratedUser{
         else if (registrationDate instanceof Date){
             this.registrationDate = ((Date)registrationDate);
         }
-
-        //System.out.println(registrationDate.get("$date").getClass());
-        //DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
-        //this.registrationDate = Date.parse(registrationDate.get("$date").toString(), formatter)
-
-        //this.registrationDate = registrationDate;
     }
 
     public List<Review> getLast3Reviews() {

@@ -23,8 +23,6 @@ public class Review {
     @JsonProperty("review_score")
     private String reviewScore;
     @JsonProperty("review_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    //@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ", locale="en_GB")
     private Date reviewDate;
     @JsonProperty("review_content")
     private String reviewContent;
@@ -87,15 +85,6 @@ public class Review {
                 if(link.get("$date")!=null) {
                     if(link.get("$date") instanceof LinkedHashMap<?,?>) {
                         this.reviewDate = new Date(1970, 1, 1);
-                        /*
-                        Cannot resolv the long to instant to string
-                        pls end my suffering
-                        LinkedHashMap linkDate = (LinkedHashMap) link.get("$date");
-                        System.out.println(linkDate.get("$numberLong"));
-                        System.out.println(linkDate.get("$numberLong").getClass());
-                        this.reviewDate = Date.from((Instant) linkDate.get("$numberLong"));
-                        String formattedDate = formatter.format(this.reviewDate);
-                        this.reviewDate = formatter.parse(formattedDate);*/
                     }
                     else{
                         this.reviewDate = formatter.parse(link.get("$date").toString());
@@ -115,11 +104,6 @@ public class Review {
             setReviewDate_date((Date)reviewDate);
         }
 
-        //System.out.println(reviewDate.get("$date").getClass());
-        //DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
-        //this.reviewDate = Date.parse(reviewDate.get("$date").toString(), formatter)
-
-        //this.reviewDate = reviewDate;
     }
 
 

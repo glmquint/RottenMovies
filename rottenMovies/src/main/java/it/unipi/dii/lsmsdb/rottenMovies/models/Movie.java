@@ -81,7 +81,7 @@ public class Movie {
         if(runtimeMinutes instanceof  Integer)
             this.runtimeMinutes = (int)runtimeMinutes;
         else
-            this.runtimeMinutes = 0;
+            this.runtimeMinutes = -1;
     }
 
     public ArrayList<String> getGenres() {
