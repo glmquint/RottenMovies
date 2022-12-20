@@ -45,11 +45,6 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
      */
     public Movie searchByTitle(String title){
         MongoClient myClient = getClient();
-        Movie movie = searchByTitlePrivate(title, myClient);
-        return movie;
-    }
-
-    private Movie searchByTitlePrivate(String title, MongoClient myClient) {
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -66,25 +61,19 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+        closeConnection(myClient);
         return movie;
-
     }
 
     public List<Movie> searchByYearRange(int startYear, int endYear){
         MongoClient myClient = getClient();
-        List<Movie> movie_list = searchByYearRangePrivate(startYear,endYear,myClient);
-        closeConnection(myClient);
-        return movie_list;
-    }
-
-    private List<Movie> searchByYearRangePrivate(int startYear, int endYear, MongoClient myClient) {
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         String json_movie;
         ObjectMapper mapper = new ObjectMapper();
         MongoCursor<Document> cursor =  collection.find(and(
                 gte("year", endYear), lte("year", startYear)
-        )).iterator();
+            )).iterator();
         List<Movie> movie_list = new ArrayList<>();
         while(cursor.hasNext()){
             json_movie = cursor.next().toJson();
@@ -96,17 +85,11 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             }
             movie_list.add(movie);
         }
+        closeConnection(myClient);
         return movie_list;
     }
-
     public List<Movie> searchByTopRatings(int rating, boolean type){
         MongoClient myClient = getClient();
-        List<Movie> movie_list = searchByTopRatingsPrivate(rating,type, myClient);
-        closeConnection(myClient);
-        return movie_list;
-    }
-
-    private List<Movie> searchByTopRatingsPrivate(int rating, boolean type, MongoClient myClient) {
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         String json_movie;
@@ -114,13 +97,13 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         MongoCursor<Document> cursor;
         if(type)
             cursor =  collection.find(
-                            gte("tomatometer_rating", rating)
-                    ).sort(orderBy(descending("tomatometer_rating")))
+                    gte("tomatometer_rating", rating)
+            ).sort(orderBy(descending("tomatometer_rating")))
                     .iterator();
         else{
             cursor =  collection.find(
-                            lte("tomatometer_rating", rating)
-                    ).sort(orderBy(descending("tomatometer_rating")))
+                    lte("tomatometer_rating", rating)
+            ).sort(orderBy(descending("tomatometer_rating")))
                     .iterator();
         }
         List<Movie> movie_list = new ArrayList<>();
@@ -134,17 +117,11 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             }
             movie_list.add(movie);
         }
-        return  movie_list;
+        closeConnection(myClient);
+        return movie_list;
     }
-
     public List<Movie> searchByUserRatings(int rating, boolean type){
         MongoClient myClient = getClient();
-        List<Movie>movie_list = searchByUserRatingsPrivate(rating, type, myClient);
-        closeConnection(myClient);
-        return movie_list;
-    }
-
-    private List<Movie> searchByUserRatingsPrivate(int rating, boolean type, MongoClient myClient) {
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         String json_movie;
@@ -152,13 +129,13 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         MongoCursor<Document> cursor;
         if(type)
             cursor =  collection.find(
-                            gte("audience_rating", rating)
-                    ).sort(orderBy(descending("audience_rating")))
+                    gte("audience_rating", rating)
+                ).sort(orderBy(descending("audience_rating")))
                     .iterator();
         else{
             cursor =  collection.find(
-                            lte("audience_rating", rating)
-                    ).sort(orderBy(descending("audience_rating")))
+                    lte("audience_rating", rating)
+            ).sort(orderBy(descending("audience_rating")))
                     .iterator();
         }
         List<Movie> movie_list = new ArrayList<>();
@@ -172,16 +149,36 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             }
             movie_list.add(movie);
         }
+        closeConnection(myClient);
         return movie_list;
     }
-
+/*
+    funzione per cercare movie in un solo anno, è un sottocaso di searchByYearRange dove
+    startYear == endYear
+   public List<Movie> searchByYear(int year){
+        MongoClient myClient = getClient();
+        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
+        Movie movie = null;
+        String json_movie;
+        ObjectMapper mapper = new ObjectMapper();
+        MongoCursor<Document> cursor =  collection.find(Filters.eq("year", year)).iterator();
+        List<Movie> movie_list = new ArrayList<>();
+        while(cursor.hasNext()){
+            json_movie = cursor.next().toJson();
+            //System.out.println(json_movie);
+            try {
+                movie = mapper.readValue(json_movie, Movie.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            movie_list.add(movie);
+        }
+        return movie_list;
+    }
+    public
+ */
     public void deleteMovie(String title){
         MongoClient myClient = getClient();
-        deleteMoviePrivate(title, myClient);
-        closeConnection(myClient);
-    }
-
-    private void deleteMoviePrivate(String title, MongoClient myClient) {
         MongoCollection<Document>  collectionMovie = returnCollection(myClient, collectionStringMovie);
         MongoCollection<Document>  collectionUser = returnCollection(myClient, collectionStringUser);
         Movie movie = null;
@@ -211,7 +208,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         Bson filter,deleteReview,deletelast3; // now i delete the movie for the user collection, both in last_3 and reviews
         UpdateResult result3reviews;
         for (Review r:
-                reviews) {
+             reviews) {
             String username=r.getCriticName();
             System.out.println(username);
             filter=eq("username", username);
@@ -224,6 +221,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                 System.out.println("Last3review modified");
             }
         }
+        closeConnection(myClient);
     }
 
     public Boolean updateMovie(Movie updated){return true;} // needs implementation

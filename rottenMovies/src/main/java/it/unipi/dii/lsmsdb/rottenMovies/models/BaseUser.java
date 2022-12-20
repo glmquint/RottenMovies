@@ -21,29 +21,33 @@ public class BaseUser extends User{
         if(birthdayDate instanceof LinkedHashMap<?,?>)
             try {
                 LinkedHashMap link = (LinkedHashMap)birthdayDate;
-
-                //debugging print, the ol' reliable
                 //System.out.println(link.get("$date"));
                 //System.out.println(link.get("$numberLong"));
                 //System.out.println(link.get("$date").getClass());
-
                 if(link.get("$date")!=null) {
                     if(link.get("$date") instanceof LinkedHashMap<?,?>) {
                         this.birthdayDate = new Date(1970, 1, 1);
+                        /*
+                        Cannot resolv the long to instant to string
+                        pls end my suffering
+                        LinkedHashMap linkDate = (LinkedHashMap) link.get("$date");
+                        System.out.println(linkDate.get("$numberLong"));
+                        System.out.println(linkDate.get("$numberLong").getClass());
+                        this.reviewDate = Date.from((Instant) linkDate.get("$numberLong"));
+                        String formattedDate = formatter.format(this.reviewDate);
+                        this.reviewDate = formatter.parse(formattedDate);*/
                     }
                     else{
                         this.birthdayDate = formatter.parse(link.get("$date").toString());
                     }
                 }
-            }
-            catch (ParseException e) {
+            } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
         else if (birthdayDate instanceof String) {
             try {
                 this.birthdayDate = formatter.parse((String) birthdayDate);
-            }
-            catch (ParseException e) {
+            } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
         }
