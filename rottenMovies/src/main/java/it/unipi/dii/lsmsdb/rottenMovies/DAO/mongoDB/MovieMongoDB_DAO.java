@@ -20,6 +20,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
+import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -225,18 +226,11 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         closeConnection(myClient);
     }
-
-    public Boolean updateMovie(Movie updated){
-        return true;
-    }
-
-    public Boolean insertMovie(Movie newOne){
-        MongoClient myClient = getClient();
-        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
+    private List<BasicDBObject> buildPersonnelField (Movie movie){
         List<BasicDBObject> personnelDBList=new ArrayList<BasicDBObject>();
-        ArrayList<Personnel> personnelList=newOne.getpersonnel();
+        ArrayList<Personnel> personnelList=movie.getpersonnel();
         for (Personnel p:
-             personnelList) {
+                personnelList) {
             BasicDBObject worker = new BasicDBObject();
             worker.put("primaryName",p.getPrimaryName());
             worker.put("category",p.getCategory());
@@ -248,6 +242,42 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             }
             personnelDBList.add(worker);
         }
+        return personnelDBList;
+    }
+    public Boolean updateMovie(Movie updated){
+        MongoClient myClient = getClient();
+        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
+        List<BasicDBObject> personnelDBList = buildPersonnelField(updated);
+
+        Document movieFromDB = new Document().append("primaryTitle",  updated.getPrimaryTitle());
+        Bson updates = Updates.combine(
+                Updates.set("year", updated.getYear()),
+                Updates.set("runtimeMinutes", updated.getRuntimeMinutes()),
+                Updates.set("production_company", updated.getProductionCompany()),
+                Updates.set("critics_consensus", updated.getCriticConsensus()),
+                Updates.set("tomatometer_status", updated.getTomatometerStatus()),
+                Updates.set("tomatometer_rating", updated.gettomatometerRating()),
+                Updates.set("audience_status", updated.getAudienceStatus()),
+                Updates.set("audience_rating", updated.getaudienceRating()),
+                Updates.set("audience_count", updated.getAudienceCount()),
+                Updates.set("tomatometer_fresh_critics_count", updated.getTomatometerFreshCriticsCount()),
+                Updates.set("tomatometer_rotten_critics_count", updated.getTomatometerRottenCriticsCount()),
+                Updates.set("personnel",personnelDBList));
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+        try {
+            UpdateResult result = collection.updateOne(movieFromDB, updates, options);
+            System.out.println("Modified document count: " + result.getModifiedCount());
+        } catch (MongoException me) {
+            System.err.println("Unable to update due to an error: " + me);
+        }
+        return true;
+    }
+
+    public Boolean insertMovie(Movie newOne){
+        MongoClient myClient = getClient();
+        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
+        List<BasicDBObject> personnelDBList = buildPersonnelField(newOne);
 
         try {
             InsertOneResult result = collection.insertOne(new Document()

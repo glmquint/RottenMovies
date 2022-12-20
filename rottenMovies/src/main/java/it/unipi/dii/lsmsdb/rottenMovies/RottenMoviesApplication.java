@@ -26,9 +26,9 @@ public class RottenMoviesApplication {
 		 */
 		Movie evidence=test.searchByTitle("Evidence");
 		System.out.println(evidence);
-		evidence.setPrimaryTitle("New Movie Added");
+		evidence.setRuntimeMinutes((Object)100);
 		System.out.println(evidence);
-		test.insertMovie(evidence);
+		test.updateMovie(evidence);
 	}
 	/*public static void main(String[] args) {
 		SpringApplication.run(RottenMoviesApplication.class, args);
