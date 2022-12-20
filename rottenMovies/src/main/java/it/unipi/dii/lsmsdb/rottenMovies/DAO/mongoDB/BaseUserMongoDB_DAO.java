@@ -16,18 +16,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
+/**
+ * @author Fabio
+ * @author Guillaume
+ * <class>BaseUserMongoDB_DAO</class> queries the DB for BaseUser
+ *  * based on different parameters like:
+ *      - UserName
+ *      - isTopCritic
+ *      - number of reviews
+ */
 public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     private static final String collectionStringMovie = "movie";
     private static final String collectionStringUser = "user";
 
-
-    public BaseUser getUserByUserName(String name) {
+    /**
+     * <method>getUserByUsername</method> queries the DB based on a username to search
+     * @param Username is the username to search
+     * @return a BaseUser model
+     */
+    public BaseUser getUserByUserName(String Username) {
         MongoClient myClient = getClient();
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
         BaseUser baseUser = null;
         ObjectMapper mapper = new ObjectMapper();
-        Document doc =  collection.find(Filters.eq("username", name)).first();
+        Document doc =  collection.find(Filters.eq("username", Username)).first();
         String json_movie;
         if (doc == null) {
             System.out.println("No results found.");
@@ -44,12 +56,16 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         return baseUser;
     }
 
+    /**
+     * <method>getUser</method> queries the DB for all user
+     * @return a list containing all BaseUser
+     */
     public List<BaseUser> getUser() {
         MongoClient myClient = getClient();
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
         List<BaseUser> baseUserList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        MongoCursor<Document> cursor =  collection.find().iterator();
+        MongoCursor<Document> cursor =  collection.find(exists("date_of_birth", true)).iterator();
         BaseUser baseUser = null;
         String json_user;
         while(cursor.hasNext()){

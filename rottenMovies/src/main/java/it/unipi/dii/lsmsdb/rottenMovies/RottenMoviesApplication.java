@@ -11,7 +11,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 public class RottenMoviesApplication {
 
 	public  static void main(String[] args) throws JsonProcessingException {
-		MovieDAO testMovie = DAOLocator.getMovieDAO();
+		//MovieDAO testMovie = DAOLocator.getMovieDAO();
 		//System.out.println(test.searchByTitle("Evidence"));
 		/*for(int i  = 2001; i<2022; ++i) {
 			for (Movie movie : test.searchByYear(i)) {
@@ -26,11 +26,11 @@ public class RottenMoviesApplication {
 		}
 
 		 */
-		Movie evidence=testMovie.searchByTitle("Evidence");
+		/*Movie evidence=testMovie.searchByTitle("Evidence");
 		System.out.println(evidence);
 		evidence.setRuntimeMinutes((Object)100);
 		System.out.println(evidence);
-		testMovie.updateMovie(evidence);
+		testMovie.updateMovie(evidence);*/
 
 		//test.deleteMovie("The Midnight Man");
 

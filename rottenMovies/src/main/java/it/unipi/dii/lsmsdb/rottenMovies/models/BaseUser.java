@@ -3,6 +3,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,18 +47,19 @@ public class BaseUser extends User{
             }
         }
         else if (birthdayDate instanceof Date){
-            this.birthdayDate=((Date)birthdayDate);
+            this.birthdayDate=(Date)birthdayDate;
         }
     }
 
     @Override
     public String toString() {
+
         return "BaseUser{" + '\n' +
                 "username " + getUsername() + '\n' +
                 "password " + getPassword() + + '\n' +
                 "first_name " + getFirstName() + '\n' +
                 "last_name " + getLastName() + '\n' +
-                "birthday_date " + getBirthdayDate() + '\n' +
+                "birthday_date " +this.birthdayDate + '\n' +
                 "last_3_review " + getLast3Reviews() + '\n' +
                 "reviews " + getReviews() + '\n' +
                 "}";
