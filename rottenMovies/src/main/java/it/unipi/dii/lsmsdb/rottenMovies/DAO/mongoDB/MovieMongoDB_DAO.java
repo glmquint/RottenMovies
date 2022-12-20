@@ -2,6 +2,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.mongoDB;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -12,15 +13,19 @@ import static com.mongodb.client.model.Sorts.*;
 
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -221,8 +226,54 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         closeConnection(myClient);
     }
 
-    public Boolean updateMovie(Movie updated){return true;} // needs implementation
+    public Boolean updateMovie(Movie updated){
+        return true;
+    }
 
-    public Boolean insertMovie(Movie newOne){return true;} // needs implementation
+    public Boolean insertMovie(Movie newOne){
+        MongoClient myClient = getClient();
+        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
+        List<BasicDBObject> personnelDBList=new ArrayList<BasicDBObject>();
+        ArrayList<Personnel> personnelList=newOne.getpersonnel();
+        for (Personnel p:
+             personnelList) {
+            BasicDBObject worker = new BasicDBObject();
+            worker.put("primaryName",p.getPrimaryName());
+            worker.put("category",p.getCategory());
+            if (p.getJob()==null){
+                worker.put("characters",p.getCharacters());
+            }
+            else {
+                worker.put("job",p.getJob());
+            }
+            personnelDBList.add(worker);
+        }
+
+        try {
+            InsertOneResult result = collection.insertOne(new Document()
+                    .append("_id", new ObjectId())
+                    .append("primaryTitle", newOne.getPrimaryTitle())
+                    .append("year", newOne.getYear())
+                    .append("runtimeMinutes", newOne.getRuntimeMinutes())
+                    .append("production_company", newOne.getProductionCompany())
+                    .append("critics_consensus", "")
+                    .append("tomatometer_status", "")
+                    .append("tomatometer_rating", 0)
+                    .append("audience_status", "")
+                    .append("audience_rating", 0)
+                    .append("audience_count", 0)
+                    .append("tomatometer_fresh_critics_count", 0)
+                    .append("tomatometer_rotten_critics_count", 0)
+                    .append("personnel", personnelDBList)
+                    .append("review", new ArrayList<BasicDBObject>()));
+
+            System.out.println("Success! Inserted document id: " + result.getInsertedId());
+        } catch (MongoException me) {
+            System.err.println("Unable to insert due to an error: " + me);
+            return false;
+        }
+        closeConnection(myClient);
+        return true;
+    }
 
 }
