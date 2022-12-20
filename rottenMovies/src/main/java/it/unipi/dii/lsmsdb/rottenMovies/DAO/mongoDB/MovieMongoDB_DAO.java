@@ -273,7 +273,9 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             System.out.println("Modified document count: " + result.getModifiedCount());
         } catch (MongoException me) {
             System.err.println("Unable to update due to an error: " + me);
+            return false;
         }
+        closeConnection(myClient);
         return true;
     }
 
