@@ -35,11 +35,23 @@ public class RottenMoviesApplication {
 		//test.deleteMovie("The Midnight Man");
 
 		BaseUserDAO testUser = DAOLocator.getBaseUserDAO();
-		//System.out.println(testUser.getUserByUserName("Mark R. Leeper"));
+		/*
+		System.out.println(testUser.getUserByUserName("Mark R. Leeper"));
 		for (BaseUser baseUser : testUser.getUser()) {
 			System.out.println(baseUser);
 			System.out.println("=============================");
 		}
+
+		 */
+		BaseUser usr = testUser.getUserByUserName("Abbie Bernstein");
+		System.out.println(usr);
+		usr.setFirstName("AbbieNew");
+		usr.setLastName("BernsteinNew");
+		System.out.println(usr);
+		testUser.insertBaseUser(usr);
+		usr.setLastName("BernsteinModified");
+		testUser.modifyBaseUser(usr);
+
 	}
 	/*public static void main(String[] args) {
 		SpringApplication.run(RottenMoviesApplication.class, args);

@@ -56,7 +56,7 @@ public class BaseUser extends User{
 
         return "BaseUser{" + '\n' +
                 "username " + getUsername() + '\n' +
-                "password " + getPassword() + + '\n' +
+                "password " + getPassword() + '\n' +
                 "first_name " + getFirstName() + '\n' +
                 "last_name " + getLastName() + '\n' +
                 "birthday_date " +this.birthdayDate + '\n' +

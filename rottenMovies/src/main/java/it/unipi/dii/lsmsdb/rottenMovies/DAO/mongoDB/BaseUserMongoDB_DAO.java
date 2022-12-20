@@ -2,15 +2,24 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.mongoDB;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.BasicDBObject;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import static com.mongodb.client.model.Filters.*;
+
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +89,55 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         closeConnection(myClient);
         return baseUserList;
+    }
+
+    public Boolean insertBaseUser(BaseUser usr){
+        MongoClient myClient = getClient();
+        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringUser);
+        try {
+            InsertOneResult result = collection.insertOne(new Document()
+                    .append("_id", new ObjectId())
+                    .append("username", usr.getUsername())
+                    .append("password", usr.getPassword())
+                    .append("first_name", usr.getFirstName())
+                    .append("last_name", usr.getLastName())
+                    .append("registration_date", usr.getRegistrationDate())
+                    .append("last_3_reviews", new ArrayList<BasicDBObject>())
+                    .append("reviews", new ArrayList<BasicDBObject>())
+                    .append("date_of_birth", usr.getBirthdayDate()));
+            System.out.println("Success! Inserted document id: " + result.getInsertedId());
+        }
+        catch (MongoException me) {
+            System.err.println("Unable to insert due to an error: " + me);
+            return false;
+        }
+        closeConnection(myClient);
+        return true;
+    }
+    public Boolean modifyBaseUser(BaseUser usr){
+        MongoClient myClient = getClient();
+        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringUser);
+
+        Document baseUserFromDB = new Document().append("username",  usr.getUsername());
+        Bson updates = Updates.combine(
+                    Updates.set("password", usr.getPassword()),
+                    Updates.set("first_name", usr.getFirstName()),
+                    Updates.set("last_name", usr.getLastName()),
+                    Updates.set("registration_date", usr.getRegistrationDate()),
+                    Updates.set("date_of_birth", usr.getBirthdayDate()));
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+        try {
+            UpdateResult result = collection.updateOne(baseUserFromDB, updates, options);
+            System.out.println("Modified document count: " + result.getModifiedCount());
+        }
+        catch (MongoException me) {
+            System.err.println("Unable to update due to an error: " + me);
+            return false;
+        }
+
+        closeConnection(myClient);
+        return true;
     }
 
 }

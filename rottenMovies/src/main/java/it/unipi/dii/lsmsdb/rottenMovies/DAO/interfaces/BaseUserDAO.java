@@ -8,4 +8,6 @@ import java.util.List;
 public interface BaseUserDAO {
     public BaseUser getUserByUserName(String name);
     public List<BaseUser> getUser();
+    public Boolean insertBaseUser(BaseUser usr);
+    public Boolean modifyBaseUser(BaseUser usr);
 }
