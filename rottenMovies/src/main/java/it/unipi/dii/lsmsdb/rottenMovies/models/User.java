@@ -46,45 +46,36 @@ public abstract class User extends RegistratedUser{
         if(registrationDate instanceof LinkedHashMap<?,?>)
             try {
                 LinkedHashMap link = (LinkedHashMap)registrationDate;
+
+                //debugging print, the ol' reliable
                 //System.out.println(link.get("$date"));
                 //System.out.println(link.get("$numberLong"));
                 //System.out.println(link.get("$date").getClass());
+
                 if(link.get("$date")!=null) {
                     if(link.get("$date") instanceof LinkedHashMap<?,?>) {
                         this.registrationDate = new Date(1970, 1, 1);
-                        /*
-                        Cannot resolv the long to instant to string
-                        pls end my suffering
-                        LinkedHashMap linkDate = (LinkedHashMap) link.get("$date");
-                        System.out.println(linkDate.get("$numberLong"));
-                        System.out.println(linkDate.get("$numberLong").getClass());
-                        this.registrationDate = Date.from((Instant) linkDate.get("$numberLong"));
-                        String formattedDate = formatter.format(this.registrationDate);
-                        this.registrationDate = formatter.parse(formattedDate);*/
+
                     }
                     else{
                         this.registrationDate = formatter.parse(link.get("$date").toString());
                     }
                 }
-            } catch (ParseException e) {
+            }
+            catch (ParseException e) {
                 throw new RuntimeException(e);
             }
         else if (registrationDate instanceof String) {
             try {
                 this.registrationDate = formatter.parse((String) registrationDate);
-            } catch (ParseException e) {
+            }
+            catch (ParseException e) {
                 throw new RuntimeException(e);
             }
         }
         else if (registrationDate instanceof Date){
             this.registrationDate = ((Date)registrationDate);
         }
-
-        //System.out.println(registrationDate.get("$date").getClass());
-        //DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
-        //this.registrationDate = Date.parse(registrationDate.get("$date").toString(), formatter)
-
-        //this.registrationDate = registrationDate;
     }
 
     public List<Review> getLast3Reviews() {

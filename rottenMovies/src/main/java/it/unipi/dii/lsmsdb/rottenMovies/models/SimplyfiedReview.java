@@ -53,4 +53,13 @@ public class SimplyfiedReview {
     public void setIndex(int index) {
         this.index = index;
     }
+
+    @Override
+    public String toString() {
+        return "SimplyfiedReview{" +
+                "movieID='" + movieID + '\n' +
+                ", primaryTitle='" + primaryTitle + '\n' +
+                ", index=" + index + '\n' +
+        '}';
+    }
 }

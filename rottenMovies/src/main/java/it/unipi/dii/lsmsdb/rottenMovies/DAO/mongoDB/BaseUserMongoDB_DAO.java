@@ -2,29 +2,42 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.mongoDB;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
+import static com.mongodb.client.model.Filters.*;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
-import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
-import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mongodb.client.model.Filters.*;
+
 
 public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     private static final String collectionStringMovie = "movie";
     private static final String collectionStringUser = "user";
 
-
     public BaseUser getUserByUserName(String name) {
         MongoClient myClient = getClient();
+        BaseUser baseUser = getUserByUserNamePrivate(name, myClient);
+        closeConnection(myClient);
+        return baseUser;
+    }
+
+
+    public List<BaseUser> getUser() {
+        MongoClient myClient = getClient();
+        List<BaseUser> baseUserList = getUserPrivate(myClient);
+        closeConnection(myClient);
+        return baseUserList;
+    }
+
+    private BaseUser getUserByUserNamePrivate(String name, MongoClient myClient) {
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
         BaseUser baseUser = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -41,12 +54,11 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        closeConnection(myClient);
         return baseUser;
     }
 
-    public List<BaseUser> getUser() {
-        MongoClient myClient = getClient();
+
+    private List<BaseUser> getUserPrivate(MongoClient myClient) {
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
         List<BaseUser> baseUserList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
@@ -63,8 +75,6 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
             }
             baseUserList.add(baseUser);
         }
-        closeConnection(myClient);
         return baseUserList;
     }
-
 }
