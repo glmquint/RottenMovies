@@ -10,10 +10,10 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 //@SpringBootApplication
 public class RottenMoviesApplication {
 
-	public static void main(String[] args) throws JsonProcessingException {
-		/*MovieDAO test = DAOLocator.getMovieDAO();
-		System.out.println(test.searchByTitle("Evidence"));
-		for(int i  = 2001; i<2022; ++i) {
+	public  static void main(String[] args) throws JsonProcessingException {
+		MovieDAO testMovie = DAOLocator.getMovieDAO();
+		//System.out.println(test.searchByTitle("Evidence"));
+		/*for(int i  = 2001; i<2022; ++i) {
 			for (Movie movie : test.searchByYear(i)) {
 				//System.out.println(movie);
 			}
@@ -26,12 +26,17 @@ public class RottenMoviesApplication {
 		}
 
 		 */
+		Movie evidence=testMovie.searchByTitle("Evidence");
+		System.out.println(evidence);
+		evidence.setRuntimeMinutes((Object)100);
+		System.out.println(evidence);
+		testMovie.updateMovie(evidence);
 
 		//test.deleteMovie("The Midnight Man");
 
-		BaseUserDAO test = DAOLocator.getBaseUserDAO();
-		//System.out.println(test.getUserByUserName("Mark R. Leeper"));
-		for (BaseUser baseUser : test.getUser()) {
+		BaseUserDAO testUser = DAOLocator.getBaseUserDAO();
+		//System.out.println(testUser.getUserByUserName("Mark R. Leeper"));
+		for (BaseUser baseUser : testUser.getUser()) {
 			System.out.println(baseUser);
 			System.out.println("=============================");
 		}
