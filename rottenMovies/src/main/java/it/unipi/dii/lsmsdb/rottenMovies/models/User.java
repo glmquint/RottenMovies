@@ -1,13 +1,24 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public abstract class User extends RegistratedUser{
+    @JsonProperty("first_name")
     private String firstName;
+    @JsonProperty("last_name")
     private String lastName;
+    @JsonProperty("registration_date")
     private Date registrationDate;
-
-    private boolean isTopCritic;
+    @JsonProperty("last_3_reviews")
+    private List<Review> last3Reviews;
+    @JsonProperty("reviews")
+    private List<SimplyfiedReview> reviews;
 
     public String getFirstName() {
         return firstName;
@@ -29,15 +40,66 @@ public abstract class User extends RegistratedUser{
         return registrationDate;
     }
 
-    public void setRegistrationDate(Date registrationDate) {
-        this.registrationDate = registrationDate;
+    public void setRegistrationDate(Object registrationDate) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        if(registrationDate instanceof LinkedHashMap<?,?>)
+            try {
+                LinkedHashMap link = (LinkedHashMap)registrationDate;
+                //System.out.println(link.get("$date"));
+                //System.out.println(link.get("$numberLong"));
+                //System.out.println(link.get("$date").getClass());
+                if(link.get("$date")!=null) {
+                    if(link.get("$date") instanceof LinkedHashMap<?,?>) {
+                        this.registrationDate = new Date(1970, 1, 1);
+                        /*
+                        Cannot resolv the long to instant to string
+                        pls end my suffering
+                        LinkedHashMap linkDate = (LinkedHashMap) link.get("$date");
+                        System.out.println(linkDate.get("$numberLong"));
+                        System.out.println(linkDate.get("$numberLong").getClass());
+                        this.registrationDate = Date.from((Instant) linkDate.get("$numberLong"));
+                        String formattedDate = formatter.format(this.registrationDate);
+                        this.registrationDate = formatter.parse(formattedDate);*/
+                    }
+                    else{
+                        this.registrationDate = formatter.parse(link.get("$date").toString());
+                    }
+                }
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        else if (registrationDate instanceof String) {
+            try {
+                this.registrationDate = formatter.parse((String) registrationDate);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else if (registrationDate instanceof Date){
+            this.registrationDate = ((Date)registrationDate);
+        }
+
+        //System.out.println(registrationDate.get("$date").getClass());
+        //DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        //this.registrationDate = Date.parse(registrationDate.get("$date").toString(), formatter)
+
+        //this.registrationDate = registrationDate;
     }
 
-    public boolean isTopCritic() {
-        return isTopCritic;
+    public List<Review> getLast3Reviews() {
+        return last3Reviews;
     }
 
-    public void setTopCritic(boolean topCritic) {
-        isTopCritic = topCritic;
+    public void setLast3Reviews(List<Review> last3Reviews) {
+        this.last3Reviews = last3Reviews;
+    }
+
+    public List<SimplyfiedReview> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<SimplyfiedReview> reviews) {
+        this.reviews = reviews;
     }
 }

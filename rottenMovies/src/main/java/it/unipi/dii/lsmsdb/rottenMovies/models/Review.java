@@ -1,6 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -9,6 +10,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Review {
     @JsonProperty("critic_name")
     private String criticName;
