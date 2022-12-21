@@ -1,6 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.bson.types.ObjectId;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,6 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public abstract class User extends RegistratedUser{
+    @JsonProperty("_id")
+    private ObjectId id;
     @JsonProperty("first_name")
     private String firstName;
     @JsonProperty("last_name")
@@ -19,6 +22,17 @@ public abstract class User extends RegistratedUser{
     private List<Review> last3Reviews;
     @JsonProperty("reviews")
     private List<SimplyfiedReview> reviews;
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(Object id) {
+        if(id instanceof LinkedHashMap<?,?>){
+            LinkedHashMap link = (LinkedHashMap)id;
+            this.id = new ObjectId(link.get("$oid").toString());
+        }
+    }
 
     public String getFirstName() {
         return firstName;
