@@ -45,6 +45,8 @@ public class RottenMoviesApplication {
 
 		 */
 		try (BaseUserDAO testUser = DAOLocator.getBaseUserDAO()){
+			//DAOException test
+			//BaseUser baseUser = testUser.getMostReviewUser();
 			BaseUser usr = testUser.getUserByUserName("Abbie Bernstein");
 			System.out.println(usr);
 			usr.setFirstName("AbbieNew");
@@ -55,7 +57,7 @@ public class RottenMoviesApplication {
 			testUser.modifyBaseUser(usr);
 		}
 		catch (DAOException e){
-			System.out.println("DAOExeption: wrong database queried" + e.getMessage());
+			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
 			e.printStackTrace();
 		}
 		catch(Exception e){
