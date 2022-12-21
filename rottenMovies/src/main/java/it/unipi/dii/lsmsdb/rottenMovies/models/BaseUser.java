@@ -14,7 +14,7 @@ public class BaseUser extends User{
     private Date birthdayDate;
 
     public Date getBirthdayDate() {
-        return birthdayDate;
+        return this.birthdayDate;
     }
 
     public void setBirthdayDate(Object birthdayDate) {
@@ -59,7 +59,7 @@ public class BaseUser extends User{
                 "password " + getPassword() + '\n' +
                 "first_name " + getFirstName() + '\n' +
                 "last_name " + getLastName() + '\n' +
-                "birthday_date " +this.birthdayDate + '\n' +
+                "birthday_date " + getBirthdayDate() + '\n' +
                 "last_3_review " + getLast3Reviews() + '\n' +
                 "reviews " + getReviews() + '\n' +
                 "}";

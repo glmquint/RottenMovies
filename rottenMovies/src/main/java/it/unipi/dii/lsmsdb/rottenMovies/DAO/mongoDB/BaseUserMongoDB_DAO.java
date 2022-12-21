@@ -49,15 +49,15 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         BaseUser baseUser = null;
         ObjectMapper mapper = new ObjectMapper();
         Document doc =  collection.find(Filters.eq("username", Username)).first();
-        String json_movie;
+        String json_user;
         if (doc == null) {
             System.out.println("No results found.");
             return null;
         } else {
-            json_movie = doc.toJson();
+            json_user = doc.toJson();
         }
         try {
-            baseUser = mapper.readValue(json_movie, BaseUser.class);
+            baseUser = mapper.readValue(json_user, BaseUser.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -69,7 +69,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
      * <method>getUser</method> queries the DB for all user
      * @return a list containing all BaseUser
      */
-    public List<BaseUser> getUser() {
+    public List<BaseUser> getAllUsers() {
         MongoClient myClient = getClient();
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
         List<BaseUser> baseUserList = new ArrayList<>();
