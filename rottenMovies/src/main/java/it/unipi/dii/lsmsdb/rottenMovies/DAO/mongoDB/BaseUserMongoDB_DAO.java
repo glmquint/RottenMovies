@@ -44,7 +44,6 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
      * @return a BaseUser model
      */
     public BaseUser getUserByUserName(String Username) {
-        MongoClient myClient = getClient();
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
         BaseUser baseUser = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -61,7 +60,6 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        closeConnection(myClient);
         return baseUser;
     }
 
@@ -70,7 +68,6 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
      * @return a list containing all BaseUser
      */
     public List<BaseUser> getAllUsers() {
-        MongoClient myClient = getClient();
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
         List<BaseUser> baseUserList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
@@ -87,12 +84,10 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
             }
             baseUserList.add(baseUser);
         }
-        closeConnection(myClient);
         return baseUserList;
     }
 
     public Boolean insertBaseUser(BaseUser usr){
-        MongoClient myClient = getClient();
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringUser);
         try {
             InsertOneResult result = collection.insertOne(new Document()
@@ -111,11 +106,9 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
             System.err.println("Unable to insert due to an error: " + me);
             return false;
         }
-        closeConnection(myClient);
         return true;
     }
     public Boolean modifyBaseUser(BaseUser usr){
-        MongoClient myClient = getClient();
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringUser);
 
         Document baseUserFromDB = new Document().append("username",  usr.getUsername());
@@ -135,8 +128,6 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
             System.err.println("Unable to update due to an error: " + me);
             return false;
         }
-
-        closeConnection(myClient);
         return true;
     }
 

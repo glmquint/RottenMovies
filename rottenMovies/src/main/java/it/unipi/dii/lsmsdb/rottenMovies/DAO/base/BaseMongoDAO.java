@@ -12,18 +12,16 @@ import org.bson.Document;
  * get a collection from the DB (getCollection) and close the connection
  * to the database (closeConnection)
  */
-public abstract class BaseMongoDAO {
+public abstract class BaseMongoDAO implements AutoCloseable{
     private static final String connectionString = "mongodb://localhost:27017";
     private static final String databaseString = "rottenMovies";
 
-    /**
-     * <method>getClient</method> create a connection to the mongoDB
-     * @return a myClient object to the caller for handling the connection
-     */
-    public MongoClient getClient(){
+    protected final MongoClient myClient;
+
+    public BaseMongoDAO(){
+        System.out.println("connection established");
         ConnectionString uri = new ConnectionString(connectionString);
-        MongoClient myClient = MongoClients.create(uri);
-        return myClient;
+        this.myClient = MongoClients.create(uri);
     }
 
     /**
@@ -40,10 +38,11 @@ public abstract class BaseMongoDAO {
 
     /**
      * <method>closeConnection</method> closes the connection to the DB
-     * @param myClient is the connection to close
      */
-    public void closeConnection(MongoClient myClient){
-        myClient.close();
+    @Override
+    public void close () throws RuntimeException{
+        System.out.println("closed conenction");
+        this.myClient.close();
     }
 
 

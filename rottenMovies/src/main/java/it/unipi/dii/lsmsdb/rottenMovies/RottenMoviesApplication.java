@@ -34,7 +34,7 @@ public class RottenMoviesApplication {
 
 		//test.deleteMovie("The Midnight Man");
 
-		BaseUserDAO testUser = DAOLocator.getBaseUserDAO();
+
 		/*
 		System.out.println(testUser.getUserByUserName("Mark R. Leeper"));
 		for (BaseUser baseUser : testUser.getUser()) {
@@ -43,14 +43,18 @@ public class RottenMoviesApplication {
 		}
 
 		 */
-		BaseUser usr = testUser.getUserByUserName("Abbie Bernstein");
-		System.out.println(usr);
-		usr.setFirstName("AbbieNew");
-		usr.setLastName("BernsteinNew");
-		System.out.println(usr);
-		testUser.insertBaseUser(usr);
-		usr.setLastName("BernsteinModified");
-		testUser.modifyBaseUser(usr);
+		try (BaseUserDAO testUser = DAOLocator.getBaseUserDAO()){
+			BaseUser usr = testUser.getUserByUserName("Abbie Bernstein");
+			System.out.println(usr);
+			usr.setFirstName("AbbieNew");
+			usr.setLastName("BernsteinNew");
+			System.out.println(usr);
+			testUser.insertBaseUser(usr);
+			usr.setLastName("BernsteinModified");
+			testUser.modifyBaseUser(usr);
+		} catch(Exception e){
+			System.out.println("Exception during testing: " + e);
+		}
 
 	}
 	/*public static void main(String[] args) {

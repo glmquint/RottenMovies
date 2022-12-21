@@ -4,7 +4,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 
 import java.util.List;
 
-public interface BaseUserDAO {
+public interface BaseUserDAO extends AutoCloseable{
     public BaseUser getUserByUserName(String name);
     public List<BaseUser> getAllUsers();
     public Boolean insertBaseUser(BaseUser usr);
