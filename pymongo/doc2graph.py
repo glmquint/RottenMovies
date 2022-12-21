@@ -36,69 +36,69 @@ class Neo4jGraph:
 
     @staticmethod
     def _addUser(tx, uid, name):
-        query = "CREATE (n:User{id:\"" + str(uid).replace('"', '\\"') + "\", name:\"" + name.replace('"', '\\"') + "\"})"
+        query = "CREATE (n:User{id:\"" + str(uid) + "\", name:\"" + name.replace('"', '\\"') + "\"})"
         #print(query)
         result = tx.run(query)
 
     @staticmethod
     def _addTopCritic(tx, cid, name):
-        query = "CREATE(m:TopCritic{id:\"" + str(cid).replace('"', '\\"') + "\", name:\"" + name.replace('"', '\\"') + "\"})"
+        query = "CREATE(m:TopCritic{id:\"" + str(cid) + "\", name:\"" + name.replace('"', '\\"') + "\"})"
         #print(query)
         result = tx.run(query)
 
     @staticmethod
     def _addMovie(tx, mid, title):
-        query = "CREATE(o:Movie{id:\"" + str(mid).replace('"', '\\"') + "\", title:\"" + title.replace('"', '\\"') + "\"})"
+        query = "CREATE(o:Movie{id:\"" + str(mid) + "\", title:\"" + title.replace('"', '\\"') + "\"})"
         #print(query)
         result = tx.run(query)
 
     @staticmethod
     def _addReview(tx, name, mid, freshness, content, date): # date in format YYYY-mm-dd, freshness in [TRUE, FALSE]
-        query = "MATCH(n{name:\"" + str(name).replace('"', '\\"') + "\"}), (m:Movie{id:\"" + str(mid).replace('"', '\\"') + "\"}) CREATE (n)-[r:REVIEWED{freshness:" + freshness + ", date:date('" + date + "'), content:\"" + content.replace('"', '\\"') + "\"}]->(m)"
+        query = "MATCH(n{name:\"" + str(name).replace('"', '\\"') + "\"}), (m:Movie{id:\"" + str(mid) + "\"}) CREATE (n)-[r:REVIEWED{freshness:" + freshness + ", date:date('" + date + "'), content:\"" + content.replace('"', '\\"') + "\"}]->(m)"
         #print(query)
         result = tx.run(query)
 
     @staticmethod
     def _addFollow(tx, uid, cid):
-        query = "MATCH(n:User{id:\"" + str(uid).replace('"', '\\"') + "\"}), (m:TopCritic{id:\"" + str(cid).replace('"', '\\"') + "\"}) CREATE (n)-[r:FOLLOWS]->(m)"
+        query = "MATCH(n:User{id:\"" + str(uid) + "\"}), (m:TopCritic{id:\"" + str(cid) + "\"}) CREATE (n)-[r:FOLLOWS]->(m)"
         #print(query)
         result = tx.run(query)
 
 if __name__ == "__main__":
-    
-
+    # dbs initialization
     dbname = get_database()
+    graphDB = Neo4jGraph("bolt://localhost:7687", "neo4j", "password")
+
+    # user creation
     collection = dbname['user']
     total = collection.count_documents({})
     print(f"user {total = }")
-    graphDB = Neo4jGraph("bolt://localhost:7687", "neo4j", "password")
-
-    """
     for i, user in enumerate(list(collection.find({}, {"_id":1, "username":1, "date_of_birth":1}))):
         graphDB.addUser(user['_id'], user['username'], 'date_of_birth' not in user)
         if not i%100:
             print(f"{(i+1)/total:%}\r", end='')
-    """
 
+    # movie creation and review linking
     collection = dbname['movie']
     total = collection.count_documents({})
     print(f"\nmovie {total = }")
     for i, movie in enumerate(list(collection.find({}, {"_id":1, "primaryTitle":1, "review":1}))):
         graphDB.addMovie(movie['_id'], movie['primaryTitle'])
-        movie['review'] = list({v['critic_name']:v for v in movie['review']}.values())
+        movie['review'] = list({v['critic_name']:v for v in movie['review']}.values()) # make unique reviews per critic
         for rev in movie['review']:
             graphDB.addReview(rev['critic_name'], movie['_id'], {"Fresh":"TRUE", "Rotten":"FALSE"}[rev['review_type']], str(rev['review_content'])[:15], str(rev['review_date'])[:10])
         print(f"{(i+1)/total:%}\r", end='')
 
+    # follow linking
     collection = dbname['user']
-    uids = [x['_id'] for x in list(collection.find({"date_of_birth":{"$exists":"True"}}, {"_id":1}))]
-    cids = [x['_id'] for x in list(collection.find({"date_of_birth":{"$exists":"False"}}, {"_id":1}))]
-    total = len(cids)
+    uids = [x['_id'] for x in list(collection.find({"date_of_birth":{"$exists":True}}, {"_id":1}))]
+    cids = [x['_id'] for x in list(collection.find({"date_of_birth":{"$exists":False}}, {"_id":1}))]
+    total = len(uids)
     print(f"\nfollow {total = }")
-    for i, critic in enumerate(cids):
+    for i, user in enumerate(uids):
         for _ in range(randint(0, 20)):
-            choice(uids)
-            graphDB.addFollow(choice(uids), critic)
-        print(f"{i/total:%}")
+            graphDB.addFollow(user, choice(cids))
+        print(f"{i/total:%}\r", end='')
+
     graphDB.close()
 
