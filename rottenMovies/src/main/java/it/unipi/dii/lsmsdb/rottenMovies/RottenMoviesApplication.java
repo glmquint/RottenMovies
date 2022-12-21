@@ -2,6 +2,7 @@ package it.unipi.dii.lsmsdb.rottenMovies;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
@@ -52,8 +53,14 @@ public class RottenMoviesApplication {
 			testUser.insertBaseUser(usr);
 			usr.setLastName("BernsteinModified");
 			testUser.modifyBaseUser(usr);
-		} catch(Exception e){
-			System.out.println("Exception during testing: " + e);
+		}
+		catch (DAOException e){
+			System.out.println("DAOExeption: wrong database queried" + e.getMessage());
+			e.printStackTrace();
+		}
+		catch(Exception e){
+			System.out.println("Exception during testing: " + e.getMessage());
+			e.printStackTrace();
 		}
 
 	}
