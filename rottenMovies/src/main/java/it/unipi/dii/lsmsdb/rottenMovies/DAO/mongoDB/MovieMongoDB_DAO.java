@@ -176,22 +176,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     public
  */
     public void deleteMovie(String title){
+        Movie movie = searchByTitle(title);
+        if (movie == null){
+            return;
+        }
         MongoCollection<Document>  collectionMovie = returnCollection(myClient, collectionStringMovie);
         MongoCollection<Document>  collectionUser = returnCollection(myClient, collectionStringUser);
-        Movie movie = null;
-        ObjectMapper mapper = new ObjectMapper();
-        Document doc =  collectionMovie.find(Filters.eq("primaryTitle", title)).first();
-        String json_movie=null;
-        if (doc == null) {
-            System.out.println("No results found.");
-        } else {
-            json_movie = doc.toJson();
-        }
-        try {
-            movie = mapper.readValue(json_movie, Movie.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
 
         Bson queryMovie = eq("primaryTitle", title);
 

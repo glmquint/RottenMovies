@@ -43,6 +43,13 @@ public class RottenMoviesApplication {
 		}
 
 		 */
+		try (MovieDAO testMovie = DAOLocator.getMovieDAO()){
+			testMovie.searchByYearRange(2000, 2000);
+			testMovie.deleteMovie("The Midnight Man");
+			testMovie.deleteMovie("The Midnight Man");
+		} catch(Exception e){
+			System.out.println("Exception during testing: " + e);
+		}
 		try (BaseUserDAO testUser = DAOLocator.getBaseUserDAO()){
 			BaseUser usr = testUser.getUserByUserName("Abbie Bernstein");
 			System.out.println(usr);

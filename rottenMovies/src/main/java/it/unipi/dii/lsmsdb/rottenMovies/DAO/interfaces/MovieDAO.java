@@ -8,7 +8,7 @@ import java.util.List;
  * @author Fabio
  * <interface>MovieDao</interface> interface for the DAO of the movie
  */
-public interface MovieDAO {
+public interface MovieDAO extends AutoCloseable {
     Movie searchByTitle(String title);
     List<Movie> searchByYearRange(int startYear, int endYear);
     List<Movie> searchByTopRatings(int rating, boolean type);
