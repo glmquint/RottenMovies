@@ -50,7 +50,6 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
      * @return a movie object
      */
     public Movie searchByTitle(String title){
-        MongoClient myClient = getClient();
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -67,12 +66,10 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        closeConnection(myClient);
         return movie;
     }
 
     public List<Movie> searchByYearRange(int startYear, int endYear){
-        MongoClient myClient = getClient();
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         String json_movie;
@@ -91,11 +88,9 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             }
             movie_list.add(movie);
         }
-        closeConnection(myClient);
         return movie_list;
     }
     public List<Movie> searchByTopRatings(int rating, boolean type){
-        MongoClient myClient = getClient();
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         String json_movie;
@@ -123,11 +118,9 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             }
             movie_list.add(movie);
         }
-        closeConnection(myClient);
         return movie_list;
     }
     public List<Movie> searchByUserRatings(int rating, boolean type){
-        MongoClient myClient = getClient();
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         String json_movie;
@@ -155,7 +148,6 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             }
             movie_list.add(movie);
         }
-        closeConnection(myClient);
         return movie_list;
     }
 /*
@@ -184,7 +176,6 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     public
  */
     public void deleteMovie(String title){
-        MongoClient myClient = getClient();
         MongoCollection<Document>  collectionMovie = returnCollection(myClient, collectionStringMovie);
         MongoCollection<Document>  collectionUser = returnCollection(myClient, collectionStringUser);
         Movie movie = null;
@@ -226,7 +217,6 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                 System.out.println("Last3review modified");
             }
         }
-        closeConnection(myClient);
     }
     private List<BasicDBObject> buildPersonnelField (Movie movie){
         List<BasicDBObject> personnelDBList=new ArrayList<BasicDBObject>();
@@ -247,7 +237,6 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return personnelDBList;
     }
     public Boolean updateMovie(Movie updated){
-        MongoClient myClient = getClient();
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         List<BasicDBObject> personnelDBList = buildPersonnelField(updated);
 
@@ -274,12 +263,10 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             System.err.println("Unable to update due to an error: " + me);
             return false;
         }
-        closeConnection(myClient);
         return true;
     }
 
     public Boolean insertMovie(Movie newOne){
-        MongoClient myClient = getClient();
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         List<BasicDBObject> personnelDBList = buildPersonnelField(newOne);
 
@@ -306,7 +293,6 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             System.err.println("Unable to insert due to an error: " + me);
             return false;
         }
-        closeConnection(myClient);
         return true;
     }
 
