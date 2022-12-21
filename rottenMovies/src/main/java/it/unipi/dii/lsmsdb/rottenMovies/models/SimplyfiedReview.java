@@ -13,7 +13,7 @@ public class SimplyfiedReview {
     private int index;
 
     public String getMovieID() {
-        return movieID;
+        return this.movieID;
     }
 
     public void setMovieID(Object movieID) {
@@ -30,7 +30,7 @@ public class SimplyfiedReview {
     }
 
     public String getPrimaryTitle() {
-        return primaryTitle;
+        return this.primaryTitle;
     }
 
     public void setPrimaryTitle(Object primaryTitle) {
@@ -47,10 +47,17 @@ public class SimplyfiedReview {
     }
 
     public int getIndex() {
-        return index;
+        return this.index;
     }
 
     public void setIndex(int index) {
         this.index = index;
+    }
+    public String toString() {
+        return "SimplyfiedReview{" +
+                "movieID='" + getMovieID() + '\'' +
+                ", primaryTitle='" + getPrimaryTitle() + '\'' +
+                ", index=" + getIndex() +
+                '}';
     }
 }
