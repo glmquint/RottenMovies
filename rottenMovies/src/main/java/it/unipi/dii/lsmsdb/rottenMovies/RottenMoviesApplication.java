@@ -42,7 +42,7 @@ public class RottenMoviesApplication {
 			System.out.println("=============================");
 		}
 
-		 */
+
 		try (MovieDAO testMovie = DAOLocator.getMovieDAO()){
 			testMovie.searchByYearRange(2000, 2000);
 			testMovie.deleteMovie("The Midnight Man");
@@ -50,15 +50,11 @@ public class RottenMoviesApplication {
 		} catch(Exception e){
 			System.out.println("Exception during testing: " + e);
 		}
+		*/
+
 		try (BaseUserDAO testUser = DAOLocator.getBaseUserDAO()){
 			BaseUser usr = testUser.getUserByUserName("Abbie Bernstein");
-			System.out.println(usr);
-			usr.setFirstName("AbbieNew");
-			usr.setLastName("BernsteinNew");
-			System.out.println(usr);
-			testUser.insertBaseUser(usr);
-			usr.setLastName("BernsteinModified");
-			testUser.modifyBaseUser(usr);
+			testUser.deleteBaseUser(usr.getUsername());
 		} catch(Exception e){
 			System.out.println("Exception during testing: " + e);
 		}

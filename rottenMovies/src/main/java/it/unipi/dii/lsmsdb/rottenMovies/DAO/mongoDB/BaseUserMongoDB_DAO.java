@@ -7,21 +7,23 @@ import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
-import static com.mongodb.client.model.Filters.*;
+import com.mongodb.client.model.*;
 
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.model.Updates;
+import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Projections.*;
+
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.models.SimplyfiedReview;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -131,4 +133,32 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         return true;
     }
 
+    public Boolean deleteBaseUser(String username) {
+        BaseUser baseUser =getUserByUserName(username);
+        if(baseUser==null){
+            return false;
+        }
+        MongoCollection<Document>  collectionMovie = returnCollection(myClient, collectionStringMovie);
+        MongoCollection<Document>  collectionUser = returnCollection(myClient, collectionStringUser);
+
+        /*
+        Bson queryUser = eq("username", username);
+        try { // now I delete the user from collection user
+            DeleteResult result = collectionMovie.deleteOne(queryUser);
+            System.out.println("Deleted document count: " + result.getDeletedCount());
+        } catch (MongoException me) {
+            System.err.println("Unable to delete due to an error: " + me);
+        }
+        */
+
+        List<SimplyfiedReview> reviews = baseUser.getReviews();
+
+        for (SimplyfiedReview r: reviews) {
+            Document doc2=collectionMovie.find(eq("primaryTitle", r.getPrimaryTitle())).projection(fields(include("primaryTitle","review"),excludeId(), slice("review", r.getIndex(),1))).first();
+
+            System.out.println(doc2.get("review"));
+        }
+
+        return true;
+    }
 }

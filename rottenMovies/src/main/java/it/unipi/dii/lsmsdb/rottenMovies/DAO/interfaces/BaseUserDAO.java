@@ -9,4 +9,5 @@ public interface BaseUserDAO extends AutoCloseable{
     public List<BaseUser> getAllUsers();
     public Boolean insertBaseUser(BaseUser usr);
     public Boolean modifyBaseUser(BaseUser usr);
+    public Boolean deleteBaseUser(String username);
 }
