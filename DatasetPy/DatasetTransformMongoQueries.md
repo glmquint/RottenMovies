@@ -643,6 +643,10 @@ db.runCommand(
 )
                 
 ```
+#### modify users date_of_birth  
+```js
+db.user.updateMany({"date_of_birth":{$exists:true}}, {$set: {"date_of_birth": new Date("1970-07-20")}} )
+```
 #### an imposter (find the error)
 
 ```js
