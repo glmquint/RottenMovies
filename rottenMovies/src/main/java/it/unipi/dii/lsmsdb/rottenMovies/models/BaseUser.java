@@ -10,11 +10,11 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 
 public class BaseUser extends User{
-    @JsonProperty("birthday_date")
+    @JsonProperty("date_of_birth")
     private Date birthdayDate;
 
     public Date getBirthdayDate() {
-        return birthdayDate;
+        return this.birthdayDate;
     }
 
     public void setBirthdayDate(Object birthdayDate) {
@@ -56,10 +56,10 @@ public class BaseUser extends User{
 
         return "BaseUser{" + '\n' +
                 "username " + getUsername() + '\n' +
-                "password " + getPassword() + + '\n' +
+                "password " + getPassword() + '\n' +
                 "first_name " + getFirstName() + '\n' +
                 "last_name " + getLastName() + '\n' +
-                "birthday_date " +this.birthdayDate + '\n' +
+                "birthday_date " + getBirthdayDate() + '\n' +
                 "last_3_review " + getLast3Reviews() + '\n' +
                 "reviews " + getReviews() + '\n' +
                 "}";
