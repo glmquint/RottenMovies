@@ -43,7 +43,7 @@ public class RottenMoviesApplication {
 			System.out.println("=============================");
 		}
 
-		 */
+
 		try (BaseUserDAO testUser = DAOLocator.getBaseUserDAO()){
 			//DAOException test
 			//BaseUser baseUser = testUser.getMostReviewUser();
@@ -57,6 +57,18 @@ public class RottenMoviesApplication {
 			testUser.modifyBaseUser(usr);
 		}
 		catch (DAOException e){
+			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
+			e.printStackTrace();
+		}
+		catch(Exception e){
+			System.out.println("Exception during testing: " + e.getMessage());
+			e.printStackTrace();
+		}*/
+
+		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO_neo4j()){
+			BaseUser user = testUser.getMostReviewUser();
+			System.out.println(user.getUsername());
+		}catch (DAOException e){
 			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
 			e.printStackTrace();
 		}

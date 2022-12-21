@@ -6,7 +6,7 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 
 public abstract class BaseNeo4jDAO implements AutoCloseable{
-    private final Driver driver;
+    protected final Driver driver;
     private static final String user = "neo4j";
     private static final String password = "password";
 
