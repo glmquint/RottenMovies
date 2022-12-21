@@ -78,7 +78,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         String json_movie;
         ObjectMapper mapper = new ObjectMapper();
         MongoCursor<Document> cursor =  collection.find(and(
-                gte("year", endYear), lte("year", startYear)
+                gte("year", startYear), lte("year", endYear)
             )).iterator();
         List<Movie> movie_list = new ArrayList<>();
         while(cursor.hasNext()){
@@ -211,10 +211,9 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             System.err.println("Unable to delete due to an error: " + me);
         }
         ArrayList<Review> reviews = movie.getReviews(); // getting all the reviews
-        Bson filter,deleteReview,deletelast3; // now i delete the movie for the user collection, both in last_3 and reviews
+        Bson filter,deleteReview,deletelast3; // now I delete the movie for the user collection, both in last_3 and reviews
         UpdateResult result3reviews;
-        for (Review r:
-             reviews) {
+        for (Review r: reviews) {
             String username=r.getCriticName();
             System.out.println(username);
             filter=eq("username", username);
@@ -223,7 +222,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             collectionUser.updateOne(filter, deleteReview);
             result3reviews=collectionUser.updateOne(filter,deletelast3);
             if(result3reviews.getModifiedCount()==1){
-                // also remember to update the last_3_reviews field after deleting a movie
+                //TODO: also remember to update the last_3_reviews field after deleting a movie
                 System.out.println("Last3review modified");
             }
         }
@@ -232,9 +231,9 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     private List<BasicDBObject> buildPersonnelField (Movie movie){
         List<BasicDBObject> personnelDBList=new ArrayList<BasicDBObject>();
         ArrayList<Personnel> personnelList=movie.getpersonnel();
-        for (Personnel p:
-                personnelList) {
-            BasicDBObject worker = new BasicDBObject();
+        BasicDBObject worker;
+        for (Personnel p: personnelList) {
+            worker = new BasicDBObject();
             worker.put("primaryName",p.getPrimaryName());
             worker.put("category",p.getCategory());
             if (p.getJob()==null){
