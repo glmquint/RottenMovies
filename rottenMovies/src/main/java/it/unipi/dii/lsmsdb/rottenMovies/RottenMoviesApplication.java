@@ -77,9 +77,9 @@ public class RottenMoviesApplication {
 			e.printStackTrace();
 		}
 		*/
-		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO()){
-			User user = (User) testUser.getByUsername("Dann Gire");
-			System.out.println(user);
+		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO_neo4j()){
+			User user = (User) testUser.getMostReviewUser();
+			System.out.println(user.getUsername());
 			/*
 			TopCritic topCritic = (TopCritic) testUser.getByUsername("Ian Buckwalter");
 			System.out.println(topCritic);
