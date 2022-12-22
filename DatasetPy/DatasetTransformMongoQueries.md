@@ -634,7 +634,7 @@ db.runCommand(
             db.user.updateOne(
                 {"username": x},
                 {$set: 
-                    {"date_of_birth": new Date("1969-07-20")}
+                    {"date_of_birth": new Date("1970-07-20")}
                 }
             )
         }
