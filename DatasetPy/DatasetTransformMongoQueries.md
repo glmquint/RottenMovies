@@ -608,7 +608,7 @@ db.runCommand(
                 is_top |= tmp.top_critic;
                 review_arr.push(tmp)
                 //movie_arr.push(tmp._id)
-                movie_arr.push({"_id": tmp._id, "primaryTitle": y.primaryTitle, "review_index": y.index})
+                movie_arr.push({"movie_id": tmp._id, "primaryTitle": y.primaryTitle, "review_index": y.index})
             })
 
         name_parts = x.split(/\s/)
