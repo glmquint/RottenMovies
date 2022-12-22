@@ -2,6 +2,7 @@ package it.unipi.dii.lsmsdb.rottenMovies;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
@@ -43,19 +44,37 @@ public class RottenMoviesApplication {
 		}
 
 
-		try (MovieDAO testMovie = DAOLocator.getMovieDAO()){
-			System.out.println(testMovie.searchByYearRange(1990, 2000));
-		} catch(Exception e){
-			System.out.println("Exception during testing: " + e);
-		}
-
-		*/
 		try (BaseUserDAO testUser = DAOLocator.getBaseUserDAO()){
+			//DAOException test
+			//BaseUser baseUser = testUser.getMostReviewUser();
 			BaseUser usr = testUser.getUserByUserName("Abbie Bernstein");
 			System.out.println(usr);
-			//testUser.deleteBaseUser(usr.getUsername());
-		} catch(Exception e){
-			System.out.println("Exception during testing: " + e);
+			usr.setFirstName("AbbieNew");
+			usr.setLastName("BernsteinNew");
+			System.out.println(usr);
+			testUser.insertBaseUser(usr);
+			usr.setLastName("BernsteinModified");
+			testUser.modifyBaseUser(usr);
+		}
+		catch (DAOException e){
+			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
+			e.printStackTrace();
+		}
+		catch(Exception e){
+			System.out.println("Exception during testing: " + e.getMessage());
+			e.printStackTrace();
+		}*/
+
+		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO_neo4j()){
+			BaseUser user = testUser.getMostReviewUser();
+			System.out.println(user.getUsername());
+		}catch (DAOException e){
+			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
+			e.printStackTrace();
+		}
+		catch(Exception e){
+			System.out.println("Exception during testing: " + e.getMessage());
+			e.printStackTrace();
 		}
 
 	}
