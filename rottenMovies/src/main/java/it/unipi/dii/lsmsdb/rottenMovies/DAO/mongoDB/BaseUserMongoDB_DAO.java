@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoException;
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.*;
@@ -18,13 +17,15 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
+import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import it.unipi.dii.lsmsdb.rottenMovies.models.SimplyfiedReview;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import javax.print.Doc;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -48,7 +49,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
      */
     public BaseUser getUserByUserName(String Username) {
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
-        BaseUser baseUser = null;
+        BaseUser simpleUser = null;
         ObjectMapper mapper = new ObjectMapper();
         Document doc =  collection.find(Filters.eq("username", Username)).first();
         String json_user;
@@ -59,11 +60,15 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
             json_user = doc.toJson();
         }
         try {
-            baseUser = mapper.readValue(json_user, BaseUser.class);
+            if (doc.containsKey("date_of_birth")) {
+                simpleUser = mapper.readValue(json_user, User.class);
+            } else {
+                simpleUser = mapper.readValue(json_user, TopCritic.class);
+            }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return baseUser;
+        return simpleUser;
     }
 
     /**
@@ -72,28 +77,33 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
      */
     public List<BaseUser> getAllUsers() {
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
-        List<BaseUser> baseUserList = new ArrayList<>();
+        List<BaseUser> simpleUserList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         MongoCursor<Document> cursor =  collection.find(exists("date_of_birth", true)).iterator();
-        BaseUser baseUser = null;
+        BaseUser simpleUser = null;
         String json_user;
         while(cursor.hasNext()){
-            json_user = cursor.next().toJson();
+            Document doc = cursor.next();
+            json_user = doc.toJson();
             //System.out.println(json_movie);
             try {
-                baseUser = mapper.readValue(json_user, BaseUser.class);
+                if (doc.containsKey("date_of_birth")) {
+                    simpleUser = mapper.readValue(json_user, User.class);
+                } else {
+                    simpleUser = mapper.readValue(json_user, TopCritic.class);
+                }
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
-            baseUserList.add(baseUser);
+            simpleUserList.add(simpleUser);
         }
-        return baseUserList;
+        return simpleUserList;
     }
 
     public Boolean insertBaseUser(BaseUser usr){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringUser);
         try {
-            InsertOneResult result = collection.insertOne(new Document()
+            Document newdoc = new Document()
                     .append("_id", new ObjectId())
                     .append("username", usr.getUsername())
                     .append("password", usr.getPassword())
@@ -101,8 +111,11 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
                     .append("last_name", usr.getLastName())
                     .append("registration_date", usr.getRegistrationDate())
                     .append("last_3_reviews", new ArrayList<BasicDBObject>())
-                    .append("reviews", new ArrayList<BasicDBObject>())
-                    .append("date_of_birth", usr.getBirthdayDate()));
+                    .append("reviews", new ArrayList<BasicDBObject>());
+            if (usr instanceof User){
+                    newdoc.append("date_of_birth", ((User)usr).getBirthdayDate());
+            }
+            InsertOneResult result = collection.insertOne(newdoc);
             System.out.println("Success! Inserted document id: " + result.getInsertedId());
         }
         catch (MongoException me) {
@@ -119,8 +132,10 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
                     Updates.set("password", usr.getPassword()),
                     Updates.set("first_name", usr.getFirstName()),
                     Updates.set("last_name", usr.getLastName()),
-                    Updates.set("registration_date", usr.getRegistrationDate()),
-                    Updates.set("date_of_birth", usr.getBirthdayDate()));
+                    Updates.set("registration_date", usr.getRegistrationDate()));
+        if (usr instanceof User){
+            updates = Updates.combine(updates, Updates.set("date_of_birth", ((User)usr).getBirthdayDate()));
+        }
 
         UpdateOptions options = new UpdateOptions().upsert(true);
         try {
@@ -135,8 +150,8 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     }
 
     public Boolean deleteBaseUser(String username) {
-        BaseUser baseUser =getUserByUserName(username);
-        if(baseUser==null){
+        BaseUser simpleUser = getUserByUserName(username);
+        if(simpleUser ==null){
             return false;
         }
         MongoCollection<Document>  collectionMovie = returnCollection(myClient, collectionStringMovie);
@@ -152,7 +167,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         */
 
-        List<SimplyfiedReview> reviews = baseUser.getReviews();
+        List<SimplyfiedReview> reviews = simpleUser.getReviews();
 
         for (SimplyfiedReview r: reviews) {
             Document doc2=collectionMovie.find(eq("primaryTitle", r.getPrimaryTitle())).projection(fields(include("primaryTitle","review"),excludeId(), slice("review", r.getIndex(),1))).first();
@@ -162,7 +177,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
 
         return true;
     }
-    public BaseUser getMostReviewUser() throws DAOException{
+    public User getMostReviewUser() throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 

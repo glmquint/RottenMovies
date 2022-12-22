@@ -1,68 +1,90 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 
-public class BaseUser extends User{
-    @JsonProperty("date_of_birth")
-    private Date birthdayDate;
+public abstract class BaseUser extends RegisteredUser {
+    @JsonProperty("first_name")
+    private String firstName;
+    @JsonProperty("last_name")
+    private String lastName;
+    @JsonProperty("registration_date")
+    private Date registrationDate;
+    @JsonProperty("last_3_reviews")
+    private List<Review> last3Reviews;
+    @JsonProperty("reviews")
+    private List<SimplyfiedReview> reviews;
 
-    public Date getBirthdayDate() {
-        return this.birthdayDate;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setBirthdayDate(Object birthdayDate) {
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Date getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(Object registrationDate) {
+
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        if(birthdayDate instanceof LinkedHashMap<?,?>)
+        if(registrationDate instanceof LinkedHashMap<?,?>)
             try {
-                LinkedHashMap link = (LinkedHashMap)birthdayDate;
+                LinkedHashMap link = (LinkedHashMap)registrationDate;
                 //System.out.println(link.get("$date"));
                 //System.out.println(link.get("$numberLong"));
                 //System.out.println(link.get("$date").getClass());
                 if(link.get("$date")!=null) {
                     if(link.get("$date") instanceof LinkedHashMap<?,?>) {
-                        this.birthdayDate = new Date(1970, 1, 1);
-
+                        this.registrationDate = new Date(1970, 1, 1);
                     }
                     else{
-                        this.birthdayDate = formatter.parse(link.get("$date").toString());
+                        this.registrationDate = formatter.parse(link.get("$date").toString());
                     }
                 }
-            }
-            catch (ParseException e) {
+            } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
-        else if (birthdayDate instanceof String) {
+        else if (registrationDate instanceof String) {
             try {
-                this.birthdayDate = formatter.parse((String) birthdayDate);
-            }
-            catch (ParseException e) {
+                this.registrationDate = formatter.parse((String) registrationDate);
+            } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
         }
-        else if (birthdayDate instanceof Date){
-            this.birthdayDate=(Date)birthdayDate;
+        else if (registrationDate instanceof Date){
+            this.registrationDate = ((Date)registrationDate);
         }
     }
 
-    @Override
-    public String toString() {
+    public List<Review> getLast3Reviews() {
+        return last3Reviews;
+    }
 
-        return "BaseUser{" + '\n' +
-                "_id " + getId().toString() + '\n' +
-                "username " + getUsername() + '\n' +
-                "password " + getPassword() + '\n' +
-                "first_name " + getFirstName() + '\n' +
-                "last_name " + getLastName() + '\n' +
-                "birthday_date " + getBirthdayDate() + '\n' +
-                "last_3_review " + getLast3Reviews() + '\n' +
-                "reviews " + getReviews() + '\n' +
-                "}";
+    public void setLast3Reviews(List<Review> last3Reviews) {
+        this.last3Reviews = last3Reviews;
+    }
+
+    public List<SimplyfiedReview> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<SimplyfiedReview> reviews) {
+        this.reviews = reviews;
     }
 }

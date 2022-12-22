@@ -1,8 +1,11 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
+import org.bson.types.ObjectId;
+
 import java.util.ArrayList;
 
 public class MovieDTO {
+        private ObjectId id;
         private String primaryTitle;
 
         private int year;
@@ -34,6 +37,14 @@ public class MovieDTO {
         private String criticConsensus;
 
     public MovieDTO() {
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
     public String getPrimaryTitle() {
