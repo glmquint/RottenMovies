@@ -68,7 +68,25 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return movie;
     }
-
+    public Movie searchById(ObjectId id){
+        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
+        Movie movie = null;
+        ObjectMapper mapper = new ObjectMapper();
+        Document doc =  collection.find(Filters.eq("_id", id)).first();
+        String json_movie;
+        if (doc == null) {
+            System.out.println("No results found.");
+            return null;
+        } else {
+            json_movie = doc.toJson();
+        }
+        try {
+            movie = mapper.readValue(json_movie, Movie.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return movie;
+    }
     public List<Movie> searchByYearRange(int startYear, int endYear){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;

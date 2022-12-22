@@ -64,7 +64,19 @@ public class RottenMoviesApplication {
 			System.out.println("Exception during testing: " + e.getMessage());
 			e.printStackTrace();
 		}*/
-
+		try(MovieDAO testMovie = DAOLocator.getMovieDAO()){
+			Movie movie = testMovie.searchByTitle("Evidence");
+			System.out.println(movie);
+			System.out.println(testMovie.searchById(movie.getId()));
+		}catch (DAOException e){
+			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
+			e.printStackTrace();
+		}
+		catch(Exception e){
+			System.out.println("Exception during testing: " + e.getMessage());
+			e.printStackTrace();
+		}
+		/*
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO_neo4j()){
 			BaseUser user = testUser.getMostReviewUser();
 			System.out.println(user.getUsername());
@@ -76,6 +88,8 @@ public class RottenMoviesApplication {
 			System.out.println("Exception during testing: " + e.getMessage());
 			e.printStackTrace();
 		}
+
+		 */
 
 	}
 	/*public static void main(String[] args) {
