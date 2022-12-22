@@ -15,8 +15,8 @@ public interface MovieDAO extends AutoCloseable {
     List<Movie> searchByYearRange(int startYear, int endYear);
     List<Movie> searchByTopRatings(int rating, boolean type);
     List<Movie> searchByUserRatings(int rating, boolean type);
-    Boolean deleteMovie(Movie toDelete);
-    Boolean updateMovie(Movie updated);
-    Boolean insertMovie(Movie newOne);
+    Boolean delete(Movie toDelete);
+    Boolean update(Movie updated);
+    Boolean insert(Movie newOne);
     //List<Movie> searchByYear(int year);
 }

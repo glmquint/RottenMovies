@@ -11,6 +11,7 @@ import com.mongodb.client.model.*;
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Projections.*;
 
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
@@ -47,7 +48,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
      * @param Username is the username to search
      * @return a BaseUser model
      */
-    public BaseUser getUserByUserName(String Username) {
+    public BaseUser getByUsername(String Username) {
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
         BaseUser simpleUser = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -70,12 +71,34 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         return simpleUser;
     }
-
+    public BaseUser getById(ObjectId id){
+        MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
+        BaseUser simpleUser = null;
+        ObjectMapper mapper = new ObjectMapper();
+        Document doc =  collection.find(Filters.eq("_id", id)).first();
+        String json_user;
+        if (doc == null) {
+            System.out.println("No results found.");
+            return null;
+        } else {
+            json_user = doc.toJson();
+        }
+        try {
+            if (doc.containsKey("date_of_birth")) {
+                simpleUser = mapper.readValue(json_user, User.class);
+            } else {
+                simpleUser = mapper.readValue(json_user, TopCritic.class);
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return simpleUser;
+    }
     /**
      * <method>getUser</method> queries the DB for all user
      * @return a list containing all BaseUser
      */
-    public List<BaseUser> getAllUsers() {
+    public List<BaseUser> getAllBaseUsers() {
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
         List<BaseUser> simpleUserList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
@@ -100,7 +123,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         return simpleUserList;
     }
 
-    public Boolean insertBaseUser(BaseUser usr){
+    public Boolean insert(BaseUser usr){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringUser);
         try {
             Document newdoc = new Document()
@@ -122,12 +145,13 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
             System.err.println("Unable to insert due to an error: " + me);
             return false;
         }
+        // also remember to add the user in Neo4j
         return true;
     }
-    public Boolean modifyBaseUser(BaseUser usr){
+    public Boolean modify(BaseUser usr){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringUser);
 
-        Document baseUserFromDB = new Document().append("username",  usr.getUsername());
+        Document baseUserFromDB = new Document().append("_id",  usr.getId());
         Bson updates = Updates.combine(
                     Updates.set("password", usr.getPassword()),
                     Updates.set("first_name", usr.getFirstName()),
@@ -149,23 +173,21 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         return true;
     }
 
-    public Boolean deleteBaseUser(String username) {
-        BaseUser simpleUser = getUserByUserName(username);
-        if(simpleUser ==null){
-            return false;
-        }
-        MongoCollection<Document>  collectionMovie = returnCollection(myClient, collectionStringMovie);
+    public Boolean delete(BaseUser user) {
         MongoCollection<Document>  collectionUser = returnCollection(myClient, collectionStringUser);
 
-        /*
-        Bson queryUser = eq("username", username);
+        Bson queryUser = eq("_id", user.getId());
         try { // now I delete the user from collection user
-            DeleteResult result = collectionMovie.deleteOne(queryUser);
+            DeleteResult result = collectionUser.deleteOne(queryUser);
             System.out.println("Deleted document count: " + result.getDeletedCount());
         } catch (MongoException me) {
             System.err.println("Unable to delete due to an error: " + me);
+            return false;
         }
-        */
+
+        // TODO: delete the review
+        return true;
+        /*
 
         List<SimplyfiedReview> reviews = simpleUser.getReviews();
 
@@ -174,8 +196,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
 
             System.out.println(doc2.get("review"));
         }
-
-        return true;
+         */
     }
     public User getMostReviewUser() throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");

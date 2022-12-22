@@ -193,7 +193,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
     public
  */
-    public Boolean deleteMovie(Movie toDelete){
+    public Boolean delete(Movie toDelete){
         MongoCollection<Document>  collectionMovie = returnCollection(myClient, collectionStringMovie);
         Bson queryMovie = eq("_id", toDelete.getId());
 
@@ -244,7 +244,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return personnelDBList;
     }
-    public Boolean updateMovie(Movie updated){
+    public Boolean update(Movie updated){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         List<BasicDBObject> personnelDBList = buildPersonnelField(updated);
 
@@ -275,7 +275,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return true;
     }
 
-    public Boolean insertMovie(Movie newOne){
+    public Boolean insert(Movie newOne){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         List<BasicDBObject> personnelDBList = buildPersonnelField(newOne);
 

@@ -6,7 +6,7 @@ import org.bson.types.ObjectId;
 import java.util.LinkedHashMap;
 
 public class SimplyfiedReview {
-    @JsonProperty("_id")
+    @JsonProperty("movie_id")
     private ObjectId movieID;
     @JsonProperty("primaryTitle")
     private String primaryTitle;

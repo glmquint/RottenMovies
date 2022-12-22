@@ -5,6 +5,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
+import org.bson.types.ObjectId;
 import org.neo4j.driver.*;
 
 import java.util.List;
@@ -29,24 +30,32 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         return user;
     }
     @Override
-    public User getUserByUserName(String name) throws DAOException {
+    public User getByUsername(String name) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
     @Override
-    public List<BaseUser> getAllUsers() throws DAOException {
+    public List<BaseUser> getAllBaseUsers() throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
     @Override
-    public Boolean insertBaseUser(BaseUser usr) throws DAOException {
+    public Boolean insert(BaseUser usr) throws DAOException {
         // TODO: actually we need to insert new users in Neo4J too,
         //  need to switch
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
+    public Boolean delete(BaseUser usr) {
+        //TODO: implement the delete query in Neo4j
+        return true;
+    }
+
     @Override
-    public Boolean modifyBaseUser(BaseUser usr) throws DAOException {
+    public Boolean modify(BaseUser usr) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+    public BaseUser getById(ObjectId id) throws DAOException{
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 }
