@@ -42,8 +42,6 @@ import java.util.List;
  */
 public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
 
-    private static final String collectionStringMovie = "movie";
-    private static final String collectionStringUser = "user";
     /**
      * <method>searchByTitle</method> queries the DB for a specific movie base on the title
      * @param title is the title of the movie to search

@@ -40,8 +40,6 @@ import java.util.List;
  *      - number of reviews
  */
 public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
-    private static final String collectionStringMovie = "movie";
-    private static final String collectionStringUser = "user";
 
     /**
      * <method>getUserByUsername</method> queries the DB based on a username to search
