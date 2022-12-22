@@ -7,6 +7,10 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
+import org.bson.types.ObjectId;
+
+import java.util.ArrayList;
 
 //@SpringBootApplication
 public class RottenMoviesApplication {
@@ -65,9 +69,16 @@ public class RottenMoviesApplication {
 			e.printStackTrace();
 		}*/
 		try(MovieDAO testMovie = DAOLocator.getMovieDAO()){
-			Movie movie = testMovie.searchByTitle("Evidence");
-			System.out.println(movie);
-			System.out.println(testMovie.searchById(movie.getId()));
+			Movie movie = testMovie.searchByTitle("The Boss");
+			//System.out.println(movie);
+			//System.out.println(testMovie.insertMovie(movie));
+			//Movie movie=testMovie.searchById(new ObjectId("63a484cf9b999919abc1921d"));
+			//System.out.println(testMovie.deleteMovie(movie));
+			movie.setRuntimeMinutes(80);
+			movie.setpersonnel(new ArrayList<Personnel>());
+			movie.setYear((Integer)1980);
+			movie.setCriticConsensus("Helo");
+			testMovie.updateMovie(movie);
 		}catch (DAOException e){
 			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
 			e.printStackTrace();
