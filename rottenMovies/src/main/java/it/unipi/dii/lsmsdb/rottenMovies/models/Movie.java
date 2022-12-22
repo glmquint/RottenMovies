@@ -2,6 +2,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -9,9 +10,12 @@ import java.util.LinkedHashMap;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie {
 
+    @JsonProperty("_id")
+    private ObjectId id;
+
     @JsonProperty("primaryTitle")
     private String primaryTitle;
-    //@JsonProperty("year")
+
     @JsonProperty("year")
     private int year;
     @JsonProperty("runtimeMinutes")
@@ -44,6 +48,17 @@ public class Movie {
     private String criticConsensus;
 
     public Movie() {}
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(Object id) {
+        if(id instanceof LinkedHashMap<?,?>){
+            LinkedHashMap link = (LinkedHashMap)id;
+            this.id = new ObjectId(link.get("$oid").toString());
+        }
+    }
 
     public String getPrimaryTitle() {
         return primaryTitle;
@@ -192,14 +207,15 @@ public class Movie {
     @Override
     public String toString() {
         return "Movie{" +
-                "primaryTitle='" + primaryTitle + '\'' +
+                "id=" + id.toString() +
+                ", primaryTitle='" + primaryTitle + '\'' +
                 ", year=" + year +
                 ", runtimeMinutes=" + runtimeMinutes +
                 ", genres=" + genres +
                 ", productionCompany='" + productionCompany + '\'' +
                 ", tomatometerStatus='" + tomatometerStatus + '\'' +
                 ", tomatometerRating=" + tomatometerRating +
-                ", audienceStatus=" + audienceStatus +
+                ", audienceStatus='" + audienceStatus + '\'' +
                 ", audienceRating=" + audienceRating +
                 ", audienceCount=" + audienceCount +
                 ", tomatometerFreshCriticsCount=" + tomatometerFreshCriticsCount +

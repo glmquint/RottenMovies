@@ -55,6 +55,7 @@ public class BaseUser extends User{
     public String toString() {
 
         return "BaseUser{" + '\n' +
+                "_id " + getId().toString() + '\n' +
                 "username " + getUsername() + '\n' +
                 "password " + getPassword() + '\n' +
                 "first_name " + getFirstName() + '\n' +
