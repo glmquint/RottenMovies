@@ -44,22 +44,15 @@ import java.util.List;
 public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
 
     public MovieDTO searchByTitle(String title){
-        return new MovieDTO(_searchByTitle(title));
-    }
-    /**
-     * <method>searchByTitle</method> queries the DB for a specific movie base on the title
-     * @param title is the title of the movie to search
-     * @return a movie object
-     */
-    private Movie _searchByTitle(String title){
+
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
-        Movie movie = null;
+        Movie movie = new Movie();
         ObjectMapper mapper = new ObjectMapper();
-        Document doc =  collection.find(Filters.eq("primaryTitle", title)).first();
+        Document doc =  collection.find(queryBuildSearchByTitle(null, title)).first();
         String json_movie;
         if (doc == null) {
             System.out.println("No results found.");
-            return null;
+            return new MovieDTO(movie);
         } else {
             json_movie = doc.toJson();
         }
@@ -68,7 +61,19 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return movie;
+        return new MovieDTO(movie);
+    }
+    /**
+     * <method>searchByTitle</method> queries the DB for a specific movie base on the title
+     * @param title is the title of the movie to search
+     * @return a movie object
+     */
+    public Bson queryBuildSearchByTitle(Bson query, String title){
+        Bson new_query = Filters.eq("primaryTitle", title);
+        if (query == null) {
+            return new_query;
+        }
+        return Filters.and(query, new_query);
     }
 
     public MovieDTO searchById(ObjectId id){
