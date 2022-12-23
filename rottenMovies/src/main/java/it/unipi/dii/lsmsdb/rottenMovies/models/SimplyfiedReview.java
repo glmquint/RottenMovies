@@ -14,8 +14,7 @@ public class SimplyfiedReview {
     @JsonProperty("review_index")
     private int index;
 
-    public SimplyfiedReview() {
-    }
+    public SimplyfiedReview() {}
     public SimplyfiedReview (SimplyfiedReviewDTO s){
         this.movieID=s.getMovieID();
         this.primaryTitle=s.getPrimaryTitle();

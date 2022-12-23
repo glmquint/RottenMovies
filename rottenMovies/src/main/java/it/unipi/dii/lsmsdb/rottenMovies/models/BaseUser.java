@@ -1,6 +1,9 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.SimplyfiedReviewDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +23,36 @@ public abstract class BaseUser extends RegisteredUser {
     @JsonProperty("reviews")
     protected ArrayList<SimplyfiedReview> reviews;
 
+    public BaseUser (){super();}
+    public BaseUser(BaseUserDTO b){
+        super(b);
+        this.firstName=b.getFirstName();
+        this.lastName=b.getLastName();
+        this.registrationDate=b.getRegistrationDate();
+        ArrayList<ReviewUserDTO> last3review = b.getLast3Reviews();
+        ArrayList<Review> reviews = null;
+        if (last3review != null){
+            reviews = new ArrayList<Review>();
+            Review review = null;
+            for (ReviewUserDTO r : last3review) {
+                review = new Review(r);
+                reviews.add(review);
+            }
+        }
+        this.last3Reviews=reviews;
+        ArrayList<SimplyfiedReviewDTO> reviewsdto = b.getReviews();
+        ArrayList<SimplyfiedReview> allreviews = null;
+        if (reviewsdto != null){
+            allreviews = new ArrayList<SimplyfiedReview>();
+            SimplyfiedReview reviewL = null;
+            for (SimplyfiedReviewDTO r : reviewsdto) {
+                reviewL = new SimplyfiedReview(r);
+                allreviews.add(reviewL);
+            }
+        }
+        this.reviews=allreviews;
+
+    }
     public String getFirstName() {
         return firstName;
     }

@@ -2,6 +2,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
 import org.bson.types.ObjectId;
 
 import java.util.LinkedHashMap;
@@ -14,6 +15,13 @@ public abstract class RegisteredUser {
     protected String username;
     @JsonProperty("password")
     protected String password;
+
+    public RegisteredUser (){}
+    public RegisteredUser (RegisteredUserDTO userdto){
+        this.id=userdto.getId();
+        this.username=userdto.getUsername();
+        this.password=userdto.getPassword();
+    }
     public ObjectId getId() {
         return id;
     }

@@ -1,10 +1,13 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.SimplyfiedReviewDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -17,7 +20,8 @@ public class User extends BaseUser {
     }
     public User(){}
     public User(UserDTO userdto){
-        this.id=userdto.getId();
+        super(userdto);
+        this.birthdayDate=userdto.getBirthdayDate();
     }
     public void setBirthdayDate(Object birthdayDate) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -55,8 +59,10 @@ public class User extends BaseUser {
 
     @Override
     public String toString() {
-
-        return "BaseUser{" + '\n' +
+        if (id == null){
+            return "User{}";
+        }
+        return "User{" + '\n' +
                 "_id " + getId().toString() + '\n' +
                 "username " + getUsername() + '\n' +
                 "password " + getPassword() + '\n' +
