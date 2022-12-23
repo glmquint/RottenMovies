@@ -1,10 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewUserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.SimplyfiedReviewDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
 
-import java.util.ArrayList;
 
 public class TopCritic extends BaseUser {
     private int follower_count;

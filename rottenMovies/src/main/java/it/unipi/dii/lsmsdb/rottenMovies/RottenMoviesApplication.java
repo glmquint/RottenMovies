@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class RottenMoviesApplication {
 
 	public  static void main(String[] args) throws JsonProcessingException {
+		/*
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
 			BaseUser base=testUser.getByUsername("Abbie Bernstein");
 			System.out.println(base);
@@ -43,7 +44,7 @@ public class RottenMoviesApplication {
 			System.out.println("Exception during testing: " + e.getMessage());
 			e.printStackTrace();
 		}
-
+		*/
 
 		/*
 		try(BaseUserDAO baseUserDAO = DAOLocator.getBaseUserDAO()){
@@ -58,23 +59,19 @@ public class RottenMoviesApplication {
 			e.printStackTrace();
 		}
 
-
+		*/
 
 		try(MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)){
-			MovieDTO movie = testMovie.searchByTitle("Evidence");
+			MovieDTO movie = testMovie.searchByTitle("The Midnight Man");
 			System.out.println(new Movie(movie));
-			/*
+
 			//System.out.println(testMovie.insert(movie));
 			//Movie movie=testMovie.searchById(new ObjectId("63a484cf9b999919abc1921d"));
 			//System.out.println(testMovie.delete(movie));
-
-			movie.setRuntimeMinutes(80);
-			movie.setPersonnel(new ArrayList<PersonnelDTO>());
-			movie.setYear((Integer)1980);
-			//movie.setCriticConsensus("Helo");
-			testMovie.update(movie);
-
-
+			//movie.setRuntimeMinutes(89);
+			//testMovie.update(movie);
+			//testMovie.delete(movie);
+			//testMovie.insert(movie);
 
 		}catch (DAOException e){
 			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
@@ -84,7 +81,7 @@ public class RottenMoviesApplication {
 			System.out.println("Exception during testing: " + e.getMessage());
 			e.printStackTrace();
 		}
-		*/
+
 		/*
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
 			User user = (User) testUser.getByUsername("Dann Gire");
