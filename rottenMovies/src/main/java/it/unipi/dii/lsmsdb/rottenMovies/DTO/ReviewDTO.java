@@ -1,5 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
+import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
+
 import java.util.Date;
 
 public abstract class ReviewDTO {
@@ -8,6 +10,15 @@ public abstract class ReviewDTO {
     protected String reviewScore;
     protected Date reviewDate;
     protected String reviewContent;
+
+    public ReviewDTO() {}
+    public ReviewDTO(Review r) {
+        this.topCritic=r.isTopCritic();
+        this.reviewType=r.getReviewType();
+        this.reviewScore=r.getReviewScore();
+        this.reviewDate=r.getReviewDate();
+        this.reviewContent=r.getReviewContent();
+    }
 
     public boolean isTopCritic() {
         return topCritic;

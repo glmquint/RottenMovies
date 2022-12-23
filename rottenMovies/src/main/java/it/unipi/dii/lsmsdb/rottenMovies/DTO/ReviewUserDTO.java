@@ -13,15 +13,10 @@ public class ReviewUserDTO extends ReviewDTO{
         this.movie = movie;
     }
 
-    public ReviewUserDTO() {
-    }
+    public ReviewUserDTO() {}
 
     public ReviewUserDTO (Review r){
+        super(r);
         this.movie=r.getMovie();
-        this.topCritic=r.isTopCritic();
-        this.reviewType=r.getReviewType();
-        this.reviewScore=r.getReviewScore();
-        this.reviewDate=r.getReviewDate();
-        this.reviewContent=r.getReviewContent();
     }
 }

@@ -16,8 +16,8 @@ public abstract class RegisteredUser {
     @JsonProperty("password")
     protected String password;
 
-    public RegisteredUser (){}
-    public RegisteredUser (RegisteredUserDTO userdto){
+    protected RegisteredUser (){}
+    protected RegisteredUser (RegisteredUserDTO userdto){
         this.id=userdto.getId();
         this.username=userdto.getUsername();
         this.password=userdto.getPassword();

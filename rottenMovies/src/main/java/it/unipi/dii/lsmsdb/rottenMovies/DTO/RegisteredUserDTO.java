@@ -1,12 +1,18 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
+import it.unipi.dii.lsmsdb.rottenMovies.models.RegisteredUser;
 import org.bson.types.ObjectId;
 
 public abstract class RegisteredUserDTO {
     protected ObjectId id;
     protected String username;
-
     protected String password;
 
+    protected RegisteredUserDTO(){}
+    protected RegisteredUserDTO(RegisteredUser u){
+        this.id=u.getId();
+        this.username=u.getPassword();
+        this.password=u.getPassword();
+    }
     public ObjectId getId() {
         return id;
     }

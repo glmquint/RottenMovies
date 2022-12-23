@@ -23,8 +23,8 @@ public abstract class BaseUser extends RegisteredUser {
     @JsonProperty("reviews")
     protected ArrayList<SimplyfiedReview> reviews;
 
-    public BaseUser (){super();}
-    public BaseUser(BaseUserDTO b){
+    protected BaseUser (){super();}
+    protected BaseUser(BaseUserDTO b){
         super(b);
         this.firstName=b.getFirstName();
         this.lastName=b.getLastName();

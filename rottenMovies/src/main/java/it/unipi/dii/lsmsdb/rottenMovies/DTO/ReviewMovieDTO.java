@@ -5,13 +5,11 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
 public class ReviewMovieDTO extends ReviewDTO{
     private String criticName;
 
+    public ReviewMovieDTO() {}
+
     public ReviewMovieDTO (Review r){
+        super(r);
         this.criticName=r.getCriticName();
-        this.topCritic=r.isTopCritic();
-        this.reviewType=r.getReviewType();
-        this.reviewScore=r.getReviewScore();
-        this.reviewDate=r.getReviewDate();
-        this.reviewContent=r.getReviewContent();
     }
     public String getCriticName() {
         return criticName;
