@@ -9,7 +9,6 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.*;
 
 import static com.mongodb.client.model.Filters.*;
-import static com.mongodb.client.model.Projections.*;
 
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
@@ -17,15 +16,14 @@ import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
-import it.unipi.dii.lsmsdb.rottenMovies.models.SimplyfiedReview;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +94,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
      * <method>getUser</method> queries the DB for all user
      * @return a list containing all BaseUser
      */
-    public List<BaseUser> getAllBaseUsers() {
+    public List<BaseUser> getAll() {
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
         List<BaseUser> simpleUserList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
@@ -175,6 +173,14 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         MongoCollection<Document>  collectionUser = returnCollection(myClient, collectionStringUser);
 
         Bson queryUser = eq("_id", user.getId());
+        user.setFirstName("[[IS_GOING_TO_BE_DELETED]]"); // TODO: refactor to global constant
+        modify(user);
+        ReviewDAO reviewdao = (ReviewDAO) new ReviewMongoDB_DAO(); // TODO: maybe use DAOLocator
+        try {
+            reviewdao.updateReviewsByDeletedBaseUser(user);
+        } catch (Exception e){
+            System.err.println(e.getStackTrace());
+        }
         try { // now I delete the user from collection user
             DeleteResult result = collectionUser.deleteOne(queryUser);
             System.out.println("Deleted document count: " + result.getDeletedCount());
