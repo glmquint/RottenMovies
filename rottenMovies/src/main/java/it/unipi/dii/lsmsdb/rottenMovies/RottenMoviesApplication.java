@@ -92,6 +92,23 @@ public class RottenMoviesApplication {
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
 			User user = (User) testUser.getByUsername("Dann Gire");
 			System.out.println(user);
+		}catch (DAOException e){
+			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
+			e.printStackTrace();
+		}
+		catch(Exception e){
+			System.out.println("Exception during testing: " + e.getMessage());
+			e.printStackTrace();
+		}
+		*/
+
+		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
+			 System.out.println(testUser.createBaseUser("Fabio Piras", false));
+			System.out.println(testUser.createBaseUser("Giacomo Volpi", true));
+			System.out.println(testUser.followTopCritic("Fabio Piras", "Giacomo Volpi"));
+			//System.out.println(testUser.unfollowTopCritic("Fabio Piras", "Giacomo Volpi"));
+			System.out.println(testUser.deleteBaseUser("Fabio Piras", false));
+
 			/*
 			TopCritic topCritic = (TopCritic) testUser.getByUsername("Ian Buckwalter");
 			System.out.println(topCritic);
@@ -103,6 +120,7 @@ public class RottenMoviesApplication {
 			System.out.println(testUser.modify(topCritic));
 			System.out.println(testUser.delete(topCritic));
 			System.out.println(testUser.delete(user));
+			*/
 
 			//System.out.println(testUser.insertBaseUser(user));
 
@@ -115,7 +133,7 @@ public class RottenMoviesApplication {
 			e.printStackTrace();
 		}
 
-		*/
+
 
 	}
 	/*public static void main(String[] args) {
