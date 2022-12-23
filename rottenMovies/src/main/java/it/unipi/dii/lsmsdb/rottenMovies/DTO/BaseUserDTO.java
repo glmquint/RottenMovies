@@ -3,15 +3,16 @@ package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
 import it.unipi.dii.lsmsdb.rottenMovies.models.SimplyfiedReview;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public abstract class BaseUserDTO {
-    private String firstName;
-    private String lastName;
-    private Date registrationDate;
-    private List<Review> last3Reviews;
-    private List<SimplyfiedReview> reviews;
+public abstract class BaseUserDTO extends RegisteredUserDTO{
+    protected String firstName;
+    protected String lastName;
+    protected Date registrationDate;
+    protected ArrayList<ReviewUserDTO> last3Reviews;
+    protected ArrayList<SimplyfiedReviewDTO> reviews;
 
     public String getFirstName() {
         return firstName;
@@ -37,19 +38,19 @@ public abstract class BaseUserDTO {
         this.registrationDate = registrationDate;
     }
 
-    public List<Review> getLast3Reviews() {
+    public ArrayList<ReviewUserDTO> getLast3Reviews() {
         return last3Reviews;
     }
 
-    public void setLast3Reviews(List<Review> last3Reviews) {
+    public void setLast3Reviews(ArrayList<ReviewUserDTO> last3Reviews) {
         this.last3Reviews = last3Reviews;
     }
 
-    public List<SimplyfiedReview> getReviews() {
+    public ArrayList<SimplyfiedReviewDTO> getReviews() {
         return reviews;
     }
 
-    public void setReviews(List<SimplyfiedReview> reviews) {
+    public void setReviews(ArrayList<SimplyfiedReviewDTO> reviews) {
         this.reviews = reviews;
     }
 }

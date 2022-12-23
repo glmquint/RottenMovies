@@ -1,6 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,7 +15,10 @@ public class User extends BaseUser {
     public Date getBirthdayDate() {
         return this.birthdayDate;
     }
-
+    public User(){}
+    public User(UserDTO userdto){
+        this.id=userdto.getId();
+    }
     public void setBirthdayDate(Object birthdayDate) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if(birthdayDate instanceof LinkedHashMap<?,?>)

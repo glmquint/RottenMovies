@@ -9,12 +9,11 @@ import java.util.LinkedHashMap;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class RegisteredUser {
     @JsonProperty("_id")
-    private ObjectId id;
-
+    protected ObjectId id;
     @JsonProperty("username")
-    private String username;
+    protected String username;
     @JsonProperty("password")
-    private String password;
+    protected String password;
     public ObjectId getId() {
         return id;
     }

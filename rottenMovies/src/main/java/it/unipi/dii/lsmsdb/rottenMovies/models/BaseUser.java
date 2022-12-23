@@ -4,21 +4,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public abstract class BaseUser extends RegisteredUser {
     @JsonProperty("first_name")
-    private String firstName;
+    protected String firstName;
     @JsonProperty("last_name")
-    private String lastName;
+    protected String lastName;
     @JsonProperty("registration_date")
-    private Date registrationDate;
+    protected Date registrationDate;
     @JsonProperty("last_3_reviews")
-    private List<Review> last3Reviews;
+    protected ArrayList<Review> last3Reviews;
     @JsonProperty("reviews")
-    private List<SimplyfiedReview> reviews;
+    protected ArrayList<SimplyfiedReview> reviews;
 
     public String getFirstName() {
         return firstName;
@@ -72,19 +72,19 @@ public abstract class BaseUser extends RegisteredUser {
         }
     }
 
-    public List<Review> getLast3Reviews() {
+    public ArrayList<Review> getLast3Reviews() {
         return last3Reviews;
     }
 
-    public void setLast3Reviews(List<Review> last3Reviews) {
+    public void setLast3Reviews(ArrayList<Review> last3Reviews) {
         this.last3Reviews = last3Reviews;
     }
 
-    public List<SimplyfiedReview> getReviews() {
+    public ArrayList<SimplyfiedReview> getReviews() {
         return reviews;
     }
 
-    public void setReviews(List<SimplyfiedReview> reviews) {
+    public void setReviews(ArrayList<SimplyfiedReview> reviews) {
         this.reviews = reviews;
     }
 }
