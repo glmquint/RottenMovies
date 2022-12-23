@@ -1,5 +1,8 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
+import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -39,6 +42,38 @@ public class MovieDTO {
     public MovieDTO() {
     }
 
+    public MovieDTO(Movie movie){
+        this.id=movie.getId();
+        this.primaryTitle=movie.getPrimaryTitle();
+        this.year= movie.getYear();
+        this.runtimeMinutes=movie.getRuntimeMinutes();
+        this.genres=movie.getGenres();
+        this.productionCompany=movie.getProductionCompany();
+        this.tomatometerStatus=movie.getTomatometerStatus();
+        this.tomatometerRating=movie.gettomatometerRating();
+        this.audienceStatus=movie.getAudienceStatus();
+        this.audienceRating=movie.getaudienceRating();
+        this.audienceCount=movie.getAudienceCount();
+        this.tomatometerFreshCriticsCount=movie.getTomatometerFreshCriticsCount();
+        this.tomatometerRottenCriticsCount= movie.getTomatometerRottenCriticsCount();
+        this.criticConsensus=movie.getCriticConsensus();
+        ArrayList<Review> reviews=movie.getReviews();
+        ArrayList<ReviewMovieDTO> reviewsdto = new ArrayList<ReviewMovieDTO>();
+        ReviewMovieDTO reviewdto;
+        for(Review r : reviews){
+            reviewdto=new ReviewMovieDTO(r);
+            reviewsdto.add(reviewdto);
+        }
+        this.reviews=reviewsdto;
+        ArrayList<Personnel> personnel=movie.getpersonnel();
+        ArrayList<PersonnelDTO> personneldto = new ArrayList<PersonnelDTO>();
+        PersonnelDTO p;
+        for(Personnel per: personnel){
+            p=new PersonnelDTO(per);
+            personneldto.add(p);
+        }
+        this.personnel=personneldto;
+    }
     public ObjectId getId() {
         return id;
     }
@@ -166,4 +201,5 @@ public class MovieDTO {
     public void setCriticConsensus(String criticConsensus) {
         this.criticConsensus = criticConsensus;
     }
+
 }

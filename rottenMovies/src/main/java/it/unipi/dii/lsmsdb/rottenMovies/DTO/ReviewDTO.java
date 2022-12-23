@@ -3,11 +3,11 @@ package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 import java.util.Date;
 
 public abstract class ReviewDTO {
-    private boolean topCritic;
-    private String reviewType;
-    private String reviewScore;
-    private Date reviewDate;
-    private String reviewContent;
+    protected boolean topCritic;
+    protected String reviewType;
+    protected String reviewScore;
+    protected Date reviewDate;
+    protected String reviewContent;
 
     public boolean isTopCritic() {
         return topCritic;

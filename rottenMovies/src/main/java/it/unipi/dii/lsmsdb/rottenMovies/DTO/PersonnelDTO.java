@@ -1,5 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
+import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
+
 import java.util.ArrayList;
 
 public class PersonnelDTO {
@@ -10,7 +12,12 @@ public class PersonnelDTO {
 
     public PersonnelDTO() {
     }
-
+    public PersonnelDTO(Personnel p) {
+        this.primaryName=p.getPrimaryName();
+        this.category=p.getCategory();
+        this.job=p.getJob();
+        this.characters=p.getCharacters();
+    }
     public String getPrimaryName() {
         return primaryName;
     }

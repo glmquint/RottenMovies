@@ -5,7 +5,12 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.PersonnelDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.*;
+
+import java.util.ArrayList;
 
 //@SpringBootApplication
 public class RottenMoviesApplication {
@@ -57,18 +62,22 @@ public class RottenMoviesApplication {
 		}
 
 		 */
-		/*
-		try(MovieDAO testMovie = DAOLocator.getMovieDAO()){
-			Movie movie = testMovie.searchByTitle("The Boss");
-			//System.out.println(movie);
+
+		try(MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)){
+			MovieDTO movie = testMovie.searchByTitle("Evidence");
+
+			System.out.println(new Movie(movie));
 			//System.out.println(testMovie.insert(movie));
 			//Movie movie=testMovie.searchById(new ObjectId("63a484cf9b999919abc1921d"));
 			//System.out.println(testMovie.delete(movie));
+
 			movie.setRuntimeMinutes(80);
-			movie.setpersonnel(new ArrayList<Personnel>());
+			movie.setPersonnel(new ArrayList<PersonnelDTO>());
 			movie.setYear((Integer)1980);
-			movie.setCriticConsensus("Helo");
+			//movie.setCriticConsensus("Helo");
 			testMovie.update(movie);
+
+
 		}catch (DAOException e){
 			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
 			e.printStackTrace();
@@ -77,7 +86,8 @@ public class RottenMoviesApplication {
 			System.out.println("Exception during testing: " + e.getMessage());
 			e.printStackTrace();
 		}
-		*/
+
+		/*
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
 			User user = (User) testUser.getByUsername("Dann Gire");
 			System.out.println(user);
@@ -92,7 +102,7 @@ public class RottenMoviesApplication {
 			System.out.println(testUser.modify(topCritic));
 			System.out.println(testUser.delete(topCritic));
 			System.out.println(testUser.delete(user));
-			*/
+
 			//System.out.println(testUser.insertBaseUser(user));
 
 		}catch (DAOException e){
@@ -104,7 +114,7 @@ public class RottenMoviesApplication {
 			e.printStackTrace();
 		}
 
-
+		*/
 
 	}
 	/*public static void main(String[] args) {

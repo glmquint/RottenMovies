@@ -1,7 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces;
 
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
-import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import org.bson.types.ObjectId;
 
 import java.util.List;
@@ -11,13 +11,14 @@ import java.util.List;
  * <interface>MovieDao</interface> interface for the DAO of the movie
  */
 public interface MovieDAO extends AutoCloseable {
-    Movie searchByTitle(String title) throws DAOException;
-    Movie searchById(ObjectId id) throws DAOException;
-    List<Movie> searchByYearRange(int startYear, int endYear) throws DAOException;
-    List<Movie> searchByTopRatings(int rating, boolean type) throws DAOException;
-    List<Movie> searchByUserRatings(int rating, boolean type) throws DAOException;
-    Boolean delete(Movie toDelete) throws DAOException;
-    Boolean update(Movie updated) throws DAOException;
-    Boolean insert(Movie newOne) throws DAOException;
+    MovieDTO searchByTitle(String title) throws DAOException;
+    MovieDTO searchById(ObjectId id) throws DAOException;
+    List<MovieDTO> searchByYearRange(int startYear, int endYear) throws DAOException;
+    List<MovieDTO> searchByTopRatings(int rating, boolean type) throws DAOException;
+    List<MovieDTO> searchByUserRatings(int rating, boolean type) throws DAOException;
+    Boolean delete(MovieDTO toDelete) throws DAOException;
+    Boolean update(MovieDTO updated) throws DAOException;
+    Boolean insert(MovieDTO newOne) throws DAOException;
     //List<Movie> searchByYear(int year) throws DAOException;
+
 }

@@ -3,6 +3,8 @@ package it.unipi.dii.lsmsdb.rottenMovies.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewMovieDTO;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,6 +32,14 @@ public class Review {
     public Review() {
     }
 
+    public Review (ReviewMovieDTO r){
+        this.criticName=r.getCriticName();
+        this.topCritic=r.isTopCritic();
+        this.reviewType=r.getReviewType();
+        this.reviewScore=r.getReviewScore();
+        this.reviewDate=r.getReviewDate();
+        this.reviewContent=r.getReviewContent();
+    }
     public String getCriticName() {
         return criticName;
     }

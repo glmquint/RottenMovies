@@ -17,6 +17,7 @@ import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
@@ -42,12 +43,15 @@ import java.util.List;
  */
 public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
 
+    public MovieDTO searchByTitle(String title){
+        return new MovieDTO(_searchByTitle(title));
+    }
     /**
      * <method>searchByTitle</method> queries the DB for a specific movie base on the title
      * @param title is the title of the movie to search
      * @return a movie object
      */
-    public Movie searchByTitle(String title){
+    private Movie _searchByTitle(String title){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -66,7 +70,11 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return movie;
     }
-    public Movie searchById(ObjectId id){
+
+    public MovieDTO searchById(ObjectId id){
+        return new MovieDTO(_searchById(id));
+    }
+    private Movie _searchById(ObjectId id){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -85,7 +93,15 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return movie;
     }
-    public List<Movie> searchByYearRange(int startYear, int endYear){
+    public List<MovieDTO> searchByYearRange(int startYear, int endYear){
+        List<Movie> movies=_searchByYearRange(startYear, endYear);
+        ArrayList<MovieDTO> movieDTOS = new ArrayList<MovieDTO>();
+        for(Movie m: movies){
+            movieDTOS.add(new MovieDTO(m));
+        }
+        return movieDTOS;
+    }
+    private List<Movie> _searchByYearRange(int startYear, int endYear){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         String json_movie;
@@ -106,7 +122,15 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return movie_list;
     }
-    public List<Movie> searchByTopRatings(int rating, boolean type){
+    public List<MovieDTO> searchByTopRatings(int rating, boolean type){
+        List<Movie> movies=_searchByTopRatings(rating,type);
+        ArrayList<MovieDTO> movieDTOS = new ArrayList<MovieDTO>();
+        for(Movie m: movies){
+            movieDTOS.add(new MovieDTO(m));
+        }
+        return movieDTOS;
+    }
+    private List<Movie> _searchByTopRatings(int rating, boolean type){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         String json_movie;
@@ -136,7 +160,15 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return movie_list;
     }
-    public List<Movie> searchByUserRatings(int rating, boolean type){
+    public List<MovieDTO> searchByUserRatings(int rating, boolean type){
+        List<Movie> movies=_searchByUserRatings(rating,type);
+        ArrayList<MovieDTO> movieDTOS = new ArrayList<MovieDTO>();
+        for(Movie m: movies){
+            movieDTOS.add(new MovieDTO(m));
+        }
+        return movieDTOS;
+    }
+    private List<Movie> _searchByUserRatings(int rating, boolean type){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
         String json_movie;
@@ -191,7 +223,11 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
     public
  */
-    public Boolean delete(Movie toDelete){
+    public Boolean delete(MovieDTO toDelete){
+
+        return delete(new Movie(toDelete));
+    }
+    private Boolean delete(Movie toDelete){
         MongoCollection<Document>  collectionMovie = returnCollection(myClient, collectionStringMovie);
         Bson queryMovie = eq("_id", toDelete.getId());
 
@@ -242,7 +278,10 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return personnelDBList;
     }
-    public Boolean update(Movie updated){
+    public Boolean update (MovieDTO updated){
+        return update(new Movie(updated));
+    }
+    private Boolean update(Movie updated){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         List<BasicDBObject> personnelDBList = buildPersonnelField(updated);
 
@@ -272,8 +311,10 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return true;
     }
-
-    public Boolean insert(Movie newOne){
+    public Boolean insert (MovieDTO newOne){
+        return insert(new Movie(newOne));
+    }
+    private Boolean insert(Movie newOne){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         List<BasicDBObject> personnelDBList = buildPersonnelField(newOne);
 

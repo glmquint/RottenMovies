@@ -1,6 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.PersonnelDTO;
 
 
 import java.util.ArrayList;
@@ -18,6 +19,12 @@ public class Personnel {
     public Personnel() {
     }
 
+    public Personnel(PersonnelDTO p) {
+        this.primaryName=p.getPrimaryName();
+        this.category=p.getCategory();
+        this.job=p.getJob();
+        this.characters=p.getCharacters();
+    }
     public String getPrimaryName() {
         return primaryName;
     }
