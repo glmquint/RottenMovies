@@ -78,8 +78,12 @@ public class RottenMoviesApplication {
 		}
 		*/
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO_neo4j()){
-			TopCritic user = (TopCritic) testUser.getMostFollowedCritic();
-			System.out.println(user.getUsername());
+			 System.out.println(testUser.createBaseUser("Fabio Piras", false));
+			System.out.println(testUser.createBaseUser("Giacomo Volpi", true));
+			System.out.println(testUser.followTopCritic("Fabio Piras", "Giacomo Volpi"));
+			//System.out.println(testUser.unfollowTopCritic("Fabio Piras", "Giacomo Volpi"));
+			System.out.println(testUser.deleteBaseUser("Fabio Piras", false));
+
 			/*
 			TopCritic topCritic = (TopCritic) testUser.getByUsername("Ian Buckwalter");
 			System.out.println(topCritic);

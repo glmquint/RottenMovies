@@ -16,4 +16,9 @@ public interface BaseUserDAO extends AutoCloseable{
     public Boolean delete(BaseUser usr) throws DAOException;
     public BaseUser getMostReviewUser() throws DAOException;
     public TopCritic getMostFollowedCritic() throws DAOException;
+    public boolean createBaseUser(String name, boolean isTop) throws DAOException;
+    public boolean deleteBaseUser(String name, boolean isTop) throws DAOException;
+    public boolean followTopCritic(String userName, String topCriticName) throws DAOException;
+
+    public boolean unfollowTopCritic(String userName, String topCriticName) throws DAOException;
 }

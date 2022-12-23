@@ -11,6 +11,8 @@ import org.neo4j.driver.*;
 
 import java.util.List;
 
+import static org.neo4j.driver.Values.parameters;
+
 public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
 
     public User getMostReviewUser() throws DAOException{
@@ -46,6 +48,89 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         });
         topCritic.setUsername((mostFollowedCritic));
         return topCritic;
+    }
+
+    public boolean createBaseUser(String name, boolean isTop) throws DAOException{
+        if(name.isEmpty()){
+            return  false;
+        }
+        Session session = driver.session();
+        String newUserName = session.writeTransaction((TransactionWork<String>)  tx ->{
+            String query;
+            if(isTop){
+                query = "MERGE (t:TopCritic{name: $name}) "+
+                        "ON CREATE SET t.name= $name "+
+                        "RETURN t.name as Name";
+            }
+            else{
+                query = "MERGE (u:User{name: $name}) "+
+                        "ON CREATE SET u.name= $name "+
+                        "RETURN u.name as Name";
+            }
+
+            Result result = tx.run(query, parameters("name", name));
+            return result.single().get("Name").asString();
+        });
+        System.out.println(newUserName);
+        return true;
+    }
+
+    public boolean deleteBaseUser(String name, boolean isTop) throws DAOException{
+        if(name.isEmpty()){
+            return  false;
+        }
+        Session session = driver.session();
+        session.writeTransaction(tx ->{
+            String query;
+            if(isTop){
+                query = "MATCH (t:TopCritic{name: $name}) " +
+                            "DETACH DELETE t";
+            }
+            else{
+                query = "MATCH (u:User{name: $name}) " +
+                        "DETACH DELETE u";
+            }
+
+            Result result = tx.run(query, parameters("name", name));
+            return 1;
+        });
+        return true;
+    }
+
+    public boolean followTopCritic(String userName, String topCriticName) throws DAOException{
+        if(userName.isEmpty() || topCriticName.isEmpty()){
+            return  false;
+        }
+        Session session = driver.session();
+        session.writeTransaction(tx -> {
+            String query = "MATCH (u:User{name: $userName}), " +
+                            "(t:TopCritic{name: $topCriticName}) " +
+                            "MERGE (u)-[f:FOLLOWS]->(t)" +
+                            "RETURN type(f) as Type";
+            Result result = tx.run(query, parameters("userName", userName, "topCriticName", topCriticName));
+            System.out.println(result.single().get("Type").asString());
+            return 1;
+        });
+        return true;
+    }
+
+    /*MATCH (n {name: 'Andy'})-[r:KNOWS]->()
+    DELETE r*/
+
+    public boolean unfollowTopCritic(String userName, String topCriticName) throws DAOException {
+        if (userName.isEmpty() || topCriticName.isEmpty()) {
+            return false;
+        }
+        Session session = driver.session();
+        session.writeTransaction(tx -> {
+            String query = "MATCH (u:User{name: $userName})" +
+                    "-[f:FOLLOWS]->"+
+                    "(t:TopCritic{name: $topCriticName}) " +
+                    "DELETE f";
+            Result result = tx.run(query, parameters("userName", userName, "topCriticName", topCriticName));
+            return 1;
+        });
+        return true;
     }
     @Override
     public User getByUsername(String name) throws DAOException {
