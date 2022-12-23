@@ -96,7 +96,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
      * <method>getUser</method> queries the DB for all user
      * @return a list containing all BaseUser
      */
-    public List<BaseUser> getAllBaseUsers() {
+    public List<BaseUser> getAll() {
         MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
         List<BaseUser> simpleUserList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();

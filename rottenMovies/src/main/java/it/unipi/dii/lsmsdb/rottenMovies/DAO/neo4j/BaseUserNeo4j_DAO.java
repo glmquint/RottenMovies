@@ -35,7 +35,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     }
 
     @Override
-    public List<BaseUser> getAllBaseUsers() throws DAOException {
+    public List<BaseUser> getAll() throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
