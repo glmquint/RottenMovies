@@ -1,6 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.SimplyfiedReviewDTO;
 import org.bson.types.ObjectId;
 
 import java.util.LinkedHashMap;
@@ -13,6 +14,13 @@ public class SimplyfiedReview {
     @JsonProperty("review_index")
     private int index;
 
+    public SimplyfiedReview() {
+    }
+    public SimplyfiedReview (SimplyfiedReviewDTO s){
+        this.movieID=s.getMovieID();
+        this.primaryTitle=s.getPrimaryTitle();
+        this.index=s.getIndex();
+    }
     public ObjectId getMovieID() {
         return this.movieID;
     }
