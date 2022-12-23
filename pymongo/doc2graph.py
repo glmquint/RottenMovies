@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from neo4j import GraphDatabase
-from random import randint, choice
+from random import randint, shuffle
 
 def get_database():
    CONNECTION_STRING = "mongodb://localhost:27017"
@@ -96,8 +96,9 @@ if __name__ == "__main__":
     total = len(uids)
     print(f"\nfollow {total = }")
     for i, user in enumerate(uids):
-        for _ in range(randint(0, 20)):
-            graphDB.addFollow(user, choice(cids))
+        shuffle(cids)
+        for j in range(randint(0, 20)):
+            graphDB.addFollow(user, cids[j])
         print(f"{i/total:%}\r", end='')
 
     graphDB.close()
