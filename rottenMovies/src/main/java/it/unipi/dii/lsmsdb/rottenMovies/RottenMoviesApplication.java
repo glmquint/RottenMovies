@@ -78,7 +78,7 @@ public class RottenMoviesApplication {
 		}
 		*/
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO_neo4j()){
-			User user = (User) testUser.getMostReviewUser();
+			TopCritic user = (TopCritic) testUser.getMostFollowedCritic();
 			System.out.println(user.getUsername());
 			/*
 			TopCritic topCritic = (TopCritic) testUser.getByUsername("Ian Buckwalter");
