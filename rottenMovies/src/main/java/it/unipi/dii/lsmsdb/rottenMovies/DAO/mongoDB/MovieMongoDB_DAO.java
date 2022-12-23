@@ -42,8 +42,6 @@ import java.util.List;
  */
 public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
 
-    private static final String collectionStringMovie = "movie";
-    private static final String collectionStringUser = "user";
     /**
      * <method>searchByTitle</method> queries the DB for a specific movie base on the title
      * @param title is the title of the movie to search
@@ -68,7 +66,25 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return movie;
     }
-
+    public Movie searchById(ObjectId id){
+        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
+        Movie movie = null;
+        ObjectMapper mapper = new ObjectMapper();
+        Document doc =  collection.find(Filters.eq("_id", id)).first();
+        String json_movie;
+        if (doc == null) {
+            System.out.println("No results found.");
+            return null;
+        } else {
+            json_movie = doc.toJson();
+        }
+        try {
+            movie = mapper.readValue(json_movie, Movie.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return movie;
+    }
     public List<Movie> searchByYearRange(int startYear, int endYear){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = null;
@@ -175,15 +191,9 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
     public
  */
-    public void deleteMovie(String title){
-        Movie movie = searchByTitle(title);
-        if (movie == null){
-            return;
-        }
+    public Boolean delete(Movie toDelete){
         MongoCollection<Document>  collectionMovie = returnCollection(myClient, collectionStringMovie);
-        MongoCollection<Document>  collectionUser = returnCollection(myClient, collectionStringUser);
-
-        Bson queryMovie = eq("primaryTitle", title);
+        Bson queryMovie = eq("_id", toDelete.getId());
 
         try { // now I delete the movie from collection movie
             DeleteResult result = collectionMovie.deleteOne(queryMovie);
@@ -191,6 +201,10 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         } catch (MongoException me) {
             System.err.println("Unable to delete due to an error: " + me);
         }
+
+        // TODO: delete the review of the deleted movie
+        return true;
+        /*
         ArrayList<Review> reviews = movie.getReviews(); // getting all the reviews
         Bson filter,deleteReview,deletelast3; // now I delete the movie for the user collection, both in last_3 and reviews
         UpdateResult result3reviews;
@@ -207,6 +221,8 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                 System.out.println("Last3review modified");
             }
         }
+
+         */
     }
     private List<BasicDBObject> buildPersonnelField (Movie movie){
         List<BasicDBObject> personnelDBList=new ArrayList<BasicDBObject>();
@@ -226,16 +242,15 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return personnelDBList;
     }
-    public Boolean updateMovie(Movie updated){
+    public Boolean update(Movie updated){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         List<BasicDBObject> personnelDBList = buildPersonnelField(updated);
 
-        Document movieFromDB = new Document().append("primaryTitle",  updated.getPrimaryTitle());
+        Document movieFromDB = new Document().append("_id",  updated.getId());
         Bson updates = Updates.combine(
                 Updates.set("year", updated.getYear()),
                 Updates.set("runtimeMinutes", updated.getRuntimeMinutes()),
                 Updates.set("production_company", updated.getProductionCompany()),
-                Updates.set("critics_consensus", updated.getCriticConsensus()),
                 Updates.set("tomatometer_status", updated.getTomatometerStatus()),
                 Updates.set("tomatometer_rating", updated.gettomatometerRating()),
                 Updates.set("audience_status", updated.getAudienceStatus()),
@@ -244,7 +259,9 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                 Updates.set("tomatometer_fresh_critics_count", updated.getTomatometerFreshCriticsCount()),
                 Updates.set("tomatometer_rotten_critics_count", updated.getTomatometerRottenCriticsCount()),
                 Updates.set("personnel",personnelDBList));
-
+        if(updated.getCriticConsensus()!=null){ // not all movies have critic_consensus
+            updates=Updates.combine(updates,Updates.set("critics_consensus", updated.getCriticConsensus()));
+        }
         UpdateOptions options = new UpdateOptions().upsert(true);
         try {
             UpdateResult result = collection.updateOne(movieFromDB, updates, options);
@@ -256,7 +273,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return true;
     }
 
-    public Boolean insertMovie(Movie newOne){
+    public Boolean insert(Movie newOne){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         List<BasicDBObject> personnelDBList = buildPersonnelField(newOne);
 

@@ -16,6 +16,9 @@ public abstract class BaseMongoDAO implements AutoCloseable{
     private static final String connectionString = "mongodb://localhost:27017";
     private static final String databaseString = "rottenMovies";
 
+    protected static final String collectionStringMovie = "movie";
+    protected static final String collectionStringUser = "user";
+
     protected final MongoClient myClient;
 
     public BaseMongoDAO(){
