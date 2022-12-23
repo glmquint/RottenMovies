@@ -43,12 +43,17 @@ import java.util.List;
  */
 public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
 
-    public MovieDTO searchByTitle(String title){
+    private Bson query;
 
+    public Bson getQuery() {
+        return query;
+    }
+
+    public MovieDTO searchByTitle(String title){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = new Movie();
         ObjectMapper mapper = new ObjectMapper();
-        Document doc =  collection.find(queryBuildSearchByTitle(null, title)).first();
+        Document doc =  collection.find(queryBuildSearchByTitle(title).getQuery()).first();
         String json_movie;
         if (doc == null) {
             System.out.println("No results found.");
@@ -68,12 +73,13 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
      * @param title is the title of the movie to search
      * @return a movie object
      */
-    public Bson queryBuildSearchByTitle(Bson query, String title){
+    public MovieMongoDB_DAO queryBuildSearchByTitle(String title){
         Bson new_query = Filters.eq("primaryTitle", title);
         if (query == null) {
-            return new_query;
+            query = new_query;
         }
-        return Filters.and(query, new_query);
+        query = Filters.and(query, new_query);
+        return this;
     }
 
     public MovieDTO searchById(ObjectId id){
