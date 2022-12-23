@@ -2,6 +2,7 @@ package it.unipi.dii.lsmsdb.rottenMovies;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.*;
@@ -77,7 +78,7 @@ public class RottenMoviesApplication {
 			e.printStackTrace();
 		}
 		*/
-		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO()){
+		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
 			User user = (User) testUser.getByUsername("Dann Gire");
 			System.out.println(user);
 			/*
