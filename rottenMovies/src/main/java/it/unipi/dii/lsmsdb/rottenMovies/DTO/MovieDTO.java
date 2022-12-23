@@ -58,19 +58,25 @@ public class MovieDTO {
         this.tomatometerRottenCriticsCount= movie.getTomatometerRottenCriticsCount();
         this.criticConsensus=movie.getCriticConsensus();
         ArrayList<Review> reviews=movie.getReviews();
-        ArrayList<ReviewMovieDTO> reviewsdto = new ArrayList<ReviewMovieDTO>();
-        ReviewMovieDTO reviewdto;
-        for(Review r : reviews){
-            reviewdto=new ReviewMovieDTO(r);
-            reviewsdto.add(reviewdto);
+        ArrayList<ReviewMovieDTO> reviewsdto = null;
+        if (reviews != null) {
+            reviewsdto = new ArrayList<ReviewMovieDTO>();
+            ReviewMovieDTO reviewdto;
+            for (Review r : reviews) {
+                reviewdto = new ReviewMovieDTO(r);
+                reviewsdto.add(reviewdto);
+            }
         }
         this.reviews=reviewsdto;
         ArrayList<Personnel> personnel=movie.getpersonnel();
-        ArrayList<PersonnelDTO> personneldto = new ArrayList<PersonnelDTO>();
-        PersonnelDTO p;
-        for(Personnel per: personnel){
-            p=new PersonnelDTO(per);
-            personneldto.add(p);
+        ArrayList<PersonnelDTO> personneldto = null;
+        if (personnel != null) {
+            personneldto = new ArrayList<PersonnelDTO>();
+            PersonnelDTO p;
+            for (Personnel per : personnel) {
+                p = new PersonnelDTO(per);
+                personneldto.add(p);
+            }
         }
         this.personnel=personneldto;
     }

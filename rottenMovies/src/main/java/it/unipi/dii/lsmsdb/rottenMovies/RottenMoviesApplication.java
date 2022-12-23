@@ -65,8 +65,8 @@ public class RottenMoviesApplication {
 
 		try(MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)){
 			MovieDTO movie = testMovie.searchByTitle("Evidence");
-
 			System.out.println(new Movie(movie));
+			/*
 			//System.out.println(testMovie.insert(movie));
 			//Movie movie=testMovie.searchById(new ObjectId("63a484cf9b999919abc1921d"));
 			//System.out.println(testMovie.delete(movie));
@@ -76,6 +76,7 @@ public class RottenMoviesApplication {
 			movie.setYear((Integer)1980);
 			//movie.setCriticConsensus("Helo");
 			testMovie.update(movie);
+			*/
 
 
 		}catch (DAOException e){
