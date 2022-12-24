@@ -3,6 +3,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import org.bson.types.ObjectId;
+import org.neo4j.driver.exceptions.NoSuchRecordException;
 
 import java.util.List;
 
@@ -21,5 +22,9 @@ public interface MovieDAO extends AutoCloseable {
     Boolean insert(MovieDTO newOne) throws DAOException;
 
     public Boolean insertNeo4j(String id, String title) throws DAOException;
+
+    public Boolean deleteNeo4j(String id) throws DAOException, NoSuchRecordException;
+
+    public Boolean updateNeo4j(String id, String newTitle) throws DAOException, NoSuchRecordException;
 
 }

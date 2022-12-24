@@ -9,6 +9,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PersonnelDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.*;
+import org.neo4j.driver.exceptions.NoSuchRecordException;
 
 import java.util.ArrayList;
 
@@ -144,8 +145,14 @@ public class RottenMoviesApplication {
 	private static void mainTestFabio() {
 		try(MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j)){
 			System.out.println(testMovie.insertNeo4j("test", "test"));
+			System.out.println(testMovie.deleteNeo4j("test"));
+			System.out.println(testMovie.updateNeo4j("test", "test2"));
 		}catch (DAOException e){
 			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
+			e.printStackTrace();
+		}
+		catch (NoSuchRecordException e){
+			System.out.println("Exception during testing: " + e.getMessage());
 			e.printStackTrace();
 		}
 		catch(Exception e){

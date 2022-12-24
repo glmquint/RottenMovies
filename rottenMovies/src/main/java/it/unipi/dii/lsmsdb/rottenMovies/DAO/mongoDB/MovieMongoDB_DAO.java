@@ -26,6 +26,7 @@ import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.neo4j.driver.exceptions.NoSuchRecordException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -357,6 +358,14 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public Boolean insertNeo4j(String id, String title) throws DAOException{
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
+    }
+
+    public Boolean deleteNeo4j(String id) throws DAOException, NoSuchRecordException{
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
+    }
+
+    public Boolean updateNeo4j(String id, String newTitle) throws DAOException, NoSuchRecordException {
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 

@@ -8,6 +8,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
+import org.neo4j.driver.exceptions.NoSuchRecordException;
 
 import java.util.List;
 
@@ -29,6 +30,36 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         });
         return true;
     }
+
+    public Boolean deleteNeo4j(String id) throws DAOException, NoSuchRecordException{
+        if(id.isEmpty()){
+            return false;
+        }
+        Session session = driver.session();
+        session.writeTransaction(tx -> {
+            String query = "MATCH (m:Movie{id: $id}) " +
+                    "DETACH DELETE m";
+            Result result = tx.run(query, parameters("id", id));
+            return 1;
+        });
+        return true;
+    }
+
+    public Boolean updateNeo4j(String id, String newTitle) throws DAOException, NoSuchRecordException {
+        if(id.isEmpty() || newTitle.isEmpty()){
+            return false;
+        }
+        Session session = driver.session();
+        session.writeTransaction(tx -> {
+            String query = "MATCH (m:Movie{id: $id}) " +
+                    "SET m.title = $newTitle RETURN m.title AS Title";
+            Result result = tx.run(query, parameters("id", id, "newTitle", newTitle));
+            System.out.println(result.single().get("Title").asString());
+            return 1;
+        });
+        return true;
+    }
+
     @Override
     public MovieDTO searchByTitle(String title) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
