@@ -24,6 +24,5 @@ public interface MovieDAO extends AutoCloseable {
     void queryBuildsearchByUserRatings(int rating, boolean type) throws DAOException;
     boolean update(MovieDTO updated) throws DAOException;
     boolean insert(MovieDTO newOne) throws DAOException;
-    //List<Movie> searchByYear(int year) throws DAOException;
 
 }

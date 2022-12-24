@@ -27,7 +27,6 @@ import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 
-
 /**
  * @author Fabio
  * @author Guillaume
@@ -151,11 +150,6 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         Boolean returnvalue=true;
         for(BaseUserDTO b:users_to_delete){
             b.setFirstName(consts.USERS_MARKED_AS_DELETED);
-            // DEBUG ONLY
-            if(b instanceof UserDTO)
-                System.out.println(new User((UserDTO) b));
-            else
-                System.out.println(new TopCritic((TopCriticDTO) b));
         }
         /*
 

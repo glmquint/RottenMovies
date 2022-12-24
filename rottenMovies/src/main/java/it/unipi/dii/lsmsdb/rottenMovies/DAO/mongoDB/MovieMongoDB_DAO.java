@@ -25,7 +25,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * @author Fabio
@@ -42,7 +42,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public MongoCollection<Document> getCollection(){
-        return returnCollection(myClient, consts.COLLECTION_STRING_MOVIE);
+        return returnCollection(myClient, consts.COLLECTION_STRING_MOVIE); // TODO: check accessed via instance reference
     }
 
     public ArrayList<MovieDTO> executeSearchQuery(int page){
@@ -221,7 +221,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     public boolean update(MovieDTO update){
         Movie updated=new Movie(update);
         MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_MOVIE);
-        List<BasicDBObject> personnelDBList = buildPersonnelField(updated);
+        ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(updated);
         Boolean returnvalue=true;
         Bson updates = Updates.combine(
                 Updates.set("year", updated.getYear()),
@@ -253,7 +253,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
     public boolean insert(MovieDTO newOne){
         MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_MOVIE);
-        List<BasicDBObject> personnelDBList = buildPersonnelField(new Movie(newOne));
+        ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(new Movie(newOne));
         Boolean returnvalue=true;
         try {
             InsertOneResult result = collection.insertOne(new Document()

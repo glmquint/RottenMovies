@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PersonnelDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewMovieDTO;
 import org.bson.types.ObjectId;
 

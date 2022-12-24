@@ -1,13 +1,10 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewUserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.SimplyfiedReviewDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
