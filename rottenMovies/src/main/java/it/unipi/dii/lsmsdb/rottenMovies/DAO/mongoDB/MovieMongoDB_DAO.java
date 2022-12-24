@@ -376,7 +376,9 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         UpdateOptions options = new UpdateOptions().upsert(true);
         try {
-            UpdateResult result = collection.updateOne(queryBuildSearchById(updated.getId()).getQuery(), updates, options);
+            query = null;
+            queryBuildSearchById(updated.getId());
+            UpdateResult result = collection.updateOne(query, updates, options);
             System.out.println("Modified document count: " + result.getModifiedCount());
         } catch (MongoException me) {
             System.err.println("Unable to update due to an error: " + me);
