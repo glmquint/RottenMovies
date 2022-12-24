@@ -13,9 +13,16 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         // TODO: execute only if user.username == "[[IS_GOING_TO_BE_DELETED]]"
         return true;
     }
-
+ /*
+ ==========================================================================
+ INSERIRE SOPRA I METODI DI MONGO E SOTTO QUELLI DI NEO4J
+ ==========================================================================
+  */
     public boolean reviewMovie(String userId, String movieId, String content, Date date, Boolean freshness) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 
+    public boolean deleteReviewNeo4j(String userId, String movieId) throws DAOException{
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
+    }
 }

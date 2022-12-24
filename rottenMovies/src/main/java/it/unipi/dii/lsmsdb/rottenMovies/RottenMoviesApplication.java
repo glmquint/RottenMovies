@@ -171,9 +171,10 @@ public class RottenMoviesApplication {
 			System.out.println(testUser.createBaseUser("Volpi", "Giacomo Volpi", true));
 			System.out.println(testMovie.insertNeo4j("test", "test"));
 			System.out.println(testReview.reviewMovie("Volpi", "test", "content", Date.valueOf(LocalDate.now()), true));
-			System.out.println(testUser.deleteBaseUser("Piras"));
-			System.out.println(testUser.deleteBaseUser("Volpi"));
-			System.out.println(testMovie.deleteNeo4j("test"));
+			System.out.println(testReview.deleteReviewNeo4j("Volpi", "test"));
+			//System.out.println(testUser.deleteBaseUser("Piras"));
+			//System.out.println(testUser.deleteBaseUser("Volpi"));
+			//System.out.println(testMovie.deleteNeo4j("test"));
 		}
 		catch (DAOException e){
 			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());

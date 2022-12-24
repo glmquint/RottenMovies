@@ -39,4 +39,19 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         });
         return true;
     }
+
+    public boolean deleteReviewNeo4j(String userId, String movieId) throws DAOException{
+        if(userId.isEmpty() || movieId.isEmpty()){
+            return false;
+        }
+        Session session = driver.session();
+        session.writeTransaction(tx -> {
+            String query = "MATCH (b{id: $userId}) -[r:REVIEWED] -> (m:Movie{id: $movieId})" +
+                    "DELETE r";
+            Result result = tx.run(query, parameters("userId", userId, "movieId", movieId));
+
+            return 1;
+        });
+        return true;
+    }
 }
