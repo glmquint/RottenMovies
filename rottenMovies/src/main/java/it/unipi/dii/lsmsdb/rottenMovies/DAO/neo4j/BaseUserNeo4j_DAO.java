@@ -143,26 +143,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         return true;
     }
 
-    public boolean reviewMovie(String userId, String movieId, String content, Date date, Boolean freshness) throws DAOException{
-        if(userId.isEmpty() ||movieId.isEmpty() || content.isEmpty() || date==null){
-            return false;
-        }
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String strDate = dateFormat.format(date);
-        Session session = driver.session();
-        session.writeTransaction(tx -> {
-            String query = "MATCH (b{id: $userId}), " +
-                    "(m:Movie{id: $movieId}) " +
-                    "MERGE (b)-[r:REVIEWED {content: $content, date: date(\""+strDate+"\"), freshness: $freshness}]->(m)" +
-                    "RETURN type(r) as Type, r.date as Date, r.freshness as Freshness";
-            Result result = tx.run(query, parameters("userId", userId, "movieId", movieId, "content", content, "freshness", freshness));
-            System.out.println(result.peek().get("Type").asString());
-            System.out.println(result.peek().get("Date"));
-            System.out.println(result.single().get("Freshness"));
-            return 1;
-        });
-        return true;
-    }
+
     @Override
     public User getByUsername(String name) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");

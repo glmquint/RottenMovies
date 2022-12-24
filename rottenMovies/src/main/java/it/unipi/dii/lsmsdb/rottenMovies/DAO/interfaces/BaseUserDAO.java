@@ -25,5 +25,4 @@ public interface BaseUserDAO extends AutoCloseable{
 
     public boolean unfollowTopCritic(String userName, String topCriticName) throws DAOException;
 
-    public boolean reviewMovie(String userId, String movieId, String content, Date date, Boolean freshness) throws DAOException;
 }

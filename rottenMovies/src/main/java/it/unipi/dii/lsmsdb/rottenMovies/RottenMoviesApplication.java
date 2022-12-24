@@ -6,6 +6,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PersonnelDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.*;
@@ -165,10 +166,14 @@ public class RottenMoviesApplication {
 		*/
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j);
 			MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j);
+			ReviewDAO testReview = DAOLocator.getReviewDAO(DataRepositoryEnum.NEO4j);
 		){
-			System.out.println(testUser.createBaseUser("Piras", "Fabio Piras", false));
+			System.out.println(testUser.createBaseUser("Volpi", "Giacomo Volpi", true));
 			System.out.println(testMovie.insertNeo4j("test", "test"));
-			System.out.println(testUser.reviewMovie("Piras", "test", "content", Date.valueOf(LocalDate.now()), true));
+			System.out.println(testReview.reviewMovie("Volpi", "test", "content", Date.valueOf(LocalDate.now()), true));
+			System.out.println(testUser.deleteBaseUser("Piras"));
+			System.out.println(testUser.deleteBaseUser("Volpi"));
+			System.out.println(testMovie.deleteNeo4j("test"));
 		}
 		catch (DAOException e){
 			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
