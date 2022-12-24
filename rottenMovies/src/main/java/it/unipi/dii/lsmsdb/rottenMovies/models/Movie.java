@@ -13,13 +13,10 @@ import java.util.LinkedHashMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie {
-
     @JsonProperty("_id")
     private ObjectId id;
-
     @JsonProperty("primaryTitle")
     private String primaryTitle;
-
     @JsonProperty("year")
     private int year;
     @JsonProperty("runtimeMinutes")
@@ -53,7 +50,6 @@ public class Movie {
 
     public Movie() {
     }
-
     public Movie (MovieDTO moviedto) {
         this.id = moviedto.getId();
         this.primaryTitle = moviedto.getPrimaryTitle();

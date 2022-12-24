@@ -1,14 +1,16 @@
 package it.unipi.dii.lsmsdb.rottenMovies;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.MongoCursor;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
-import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.mongoDB.MovieMongoDB_DAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.PersonnelDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.*;
+import org.bson.Document;
 
 import java.util.ArrayList;
 
@@ -16,38 +18,37 @@ import java.util.ArrayList;
 public class RottenMoviesApplication {
 
 	public  static void main(String[] args) throws JsonProcessingException {
-		//MovieDAO testMovie = DAOLocator.getMovieDAO();
-		//System.out.println(test.searchByTitle("Evidence"));
-		/*for(int i  = 2001; i<2022; ++i) {
-			for (Movie movie : test.searchByYear(i)) {
-				//System.out.println(movie);
-			}
-		}*/
-		//test.searchByYearRange(2000, 2000);
 		/*
-		for(Movie movie : test.searchByUserRatings(10, false)){
-			System.out.println(movie.lessDataString());
-			System.out.println("=============================");
+		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
+			BaseUser base=testUser.getByUsername("Abbie Bernstein");
+			System.out.println(base);
+			System.out.println("=========================");
+			UserDTO user = new UserDTO((User) base);
+			System.out.println(new User(user));
+			System.out.println("=========================");
+			System.out.println(new User());
+			System.out.println("=========================");
+
+			base=testUser.getByUsername("Ernest Hardy");
+			System.out.println(base);
+			System.out.println("=========================");
+
+			TopCriticDTO top = new TopCriticDTO((TopCritic) base);
+			System.out.println(new TopCritic(top));
+			System.out.println("=========================");
+			System.out.println(new TopCritic());
+			System.out.println("=========================");
+
+		}catch (DAOException e){
+			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
+			e.printStackTrace();
 		}
-
-		 */
-		/*Movie evidence=testMovie.searchByTitle("Evidence");
-		System.out.println(evidence);
-		evidence.setRuntimeMinutes((Object)100);
-		System.out.println(evidence);
-		testMovie.updateMovie(evidence);*/
-
-		//test.deleteMovie("The Midnight Man");
-
-
-		/*
-		System.out.println(testUser.getUserByUserName("Mark R. Leeper"));
-		for (BaseUser baseUser : testUser.getUser()) {
-			System.out.println(baseUser);
-			System.out.println("=============================");
+		catch(Exception e){
+			System.out.println("Exception during testing: " + e.getMessage());
+			e.printStackTrace();
 		}
-
 		*/
+
 		/*
 		try(BaseUserDAO baseUserDAO = DAOLocator.getBaseUserDAO()){
 			User user= (User) baseUserDAO.getUserByUserName("Abbie Bernstein");
@@ -61,24 +62,60 @@ public class RottenMoviesApplication {
 			e.printStackTrace();
 		}
 
-		 */
+		*/
 
+		try(MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)){
+			MovieDTO newmovie = new MovieDTO();
+			newmovie.setPrimaryTitle("test nuovo movie 1");
+			((MovieMongoDB_DAO) moviedao).insert(newmovie);
+			System.out.println("insert done 1");
+			newmovie.setPrimaryTitle("test nuovo movie 2");
+			((MovieMongoDB_DAO) moviedao).insert(newmovie);
+			System.out.println("insert done 2");
+			((MovieMongoDB_DAO) moviedao).queryBuildSearchByTitleContains("test nuovo");
+			ArrayList<MovieDTO> movies = ((MovieMongoDB_DAO) moviedao).executeSearchQuery(-1);
+			for (MovieDTO movie : movies){
+				System.out.println(new Movie(movie));
+			}
+			((MovieMongoDB_DAO) moviedao).executeDeleteQuery();
+		} catch (Exception e){
+			System.err.println(e.getStackTrace());
+		}
+/*
 		try(MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)){
-			MovieDTO movie = testMovie.searchByTitle("Evidence");
-			System.out.println(new Movie(movie));
+		*/
 			/*
+			MongoCursor<Document> iter = testMovie.getCollection().find(((MovieMongoDB_DAO)testMovie).queryBuildSearchByTitleContains("avengers").getQuery()).iterator();
+			ObjectMapper mapper = new ObjectMapper();
+			while (iter.hasNext()){
+				System.out.println(mapper.readValue(iter.next().toJson(), Movie.class));
+				System.out.println("=========================");
+			}
+
+			 */
+
+/*
+			((MovieMongoDB_DAO) testMovie).queryBuildSearchByTitleContains("avengers");
+			((MovieMongoDB_DAO) testMovie).queryBuildSearchByYearRange(2018, 2019);
+			ArrayList<MovieDTO> movies = ((MovieMongoDB_DAO) testMovie).executeSearchQuery(0);
+			for (MovieDTO movie : movies){
+				System.out.println(new Movie(movie));
+			}*/
+
+			/*
+			ArrayList<MovieDTO> list = testMovie.searchByYearRange(1929,1930);
+			for(MovieDTO m:list){
+				System.out.println(new Movie(m));
+			}
+*/
 			//System.out.println(testMovie.insert(movie));
 			//Movie movie=testMovie.searchById(new ObjectId("63a484cf9b999919abc1921d"));
 			//System.out.println(testMovie.delete(movie));
-
-			movie.setRuntimeMinutes(80);
-			movie.setPersonnel(new ArrayList<PersonnelDTO>());
-			movie.setYear((Integer)1980);
-			//movie.setCriticConsensus("Helo");
-			testMovie.update(movie);
-			*/
-
-
+			//movie.setRuntimeMinutes(50);
+			//testMovie.update(movie);
+			//testMovie.delete(movie);
+			//testMovie.insert(movie);
+/*
 		}catch (DAOException e){
 			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
 			e.printStackTrace();
@@ -87,7 +124,7 @@ public class RottenMoviesApplication {
 			System.out.println("Exception during testing: " + e.getMessage());
 			e.printStackTrace();
 		}
-
+*/
 		/*
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
 			User user = (User) testUser.getByUsername("Dann Gire");
@@ -102,6 +139,7 @@ public class RottenMoviesApplication {
 		}
 		*/
 
+		/*
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
 			 System.out.println(testUser.createBaseUser("Fabio Piras", false));
 			System.out.println(testUser.createBaseUser("Giacomo Volpi", true));
@@ -109,7 +147,7 @@ public class RottenMoviesApplication {
 			//System.out.println(testUser.unfollowTopCritic("Fabio Piras", "Giacomo Volpi"));
 			System.out.println(testUser.deleteBaseUser("Fabio Piras", false));
 
-			/*
+
 			TopCritic topCritic = (TopCritic) testUser.getByUsername("Ian Buckwalter");
 			System.out.println(topCritic);
 			user.setFirstName("ModifiedAbbie");
@@ -120,7 +158,7 @@ public class RottenMoviesApplication {
 			System.out.println(testUser.modify(topCritic));
 			System.out.println(testUser.delete(topCritic));
 			System.out.println(testUser.delete(user));
-			*/
+
 
 			//System.out.println(testUser.insertBaseUser(user));
 
@@ -132,7 +170,7 @@ public class RottenMoviesApplication {
 			System.out.println("Exception during testing: " + e.getMessage());
 			e.printStackTrace();
 		}
-
+		*/
 
 
 	}

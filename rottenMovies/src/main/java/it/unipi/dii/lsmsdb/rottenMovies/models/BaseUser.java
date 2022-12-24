@@ -1,25 +1,58 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.SimplyfiedReviewDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public abstract class BaseUser extends RegisteredUser {
     @JsonProperty("first_name")
-    private String firstName;
+    protected String firstName;
     @JsonProperty("last_name")
-    private String lastName;
+    protected String lastName;
     @JsonProperty("registration_date")
-    private Date registrationDate;
+    protected Date registrationDate;
     @JsonProperty("last_3_reviews")
-    private List<Review> last3Reviews;
+    protected ArrayList<Review> last3Reviews;
     @JsonProperty("reviews")
-    private List<SimplyfiedReview> reviews;
+    protected ArrayList<SimplyfiedReview> reviews;
 
+    protected BaseUser (){super();}
+    protected BaseUser(BaseUserDTO b){
+        super(b);
+        this.firstName=b.getFirstName();
+        this.lastName=b.getLastName();
+        this.registrationDate=b.getRegistrationDate();
+        ArrayList<ReviewUserDTO> last3review = b.getLast3Reviews();
+        ArrayList<Review> reviews = null;
+        if (last3review != null){
+            reviews = new ArrayList<Review>();
+            Review review = null;
+            for (ReviewUserDTO r : last3review) {
+                review = new Review(r);
+                reviews.add(review);
+            }
+        }
+        this.last3Reviews=reviews;
+        ArrayList<SimplyfiedReviewDTO> reviewsdto = b.getReviews();
+        ArrayList<SimplyfiedReview> allreviews = null;
+        if (reviewsdto != null){
+            allreviews = new ArrayList<SimplyfiedReview>();
+            SimplyfiedReview reviewL = null;
+            for (SimplyfiedReviewDTO r : reviewsdto) {
+                reviewL = new SimplyfiedReview(r);
+                allreviews.add(reviewL);
+            }
+        }
+        this.reviews=allreviews;
+
+    }
     public String getFirstName() {
         return firstName;
     }
@@ -72,19 +105,19 @@ public abstract class BaseUser extends RegisteredUser {
         }
     }
 
-    public List<Review> getLast3Reviews() {
+    public ArrayList<Review> getLast3Reviews() {
         return last3Reviews;
     }
 
-    public void setLast3Reviews(List<Review> last3Reviews) {
+    public void setLast3Reviews(ArrayList<Review> last3Reviews) {
         this.last3Reviews = last3Reviews;
     }
 
-    public List<SimplyfiedReview> getReviews() {
+    public ArrayList<SimplyfiedReview> getReviews() {
         return reviews;
     }
 
-    public void setReviews(List<SimplyfiedReview> reviews) {
+    public void setReviews(ArrayList<SimplyfiedReview> reviews) {
         this.reviews = reviews;
     }
 }
