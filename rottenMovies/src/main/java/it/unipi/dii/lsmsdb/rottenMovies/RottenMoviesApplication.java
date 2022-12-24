@@ -62,7 +62,7 @@ public class RottenMoviesApplication {
 		}
 
 		 */
-
+		/*
 		try(MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)){
 			MovieDTO movie = testMovie.searchByTitle("Evidence");
 			System.out.println(new Movie(movie));
@@ -76,7 +76,7 @@ public class RottenMoviesApplication {
 			movie.setYear((Integer)1980);
 			//movie.setCriticConsensus("Helo");
 			testMovie.update(movie);
-			*/
+
 
 
 		}catch (DAOException e){
@@ -86,7 +86,7 @@ public class RottenMoviesApplication {
 		catch(Exception e){
 			System.out.println("Exception during testing: " + e.getMessage());
 			e.printStackTrace();
-		}
+		}*/
 
 		/*
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
@@ -101,7 +101,7 @@ public class RottenMoviesApplication {
 			e.printStackTrace();
 		}
 		*/
-
+		/* TEST FOR NEO4J USER DAO
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
 			 System.out.println(testUser.createBaseUser("Fabio Piras", false));
 			System.out.println(testUser.createBaseUser("Giacomo Volpi", true));
@@ -123,7 +123,27 @@ public class RottenMoviesApplication {
 			*/
 
 			//System.out.println(testUser.insertBaseUser(user));
+	/*
+		}catch (DAOException e){
+			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
+			e.printStackTrace();
+		}
+		catch(Exception e){
+			System.out.println("Exception during testing: " + e.getMessage());
+			e.printStackTrace();
+		}*/
 
+		//uso questa funzione per eseguire i miei test così
+		//da non intasare ulteriormente il main
+		mainTestFabio();
+
+
+
+	}
+
+	private static void mainTestFabio() {
+		try(MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j)){
+			System.out.println(testMovie.insertNeo4j("test", "test"));
 		}catch (DAOException e){
 			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
 			e.printStackTrace();
@@ -132,9 +152,6 @@ public class RottenMoviesApplication {
 			System.out.println("Exception during testing: " + e.getMessage());
 			e.printStackTrace();
 		}
-
-
-
 	}
 	/*public static void main(String[] args) {
 		SpringApplication.run(RottenMoviesApplication.class, args);
