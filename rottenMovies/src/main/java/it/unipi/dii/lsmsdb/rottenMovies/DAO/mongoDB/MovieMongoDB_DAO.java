@@ -239,19 +239,11 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
     public
  */
-    public MovieMongoDB_DAO queryBuildUpdateDelete(ObjectId id){
-        Bson new_query = queryBuildSearchById(id).getQuery();
-        if (query == null) {
-            query = new_query;
-        }
-        query = Filters.and(query, new_query);
-        return this;
-    }
     public Boolean delete(MovieDTO toDelete){
         MongoCollection<Document>  collectionMovie = returnCollection(myClient, collectionStringMovie);
 
         try { // now I delete the movie from collection movie
-            DeleteResult result = collectionMovie.deleteOne(queryBuildUpdateDelete(toDelete.getId()).getQuery());
+            DeleteResult result = collectionMovie.deleteOne(queryBuildSearchById(toDelete.getId()).getQuery());
             System.out.println("Deleted document count: " + result.getDeletedCount());
         } catch (MongoException me) {
             System.err.println("Unable to delete due to an error: " + me);
@@ -321,7 +313,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         UpdateOptions options = new UpdateOptions().upsert(true);
         try {
-            UpdateResult result = collection.updateOne(queryBuildUpdateDelete(updated.getId()).getQuery(), updates, options);
+            UpdateResult result = collection.updateOne(queryBuildSearchById(updated.getId()).getQuery(), updates, options);
             System.out.println("Modified document count: " + result.getModifiedCount());
         } catch (MongoException me) {
             System.err.println("Unable to update due to an error: " + me);

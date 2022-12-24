@@ -68,8 +68,8 @@ public class RottenMoviesApplication {
 			//System.out.println(testMovie.insert(movie));
 			//Movie movie=testMovie.searchById(new ObjectId("63a484cf9b999919abc1921d"));
 			//System.out.println(testMovie.delete(movie));
-			//movie.setRuntimeMinutes(89);
-			//testMovie.update(movie);
+			movie.setRuntimeMinutes(50);
+			testMovie.update(movie);
 			//testMovie.delete(movie);
 			//testMovie.insert(movie);
 
