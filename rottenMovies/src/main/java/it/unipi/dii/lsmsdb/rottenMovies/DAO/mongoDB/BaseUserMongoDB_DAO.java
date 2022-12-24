@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoException;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.*;
@@ -17,7 +18,12 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import org.bson.Document;
@@ -39,6 +45,50 @@ import java.util.List;
  */
 public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
 
+    public BaseUserMongoDB_DAO() {
+        super();
+    }
+    public MongoCollection<Document> getCollection(){
+        return returnCollection(myClient, consts.COLLECTION_STRING_USER);
+    }
+    public ArrayList<BaseUserDTO> executeSearchQuery(int page){
+        MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
+        ObjectMapper mapper = new ObjectMapper();
+        FindIterable found = collection.find(query);
+        if (page >= 0) { // only internally. Never return all movies without pagination on front-end
+            query=null;
+            found = found.skip(page * consts.USERS_PER_PAGE).limit(consts.USERS_PER_PAGE);
+        }
+        MongoCursor<Document> cursor = found.iterator();
+        ArrayList<BaseUserDTO> user_list = new ArrayList<>();
+        BaseUser simpleUser;
+        String json_user;
+        Document doc;
+        while(cursor.hasNext()){
+            doc = cursor.next();
+            json_user = doc.toJson();
+            try {
+                if (doc.containsKey("date_of_birth")) {
+                    simpleUser = mapper.readValue(json_user, User.class);
+                    user_list.add(new UserDTO((User) simpleUser));
+                } else {
+                    simpleUser = mapper.readValue(json_user, TopCritic.class);
+                    user_list.add(new TopCriticDTO((TopCritic) simpleUser));
+                }
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return user_list;
+    }
+    public void queryBuildSearchByUsername(String username){
+        Bson new_query = Filters.eq("username", username);
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
     /**
      * <method>getUserByUsername</method> queries the DB based on a username to search
      * @param Username is the username to search
