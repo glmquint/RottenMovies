@@ -78,6 +78,15 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return this;
     }
 
+    public MovieMongoDB_DAO queryBuildSearchByTitleContains(String title){
+        Bson new_query = Filters.eq("primaryTitle", title);
+        if (query == null) {
+            query = new_query;
+        }
+        query = Filters.and(query, new_query);
+        return this;
+    }
+
     public MovieDTO searchById(ObjectId id){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         Movie movie = new Movie();
