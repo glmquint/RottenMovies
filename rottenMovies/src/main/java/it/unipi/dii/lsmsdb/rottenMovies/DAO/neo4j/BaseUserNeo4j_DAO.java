@@ -1,5 +1,6 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DAO.neo4j;
 
+import com.mongodb.client.MongoCollection;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseNeo4jDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
@@ -9,15 +10,15 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.*;
-
+import org.bson.Document;
 import java.util.ArrayList;
-import java.util.List;
+
 
 import static org.neo4j.driver.Values.parameters;
 
 public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
 
-    public User getMostReviewUser() throws DAOException{
+    public User getMostReviewUser() throws DAOException {
         Session session = driver.session();
         User user = new User();
 
@@ -134,10 +135,25 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         });
         return true;
     }
+    public MongoCollection<Document> getCollection() throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
     public ArrayList<BaseUserDTO> executeSearchQuery(int page) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
     public void queryBuildSearchByUsername(String username) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+    public void queryBuildSearchById(ObjectId id) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+    public boolean executeDeleteQuery() throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+    public boolean insert(BaseUser usr) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+    public boolean update(BaseUser usr) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
     /*

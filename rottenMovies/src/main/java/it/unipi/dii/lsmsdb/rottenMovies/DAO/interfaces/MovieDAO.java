@@ -15,15 +15,15 @@ import java.util.ArrayList;
 public interface MovieDAO extends AutoCloseable {
     MongoCollection<Document> getCollection() throws DAOException;
     ArrayList<MovieDTO> executeSearchQuery(int page) throws DAOException;
-    Boolean executeDeleteQuery() throws DAOException;
+    boolean executeDeleteQuery() throws DAOException;
     void queryBuildSearchByTitle (String title) throws DAOException;
     void queryBuildSearchByTitleContains(String title) throws DAOException;
     void queryBuildSearchById(ObjectId id) throws DAOException;
     void queryBuildSearchByYear(int year, boolean afterYear) throws DAOException;
     void queryBuildSearchByTopRatings(int rating, boolean type) throws DAOException;
     void queryBuildsearchByUserRatings(int rating, boolean type) throws DAOException;
-    Boolean update(MovieDTO updated) throws DAOException;
-    Boolean insert(MovieDTO newOne) throws DAOException;
+    boolean update(MovieDTO updated) throws DAOException;
+    boolean insert(MovieDTO newOne) throws DAOException;
     //List<Movie> searchByYear(int year) throws DAOException;
 
 }

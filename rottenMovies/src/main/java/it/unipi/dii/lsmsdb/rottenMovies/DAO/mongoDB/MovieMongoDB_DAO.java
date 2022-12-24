@@ -69,7 +69,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return movie_list;
     }
 
-    public Boolean executeDeleteQuery(){
+    public boolean executeDeleteQuery(){
         ArrayList<MovieDTO> movies_to_delete = executeSearchQuery(-1);
         // TODO: delete the user review of the deleted movie before executing deleteMany
         MongoCollection<Document>  collectionMovie = returnCollection(myClient, consts.COLLECTION_STRING_MOVIE);
@@ -218,7 +218,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return personnelDBList;
     }
-    public Boolean update(MovieDTO update){
+    public boolean update(MovieDTO update){
         Movie updated=new Movie(update);
         MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_MOVIE);
         List<BasicDBObject> personnelDBList = buildPersonnelField(updated);
@@ -251,7 +251,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query=null;
         return returnvalue;
     }
-    public Boolean insert(MovieDTO newOne){
+    public boolean insert(MovieDTO newOne){
         MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_MOVIE);
         List<BasicDBObject> personnelDBList = buildPersonnelField(new Movie(newOne));
         Boolean returnvalue=true;
