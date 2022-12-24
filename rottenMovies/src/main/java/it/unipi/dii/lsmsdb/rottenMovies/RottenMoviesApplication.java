@@ -143,11 +143,25 @@ public class RottenMoviesApplication {
 	}
 
 	private static void mainTestFabio() {
+		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)) {
+			System.out.println(testUser.createBaseUser("Piras", "Fabio Piras", false));
+			System.out.println(testUser.createBaseUser("Volpi", "Giacomo Volpi", true));
+			System.out.println(testUser.updateBaseUser("Volpi", "Volpi Giacomo"));
+			//System.out.println(testUser.followTopCritic("Fabio Piras", "Giacomo Volpi"));
+			//System.out.println(testUser.unfollowTopCritic("Fabio Piras", "Giacomo Volpi"));
+			System.out.println(testUser.deleteBaseUser("Piras"));
+			System.out.println(testUser.deleteBaseUser("Volpi"));
+		}
+
+		/*	TEST FOR THE MOVIE NEO4J
 		try(MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j)){
 			System.out.println(testMovie.insertNeo4j("test", "test"));
 			System.out.println(testMovie.deleteNeo4j("test"));
 			System.out.println(testMovie.updateNeo4j("test", "test2"));
-		}catch (DAOException e){
+		}
+		*/
+
+		catch (DAOException e){
 			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
 			e.printStackTrace();
 		}

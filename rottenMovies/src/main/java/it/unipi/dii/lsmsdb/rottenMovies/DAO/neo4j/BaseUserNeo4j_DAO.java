@@ -50,53 +50,60 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         return topCritic;
     }
 
-    public boolean createBaseUser(String name, boolean isTop) throws DAOException{
-        if(name.isEmpty()){
+    public boolean createBaseUser(String id, String name, boolean isTop) throws DAOException{
+        if(id.isEmpty() || name.isEmpty()){
             return  false;
         }
         Session session = driver.session();
         String newUserName = session.writeTransaction((TransactionWork<String>)  tx ->{
             String query;
             if(isTop){
-                query = "MERGE (t:TopCritic{name: $name}) "+
-                        "ON CREATE SET t.name= $name "+
+                query = "MERGE (t:TopCritic{id: $id}) "+
+                        "ON CREATE SET t.id = $id, t.name= $name "+
                         "RETURN t.name as Name";
             }
             else{
-                query = "MERGE (u:User{name: $name}) "+
-                        "ON CREATE SET u.name= $name "+
+                query = "MERGE (u:User{id: $id}) "+
+                        "ON CREATE SET u.id=$id, u.name= $name "+
                         "RETURN u.name as Name";
             }
 
-            Result result = tx.run(query, parameters("name", name));
+            Result result = tx.run(query, parameters("id", id, "name", name));
             return result.single().get("Name").asString();
         });
         System.out.println(newUserName);
         return true;
     }
 
-    public boolean deleteBaseUser(String name, boolean isTop) throws DAOException{
-        if(name.isEmpty()){
+    public boolean deleteBaseUser(String id) throws DAOException{
+        if(id.isEmpty()){
             return  false;
         }
         Session session = driver.session();
         session.writeTransaction(tx ->{
-            String query;
-            if(isTop){
-                query = "MATCH (t:TopCritic{name: $name}) " +
-                            "DETACH DELETE t";
-            }
-            else{
-                query = "MATCH (u:User{name: $name}) " +
-                        "DETACH DELETE u";
-            }
-
-            Result result = tx.run(query, parameters("name", name));
+            String query = "MATCH (b{id: $id}) " +
+                        "DETACH DELETE b";
+            Result result = tx.run(query, parameters("id", id));
             return 1;
         });
         return true;
     }
 
+    public boolean updateBaseUser(String id, String newName) throws DAOException{
+        if(id.isEmpty() || newName.isEmpty()){
+            return  false;
+        }
+        Session session = driver.session();
+        session.writeTransaction(tx -> {
+            String query = "MATCH (b{id: $id}) " +
+                    "SET b.name=$newName RETURN b.name AS Name";
+
+            Result result = tx.run(query, parameters("id", id, "newName", newName));
+            System.out.println(result.single().get("Name").asString());
+            return 1;
+        });
+        return true;
+    }
     public boolean followTopCritic(String userName, String topCriticName) throws DAOException{
         if(userName.isEmpty() || topCriticName.isEmpty()){
             return  false;
