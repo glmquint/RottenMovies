@@ -62,14 +62,19 @@ public class RottenMoviesApplication {
 		*/
 
 		try(MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)){
-			MovieDTO movie = testMovie.searchByTitle("The Midnight Man");
+			MovieDTO movie = testMovie.searchByTitle("Avatar");
 			System.out.println(new Movie(movie));
+			System.out.println("=========================");
+			ArrayList<MovieDTO> list = testMovie.searchByYearRange(1929,1930);
+			for(MovieDTO m:list){
+				System.out.println(new Movie(m));
+			}
 
 			//System.out.println(testMovie.insert(movie));
 			//Movie movie=testMovie.searchById(new ObjectId("63a484cf9b999919abc1921d"));
 			//System.out.println(testMovie.delete(movie));
-			movie.setRuntimeMinutes(50);
-			testMovie.update(movie);
+			//movie.setRuntimeMinutes(50);
+			//testMovie.update(movie);
 			//testMovie.delete(movie);
 			//testMovie.insert(movie);
 

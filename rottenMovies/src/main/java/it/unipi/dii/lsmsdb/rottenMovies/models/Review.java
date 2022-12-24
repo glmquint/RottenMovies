@@ -42,7 +42,7 @@ public class Review {
         if(r instanceof ReviewUserDTO){
             this.movie= ((ReviewUserDTO) r).getMovie();
         }
-        else {
+        else if (r instanceof ReviewMovieDTO){
             this.criticName=((ReviewMovieDTO)r).getCriticName();
         }
     }
