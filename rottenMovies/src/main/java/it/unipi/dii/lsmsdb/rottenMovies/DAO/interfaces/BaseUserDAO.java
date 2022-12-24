@@ -4,7 +4,9 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import org.bson.types.ObjectId;
+import org.springframework.data.auditing.CurrentDateTimeProvider;
 
+import java.util.Date;
 import java.util.List;
 
 public interface BaseUserDAO extends AutoCloseable{
@@ -22,4 +24,6 @@ public interface BaseUserDAO extends AutoCloseable{
     public boolean followTopCritic(String userName, String topCriticName) throws DAOException;
 
     public boolean unfollowTopCritic(String userName, String topCriticName) throws DAOException;
+
+    public boolean reviewMovie(String userId, String movieId, String content, Date date, Boolean freshness) throws DAOException;
 }

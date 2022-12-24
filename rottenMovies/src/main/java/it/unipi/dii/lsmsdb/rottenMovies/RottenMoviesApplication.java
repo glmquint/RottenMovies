@@ -11,6 +11,8 @@ import it.unipi.dii.lsmsdb.rottenMovies.DTO.PersonnelDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.*;
 import org.neo4j.driver.exceptions.NoSuchRecordException;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 //@SpringBootApplication
@@ -143,6 +145,7 @@ public class RottenMoviesApplication {
 	}
 
 	private static void mainTestFabio() {
+		/* TEST FOR THE USER NEO4J
 		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)) {
 			System.out.println(testUser.createBaseUser("Piras", "Fabio Piras", false));
 			System.out.println(testUser.createBaseUser("Volpi", "Giacomo Volpi", true));
@@ -152,7 +155,7 @@ public class RottenMoviesApplication {
 			System.out.println(testUser.deleteBaseUser("Piras"));
 			System.out.println(testUser.deleteBaseUser("Volpi"));
 		}
-
+		*/
 		/*	TEST FOR THE MOVIE NEO4J
 		try(MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j)){
 			System.out.println(testMovie.insertNeo4j("test", "test"));
@@ -160,7 +163,13 @@ public class RottenMoviesApplication {
 			System.out.println(testMovie.updateNeo4j("test", "test2"));
 		}
 		*/
-
+		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j);
+			MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j);
+		){
+			System.out.println(testUser.createBaseUser("Piras", "Fabio Piras", false));
+			System.out.println(testMovie.insertNeo4j("test", "test"));
+			System.out.println(testUser.reviewMovie("Piras", "test", "content", Date.valueOf(LocalDate.now()), true));
+		}
 		catch (DAOException e){
 			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
 			e.printStackTrace();
