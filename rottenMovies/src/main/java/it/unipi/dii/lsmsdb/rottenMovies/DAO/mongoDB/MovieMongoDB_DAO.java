@@ -16,6 +16,7 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
@@ -353,6 +354,10 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             return false;
         }
         return true;
+    }
+
+    public Boolean insertNeo4j(String id, String title) throws DAOException{
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 
 }

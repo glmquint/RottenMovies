@@ -19,6 +19,7 @@ public interface MovieDAO extends AutoCloseable {
     Boolean delete(MovieDTO toDelete) throws DAOException;
     Boolean update(MovieDTO updated) throws DAOException;
     Boolean insert(MovieDTO newOne) throws DAOException;
-    //List<Movie> searchByYear(int year) throws DAOException;
+
+    public Boolean insertNeo4j(String id, String title) throws DAOException;
 
 }
