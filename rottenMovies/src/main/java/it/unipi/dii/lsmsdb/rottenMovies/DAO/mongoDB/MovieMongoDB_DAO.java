@@ -103,7 +103,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         if (query == null) {
             query = new_query;
         }
-        query = Filters.and(query, new_query); //TODO: check this
+        query = Filters.and(query, new_query);
         return this;
     }
     public ArrayList<MovieDTO> searchByYearRange(int startYear, int endYear){
@@ -112,22 +112,19 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         String json_movie;
         ObjectMapper mapper = new ObjectMapper();
         MongoCursor<Document> cursor =  collection.find(queryBuildsearchByYearRange(startYear,endYear).getQuery()).iterator();
-        List<Movie> movie_list = new ArrayList<>();
+        ArrayList<MovieDTO> movie_list = new ArrayList<>();
         while(cursor.hasNext()){
             json_movie = cursor.next().toJson();
             try {
-                movie = mapper.readValue(json_movie, Movie.class); //TODO: possible optimization, direct MovieDTO return list
+                movie = mapper.readValue(json_movie, Movie.class);
             } catch (JsonProcessingException e) {
+                query=null;
                 throw new RuntimeException(e);
             }
-            movie_list.add(movie);
-        }
-        ArrayList<MovieDTO> movieDTOS = new ArrayList<MovieDTO>();
-        for(Movie m: movie_list){
-            movieDTOS.add(new MovieDTO(m));
+            movie_list.add(new MovieDTO(movie));
         }
         query=null;
-        return movieDTOS;
+        return movie_list;
     }
 
     public MovieMongoDB_DAO queryBuildsearchByYearRange(int startYear, int endYear){
@@ -159,22 +156,19 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         String json_movie;
         ObjectMapper mapper = new ObjectMapper();
         MongoCursor<Document> cursor =  collection.find(queryBuildsearchByTopRatings(rating,type).getQuery()).sort(orderBy(descending("tomatometer_rating"))).iterator();
-        List<Movie> movie_list = new ArrayList<>();
+        ArrayList<MovieDTO> movie_list = new ArrayList<>();
         while(cursor.hasNext()){
             json_movie = cursor.next().toJson();
             try {
-                movie = mapper.readValue(json_movie, Movie.class); //TODO: possible optimization, direct MovieDTO return list
+                movie = mapper.readValue(json_movie, Movie.class);
             } catch (JsonProcessingException e) {
+                query=null;
                 throw new RuntimeException(e);
             }
-            movie_list.add(movie);
-        }
-        ArrayList<MovieDTO> movieDTOS = new ArrayList<MovieDTO>();
-        for(Movie m: movie_list){
-            movieDTOS.add(new MovieDTO(m));
+            movie_list.add(new MovieDTO(movie));
         }
         query=null;
-        return movieDTOS;
+        return movie_list;
     }
 
     public ArrayList<MovieDTO> searchByUserRatings(int rating, boolean type){
@@ -183,22 +177,19 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         String json_movie;
         ObjectMapper mapper = new ObjectMapper();
         MongoCursor<Document> cursor =  collection.find(queryBuildsearchByUserRatings(rating,type).getQuery()).sort(orderBy(descending("audience_rating"))).iterator();
-        List<Movie> movie_list = new ArrayList<>();
+        ArrayList<MovieDTO> movie_list = new ArrayList<>();
         while(cursor.hasNext()){
             json_movie = cursor.next().toJson();
             try {
-                movie = mapper.readValue(json_movie, Movie.class); //TODO: possible optimization, direct MovieDTO return list
+                movie = mapper.readValue(json_movie, Movie.class);
             } catch (JsonProcessingException e) {
+                query=null;
                 throw new RuntimeException(e);
             }
-            movie_list.add(movie);
-        }
-        ArrayList<MovieDTO> movieDTOS = new ArrayList<MovieDTO>();
-        for(Movie m: movie_list){
-            movieDTOS.add(new MovieDTO(m));
+            movie_list.add(new MovieDTO(movie));
         }
         query=null;
-        return movieDTOS;
+        return movie_list;
     }
     public MovieMongoDB_DAO queryBuildsearchByUserRatings(int rating, boolean type){
         Bson new_query;
@@ -241,19 +232,17 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
  */
     public Boolean delete(MovieDTO toDelete){
         MongoCollection<Document>  collectionMovie = returnCollection(myClient, collectionStringMovie);
-
+        Boolean returnvalue=true;
         try { // now I delete the movie from collection movie
             DeleteResult result = collectionMovie.deleteOne(queryBuildSearchById(toDelete.getId()).getQuery());
             System.out.println("Deleted document count: " + result.getDeletedCount());
         } catch (MongoException me) {
             System.err.println("Unable to delete due to an error: " + me);
-            query=null;
-            return false;
+            returnvalue=false;
         }
-
         // TODO: delete the review of the deleted movie
         query=null;
-        return true;
+        return returnvalue;
         /*
         ArrayList<Review> reviews = movie.getReviews(); // getting all the reviews
         Bson filter,deleteReview,deletelast3; // now I delete the movie for the user collection, both in last_3 and reviews
@@ -296,6 +285,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         Movie updated=new Movie(update);
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         List<BasicDBObject> personnelDBList = buildPersonnelField(updated);
+        Boolean returnvalue=true;
         Bson updates = Updates.combine(
                 Updates.set("year", updated.getYear()),
                 Updates.set("runtimeMinutes", updated.getRuntimeMinutes()),
@@ -317,16 +307,16 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             System.out.println("Modified document count: " + result.getModifiedCount());
         } catch (MongoException me) {
             System.err.println("Unable to update due to an error: " + me);
-            query=null;
-            return false;
+
+            returnvalue=false;
         }
         query=null;
-        return true;
+        return returnvalue;
     }
     public Boolean insert(MovieDTO newOne){
         MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
         List<BasicDBObject> personnelDBList = buildPersonnelField(new Movie(newOne));
-
+        Boolean returnvalue=true;
         try {
             InsertOneResult result = collection.insertOne(new Document()
                     .append("_id", new ObjectId())
@@ -348,9 +338,10 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             System.out.println("Success! Inserted document id: " + result.getInsertedId());
         } catch (MongoException me) {
             System.err.println("Unable to insert due to an error: " + me);
-            return false;
+            returnvalue = false;
         }
-        return true;
+        query=null;
+        return returnvalue;
     }
 
 }
