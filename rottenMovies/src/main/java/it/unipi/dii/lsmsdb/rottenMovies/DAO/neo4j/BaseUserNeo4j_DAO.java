@@ -144,6 +144,15 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     public void queryBuildSearchByUsername(String username) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    public void queryBuildSearchByUsernameContains(String username) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+    public void queryBuildSearchByLastNameContains(String lastname) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+    public void queryBuildSearchByFirstNameContains(String firstname) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
     public void queryBuildSearchById(ObjectId id) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }

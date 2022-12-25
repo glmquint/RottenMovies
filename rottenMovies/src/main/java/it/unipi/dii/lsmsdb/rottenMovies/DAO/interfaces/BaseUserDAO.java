@@ -14,7 +14,10 @@ public interface BaseUserDAO extends AutoCloseable{
     MongoCollection<Document> getCollection() throws DAOException;
     ArrayList<BaseUserDTO> executeSearchQuery(int page) throws DAOException;
     void queryBuildSearchByUsername(String username) throws DAOException;
+    void queryBuildSearchByLastNameContains(String lastname) throws DAOException;
+    void queryBuildSearchByFirstNameContains(String lastname) throws DAOException;
     void queryBuildSearchById(ObjectId id) throws DAOException;
+    void queryBuildSearchByUsernameContains(String username) throws DAOException;
     boolean insert(BaseUser usr) throws DAOException;
     boolean update(BaseUser usr) throws DAOException;
     boolean executeDeleteQuery() throws DAOException;

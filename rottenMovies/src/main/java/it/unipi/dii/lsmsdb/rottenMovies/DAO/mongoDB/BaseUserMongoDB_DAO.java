@@ -83,6 +83,31 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         query = Filters.and(query, new_query);
     }
+    public void queryBuildSearchByUsernameContains(String username){
+        Bson new_query = Filters.regex("username", username, "i");
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+    public void queryBuildSearchByFirstNameContains(String firstname){
+        Bson new_query = Filters.regex("first_name", firstname, "i");
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+    public void queryBuildSearchByLastNameContains(String lastname){
+        Bson new_query = Filters.regex("last_name", lastname, "i");
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+    
     public void queryBuildSearchById(ObjectId id){
         Bson new_query = Filters.eq("_id", id);
         if (query == null) {
