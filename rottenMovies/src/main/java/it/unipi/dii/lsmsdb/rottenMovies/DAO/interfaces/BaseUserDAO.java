@@ -16,8 +16,10 @@ public interface BaseUserDAO extends AutoCloseable{
     void queryBuildSearchByUsername(String username) throws DAOException;
     void queryBuildSearchByLastNameContains(String lastname) throws DAOException;
     void queryBuildSearchByFirstNameContains(String lastname) throws DAOException;
+    void queryBuildSearchByYearOfBirth(int year) throws DAOException;
     void queryBuildSearchById(ObjectId id) throws DAOException;
     void queryBuildSearchByUsernameContains(String username) throws DAOException;
+    void queryBuildSearchByRegistrationDate(int year,int month,int day) throws DAOException;
     boolean insert(BaseUser usr) throws DAOException;
     boolean update(BaseUser usr) throws DAOException;
     boolean executeDeleteQuery() throws DAOException;

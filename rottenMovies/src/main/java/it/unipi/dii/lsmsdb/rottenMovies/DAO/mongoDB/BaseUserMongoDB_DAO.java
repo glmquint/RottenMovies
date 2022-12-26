@@ -25,7 +25,9 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+
 
 /**
  * @author Fabio
@@ -107,7 +109,28 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         query = Filters.and(query, new_query);
     }
-    
+
+    public void queryBuildSearchByYearOfBirth(int year){
+        LocalDateTime start = LocalDateTime.of(year, 1, 1, 00, 00, 00);
+        LocalDateTime end = LocalDateTime.of(year, 12, 31, 23, 59, 59);
+        Bson new_query = Filters.and(Filters.gte("date_of_birth",start),Filters.lte("date_of_birth",end));
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+    public void queryBuildSearchByRegistrationDate(int year,int month,int day){
+        LocalDateTime start = LocalDateTime.of(year, month, day, 00, 00, 00);
+        LocalDateTime end = LocalDateTime.of(year, month, day, 23, 59, 59);
+        Bson new_query = Filters.and(Filters.gte("registration_date",start),Filters.lte("registration_date",end));
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+
     public void queryBuildSearchById(ObjectId id){
         Bson new_query = Filters.eq("_id", id);
         if (query == null) {
