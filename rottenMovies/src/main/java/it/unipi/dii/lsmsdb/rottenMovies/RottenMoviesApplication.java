@@ -9,5 +9,4 @@ public class RottenMoviesApplication {
 		PersonalTestClass test = new PersonalTestClass();
 		test.testMain();
 	}
-
 }
