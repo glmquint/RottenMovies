@@ -140,15 +140,6 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query = Filters.and(query, new_query);
     }
 
-    public void queryBuildSearchPersonnel(String worker){
-        Bson new_query = Filters.and(elemMatch("personnel", eq("primaryName", worker)));
-        if (query == null){
-            query = new_query;
-            return;
-        }
-        query = Filters.and(query, new_query);
-    }
-
     public void queryBuildSearchByYear(int year, boolean afterYear){
         Bson new_query = null;
         if (afterYear) {
