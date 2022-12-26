@@ -2,16 +2,21 @@ package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.PersonnelDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewMovieDTO;
+import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie {
-
+    @JsonProperty("_id")
+    private ObjectId id;
     @JsonProperty("primaryTitle")
     private String primaryTitle;
-    //@JsonProperty("year")
     @JsonProperty("year")
     private int year;
     @JsonProperty("runtimeMinutes")
@@ -43,7 +48,57 @@ public class Movie {
     @JsonProperty("critic_consensus")
     private String criticConsensus;
 
-    public Movie() {}
+    public Movie() {
+    }
+    public Movie (MovieDTO moviedto) {
+        this.id = moviedto.getId();
+        this.primaryTitle = moviedto.getPrimaryTitle();
+        this.year = moviedto.getYear();
+        this.runtimeMinutes = moviedto.getRuntimeMinutes();
+        this.genres = moviedto.getGenres();
+        this.productionCompany = moviedto.getProductionCompany();
+        this.tomatometerStatus = moviedto.getTomatometerStatus();
+        this.tomatometerRating = moviedto.getTomatometerRating();
+        this.audienceStatus = moviedto.getAudienceStatus();
+        this.audienceRating = moviedto.getAudienceRating();
+        this.audienceCount = moviedto.getAudienceCount();
+        this.tomatometerFreshCriticsCount = moviedto.getTomatometerFreshCriticsCount();
+        this.tomatometerRottenCriticsCount = moviedto.getTomatometerRottenCriticsCount();
+        this.criticConsensus = moviedto.getCriticConsensus();
+        ArrayList<ReviewMovieDTO> reviewsDTO = moviedto.getReviews();
+        ArrayList<Review> reviews = null;
+        if (reviewsDTO != null){
+            reviews = new ArrayList<Review>();
+            Review review = null;
+            for (ReviewMovieDTO r : reviewsDTO) {
+                review = new Review(r);
+                reviews.add(review);
+            }
+        }
+        this.reviews=reviews;
+        ArrayList<PersonnelDTO> personnelDTO=moviedto.getPersonnel();
+        ArrayList<Personnel> personnel = null;
+        if (personnelDTO != null){
+            personnel = new ArrayList<Personnel>();
+            Personnel p;
+            for(PersonnelDTO per: personnelDTO){
+                p=new Personnel(per);
+                personnel.add(p);
+            }
+        }
+        this.personnel=personnel;
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(Object id) {
+        if(id instanceof LinkedHashMap<?,?>){
+            LinkedHashMap link = (LinkedHashMap)id;
+            this.id = new ObjectId(link.get("$oid").toString());
+        }
+    }
 
     public String getPrimaryTitle() {
         return primaryTitle;
@@ -81,7 +136,7 @@ public class Movie {
         if(runtimeMinutes instanceof  Integer)
             this.runtimeMinutes = (int)runtimeMinutes;
         else
-            this.runtimeMinutes = 0;
+            this.runtimeMinutes = -1;
     }
 
     public ArrayList<String> getGenres() {
@@ -191,15 +246,19 @@ public class Movie {
 
     @Override
     public String toString() {
+        if (id == null){
+            return "Movie{}";
+        }
         return "Movie{" +
-                "primaryTitle='" + primaryTitle + '\'' +
+                "id=" + id.toString() +
+                ", primaryTitle='" + primaryTitle + '\'' +
                 ", year=" + year +
                 ", runtimeMinutes=" + runtimeMinutes +
                 ", genres=" + genres +
                 ", productionCompany='" + productionCompany + '\'' +
                 ", tomatometerStatus='" + tomatometerStatus + '\'' +
                 ", tomatometerRating=" + tomatometerRating +
-                ", audienceStatus=" + audienceStatus +
+                ", audienceStatus='" + audienceStatus + '\'' +
                 ", audienceRating=" + audienceRating +
                 ", audienceCount=" + audienceCount +
                 ", tomatometerFreshCriticsCount=" + tomatometerFreshCriticsCount +
@@ -211,6 +270,9 @@ public class Movie {
     }
 
     public String lessDataString(){
+        if (id == null){
+            return "Movie{}";
+        }
         return "Movie{"+'\n'+
                 "primaryTitle='" + primaryTitle + '\n' +
                 "year=" + year + '\n' +

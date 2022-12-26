@@ -1,4 +1,9 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
-public class Admin extends RegistratedUser {
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO;
+
+public class Admin extends RegisteredUser {
+    public Admin(AdminDTO adminDTO){
+        super(adminDTO);
+    }
 }

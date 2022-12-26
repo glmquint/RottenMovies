@@ -608,7 +608,7 @@ db.runCommand(
                 is_top |= tmp.top_critic;
                 review_arr.push(tmp)
                 //movie_arr.push(tmp._id)
-                movie_arr.push({"_id": tmp._id, "primaryTitle": y.primaryTitle, "review_index": y.index})
+                movie_arr.push({"movie_id": tmp._id, "primaryTitle": y.primaryTitle, "review_index": y.index})
             })
 
         name_parts = x.split(/\s/)
@@ -634,7 +634,7 @@ db.runCommand(
             db.user.updateOne(
                 {"username": x},
                 {$set: 
-                    {"date_of_birth": new Date("1969-07-20")}
+                    {"date_of_birth": new Date("1970-07-20")}
                 }
             )
         }
@@ -642,6 +642,10 @@ db.runCommand(
     }   
 )
                 
+```
+#### modify users date_of_birth  
+```js
+db.user.updateMany({"date_of_birth":{$exists:true}}, {$set: {"date_of_birth": new Date("1970-07-20")}} )
 ```
 #### an imposter (find the error)
 

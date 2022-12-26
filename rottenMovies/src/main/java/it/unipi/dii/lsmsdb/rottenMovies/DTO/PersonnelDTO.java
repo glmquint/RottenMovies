@@ -1,25 +1,18 @@
-package it.unipi.dii.lsmsdb.rottenMovies.models;
+package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.PersonnelDTO;
-
+import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 
 import java.util.ArrayList;
 
-public class Personnel {
-    @JsonProperty("primaryName")
-    private String primaryName;
-    @JsonProperty("category")
-    private String category;
-    @JsonProperty("job")
-    private String job;
-    @JsonProperty("characters")
-    private ArrayList<String> characters;
+public class PersonnelDTO {
+        private String primaryName;
+        private String category;
+        private String job;
+        private ArrayList<String> characters;
 
-    public Personnel() {
+    public PersonnelDTO() {
     }
-
-    public Personnel(PersonnelDTO p) {
+    public PersonnelDTO(Personnel p) {
         this.primaryName=p.getPrimaryName();
         this.category=p.getCategory();
         this.job=p.getJob();
@@ -55,15 +48,5 @@ public class Personnel {
 
     public void setCharacters(ArrayList<String> characters) {
         this.characters = characters;
-    }
-
-    @Override
-    public String toString() {
-        return "Personnel{" +
-                "primaryName='" + primaryName + '\'' +
-                ", category='" + category + '\'' +
-                ", job='" + job + '\'' +
-                ", characters=" + characters +
-                '}';
     }
 }

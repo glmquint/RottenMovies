@@ -19,46 +19,8 @@ import java.util.List;
 @Controller
 public class RottenMoviesApplication {
 
-	public  static void main(String[] args)  {
-		SpringApplication.run(RottenMoviesApplication.class, args);
+	public  static void main(String[] args) throws JsonProcessingException {
+		PersonalTestClass test = new PersonalTestClass();
+		test.testMain();
 	}
-	@GetMapping("/hello/{id}")
-	public String hello(Model model,
-						@RequestParam(value = "name", defaultValue = "World") String name,
-						@RequestParam(value = "amount", defaultValue = "1") String amount,
-						@PathVariable("projectId") int id) {
-		model.addAttribute("return", String.format("Hello %s!", name));
-		model.addAttribute("id", id);
-		/*List<Movie> movies = new
-		for (int i = 0; i < amount; i++) {
-
-		}*/
-		return "hello";
-	}
-
-	@GetMapping("/")
-	public String index(Model model){
-		return "index";
-	}
-
-	@GetMapping("/explore")
-	public  String explore(Model model){
-		return "explore";
-	}
-
-	@GetMapping("/login")
-	public String login(Model model){
-		return "login";
-	}
-
-	@GetMapping("/movie")
-	public  String movie(Model model){
-		return "movie";
-	}
-
-	@GetMapping("/admin-panel")
-	public  String adminPanel(Model model){
-		return "admin-panel";
-	}
-
 }

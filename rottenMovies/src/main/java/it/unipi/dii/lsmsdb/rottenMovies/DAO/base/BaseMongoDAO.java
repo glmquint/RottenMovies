@@ -2,7 +2,9 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.base;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.client.*;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 /**
  * @author Fabio
@@ -12,18 +14,24 @@ import org.bson.Document;
  * get a collection from the DB (getCollection) and close the connection
  * to the database (closeConnection)
  */
-public abstract class BaseMongoDAO {
-    private static final String connectionString = "mongodb://localhost:27017";
-    private static final String databaseString = "rottenMovies";
+public abstract class BaseMongoDAO implements AutoCloseable{
+    protected Constants consts;
 
-    /**
-     * <method>getClient</method> create a connection to the mongoDB
-     * @return a myClient object to the caller for handling the connection
-     */
-    public MongoClient getClient(){
-        ConnectionString uri = new ConnectionString(connectionString);
-        MongoClient myClient = MongoClients.create(uri);
-        return myClient;
+    protected final MongoClient myClient;
+    protected Bson query;
+
+
+    public Bson getQuery() {
+        return query;
+    }
+
+
+    public BaseMongoDAO(){
+        consts = new Constants();
+        System.out.println("connection established");
+        ConnectionString uri = new ConnectionString(consts.CONNECTION_STRING);
+        this.myClient = MongoClients.create(uri);
+        query = null;
     }
 
     /**
@@ -33,17 +41,18 @@ public abstract class BaseMongoDAO {
      * @return a document to make operation on the collection
      */
     public MongoCollection<Document> returnCollection(MongoClient myClient, String connectionString){
-        MongoDatabase db = myClient.getDatabase(databaseString);
+        MongoDatabase db = myClient.getDatabase(consts.DATABASE_STRING);
         MongoCollection<Document> collection = db.getCollection(connectionString);
         return collection;
     }
 
     /**
      * <method>closeConnection</method> closes the connection to the DB
-     * @param myClient is the connection to close
      */
-    public void closeConnection(MongoClient myClient){
-        myClient.close();
+    @Override
+    public void close () throws RuntimeException{
+        System.out.println("closed conenction");
+        this.myClient.close();
     }
 
 
