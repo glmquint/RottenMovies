@@ -96,4 +96,17 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         }));
         return reviewFeed;
     }
+
+    /*
+        MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
+        WHERE NOT (u)-[:FOLLOWS]->(t)
+        RETURN 100*toFloat( sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/ (count(m.title)+2) as perc,
+        t.name as name ORDER by perc DESC LIMIT 10
+
+
+        MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
+        WHERE NOT (u)-[:FOLLOWS]->(t)
+        RETURN 100*toFloat( sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/ (count(m.title)+2) as perc,
+        t.name as name, collect(m.title) as movies, collect(r.freshness=r2.freshness) as alignement ORDER by perc DESC LIMIT 20
+     */
 }
