@@ -16,10 +16,12 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+
 //@SpringBootApplication
 public class RottenMoviesApplication {
 
 	public  static void main(String[] args) throws JsonProcessingException {
+
 		//MovieDAO testMovie = DAOLocator.getMovieDAO();
 		//System.out.println(test.searchByTitle("Evidence"));
 		/*for(int i  = 2001; i<2022; ++i) {
@@ -139,58 +141,12 @@ public class RottenMoviesApplication {
 
 		//uso questa funzione per eseguire i miei test così
 		//da non intasare ulteriormente il main
-		mainTestFabio();
+		PersonalTestClass test = new PersonalTestClass();
+		test.testMain();
 
 
 
 	}
 
-	private static void mainTestFabio() {
-		/* TEST FOR THE USER NEO4J
-		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)) {
-			System.out.println(testUser.createBaseUser("Piras", "Fabio Piras", false));
-			System.out.println(testUser.createBaseUser("Volpi", "Giacomo Volpi", true));
-			System.out.println(testUser.updateBaseUser("Volpi", "Volpi Giacomo"));
-			//System.out.println(testUser.followTopCritic("Fabio Piras", "Giacomo Volpi"));
-			//System.out.println(testUser.unfollowTopCritic("Fabio Piras", "Giacomo Volpi"));
-			System.out.println(testUser.deleteBaseUser("Piras"));
-			System.out.println(testUser.deleteBaseUser("Volpi"));
-		}
-		*/
-		/*	TEST FOR THE MOVIE NEO4J
-		try(MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j)){
-			System.out.println(testMovie.insertNeo4j("test", "test"));
-			System.out.println(testMovie.deleteNeo4j("test"));
-			System.out.println(testMovie.updateNeo4j("test", "test2"));
-		}
-		*/
-		try(BaseUserDAO testUser = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j);
-			MovieDAO testMovie = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j);
-			ReviewDAO testReview = DAOLocator.getReviewDAO(DataRepositoryEnum.NEO4j);
-		){
-			System.out.println(testUser.createBaseUser("Volpi", "Giacomo Volpi", true));
-			System.out.println(testMovie.insertNeo4j("test", "test"));
-			System.out.println(testReview.reviewMovie("Volpi", "test", "content", Date.valueOf(LocalDate.now()), true));
-			System.out.println(testReview.deleteReviewNeo4j("Volpi", "test"));
-			//System.out.println(testUser.deleteBaseUser("Piras"));
-			//System.out.println(testUser.deleteBaseUser("Volpi"));
-			//System.out.println(testMovie.deleteNeo4j("test"));
-		}
-		catch (DAOException e){
-			System.out.println("DAOExeption: wrong database queried: " + e.getMessage());
-			e.printStackTrace();
-		}
-		catch (NoSuchRecordException e){
-			System.out.println("Exception during testing: " + e.getMessage());
-			e.printStackTrace();
-		}
-		catch(Exception e){
-			System.out.println("Exception during testing: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-	/*public static void main(String[] args) {
-		SpringApplication.run(RottenMoviesApplication.class, args);
-	}*/
 
 }

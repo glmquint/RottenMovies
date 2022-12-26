@@ -46,7 +46,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
      * @return a BaseUser model
      */
     public BaseUser getByUsername(String Username) {
-        MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
+        MongoCollection<Document> collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
         BaseUser simpleUser = null;
         ObjectMapper mapper = new ObjectMapper();
         Document doc =  collection.find(Filters.eq("username", Username)).first();
@@ -69,7 +69,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         return simpleUser;
     }
     public BaseUser getById(ObjectId id){
-        MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
+        MongoCollection<Document> collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
         BaseUser simpleUser = null;
         ObjectMapper mapper = new ObjectMapper();
         Document doc =  collection.find(Filters.eq("_id", id)).first();
@@ -96,7 +96,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
      * @return a list containing all BaseUser
      */
     public List<BaseUser> getAll() {
-        MongoCollection<Document> collection = returnCollection(myClient, collectionStringUser);
+        MongoCollection<Document> collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
         List<BaseUser> simpleUserList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         MongoCursor<Document> cursor =  collection.find(exists("date_of_birth", true)).iterator();
@@ -121,7 +121,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     }
 
     public Boolean insert(BaseUser usr){
-        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringUser);
+        MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
         try {
             Document newdoc = new Document()
                     .append("_id", new ObjectId())
@@ -146,7 +146,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         return true;
     }
     public Boolean modify(BaseUser usr){
-        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringUser);
+        MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
 
         Document baseUserFromDB = new Document().append("_id",  usr.getId());
         Bson updates = Updates.combine(
@@ -171,7 +171,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     }
 
     public Boolean delete(BaseUser user) {
-        MongoCollection<Document>  collectionUser = returnCollection(myClient, collectionStringUser);
+        MongoCollection<Document>  collectionUser = returnCollection(myClient, consts.COLLECTION_STRING_USER);
 
         Bson queryUser = eq("_id", user.getId());
         user.setFirstName("[[IS_GOING_TO_BE_DELETED]]"); // TODO: refactor to global constant

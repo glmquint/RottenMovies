@@ -1,8 +1,15 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
+
+
 public class TopCritic extends BaseUser {
     private int follower_count;
-
+    public TopCritic (){}
+    public TopCritic (TopCriticDTO userdto){
+        super(userdto);
+        this.follower_count= userdto.getFollower_count();
+    }
     public int getFollower_count() {
         return follower_count;
     }
@@ -13,7 +20,9 @@ public class TopCritic extends BaseUser {
 
     @Override
     public String toString() {
-
+        if (id == null){
+            return "TopCritic{}";
+        }
         return "TopCritic{" + '\n' +
                 "_id " + getId().toString() + '\n' +
                 "username " + getUsername() + '\n' +

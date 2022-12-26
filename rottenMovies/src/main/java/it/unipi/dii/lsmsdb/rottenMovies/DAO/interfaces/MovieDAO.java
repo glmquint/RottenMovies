@@ -1,23 +1,28 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces;
 
+import com.mongodb.client.MongoCollection;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.exceptions.NoSuchRecordException;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @author Fabio
  * <interface>MovieDao</interface> interface for the DAO of the movie
  */
 public interface MovieDAO extends AutoCloseable {
-    MovieDTO searchByTitle(String title) throws DAOException;
-    MovieDTO searchById(ObjectId id) throws DAOException;
-    List<MovieDTO> searchByYearRange(int startYear, int endYear) throws DAOException;
-    List<MovieDTO> searchByTopRatings(int rating, boolean type) throws DAOException;
-    List<MovieDTO> searchByUserRatings(int rating, boolean type) throws DAOException;
-    Boolean delete(MovieDTO toDelete) throws DAOException;
+    MongoCollection<Document> getCollection() throws DAOException;
+    ArrayList<MovieDTO> executeSearchQuery(int page) throws DAOException;
+    Boolean executeDeleteQuery() throws DAOException;
+    void queryBuildSearchByTitle (String title) throws DAOException;
+    void queryBuildSearchByTitleContains(String title) throws DAOException;
+    void queryBuildSearchById(ObjectId id) throws DAOException;
+    void queryBuildSearchByYear(int year, boolean afterYear) throws DAOException;
+    void queryBuildSearchByTopRatings(int rating, boolean type) throws DAOException;
+    void queryBuildsearchByUserRatings(int rating, boolean type) throws DAOException;
     Boolean update(MovieDTO updated) throws DAOException;
     Boolean insert(MovieDTO newOne) throws DAOException;
 
