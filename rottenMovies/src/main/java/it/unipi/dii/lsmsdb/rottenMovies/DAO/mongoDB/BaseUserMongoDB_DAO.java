@@ -160,7 +160,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     }
     public boolean update(BaseUser usr){
         MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
-        Boolean returnvalue=true;
+        boolean returnvalue=true;
         Bson updates = Updates.combine(
                     Updates.set("password", usr.getPassword()),
                     Updates.set("first_name", usr.getFirstName()),
@@ -200,7 +200,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     public boolean executeDeleteQuery() {
         ArrayList<BaseUserDTO> users_to_delete = executeSearchQuery(-1);
         MongoCollection<Document>  collectionUser = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
-        Boolean returnvalue=true;
+        boolean returnvalue=true;
         for(BaseUserDTO b:users_to_delete){
             b.setFirstName(Constants.USERS_MARKED_AS_DELETED);
         }
