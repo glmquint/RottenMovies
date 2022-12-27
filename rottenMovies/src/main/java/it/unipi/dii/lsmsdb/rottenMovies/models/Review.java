@@ -54,11 +54,9 @@ public class Review {
     }
 
     public void setMovie_id(Object id) {
-        System.out.println("Chiamata a setMovie_id");
         if(id instanceof LinkedHashMap<?,?>){
             LinkedHashMap link = (LinkedHashMap)id;
             this.movie_id = new ObjectId(link.get("$oid").toString());
-            System.out.println(this.movie_id.toString());
         }
     }
 
@@ -155,15 +153,25 @@ public class Review {
     public String toString() {
         Date date = new Date();
         DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
-        return "Review{" +
-                "id=" + movie_id.toString() + '\''+
-                "criticName='" + criticName + '\'' +
-                ", movie='" + movie + '\'' +
-                ", topCritic=" + topCritic + '\'' +
-                ", reviewType='" + reviewType + '\'' +
-                ", reviewScore='" + reviewScore + '\'' +
-                ", reviewDate=" + df2.format(date) + '\'' +
-                ", reviewContent='" + reviewContent + '\'' +
-                '}';
+        if (movie == null) {
+            return "Review{" +
+                    "criticName='" + criticName + '\'' +
+                    ", topCritic=" + topCritic + '\'' +
+                    ", reviewType='" + reviewType + '\'' +
+                    ", reviewScore='" + reviewScore + '\'' +
+                    ", reviewDate=" + df2.format(date) + '\'' +
+                    ", reviewContent='" + reviewContent + '\'' +
+                    '}';
+        } else {
+            return "Review{" +
+                    "id=" + movie_id.toString() + '\'' +
+                    ", movie='" + movie + '\'' +
+                    ", topCritic=" + topCritic + '\'' +
+                    ", reviewType='" + reviewType + '\'' +
+                    ", reviewScore='" + reviewScore + '\'' +
+                    ", reviewDate=" + df2.format(date) + '\'' +
+                    ", reviewContent='" + reviewContent + '\'' +
+                    '}';
+        }
     }
 }
