@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@SpringBootApplication
-@Controller
+//@SpringBootApplication
 public class RottenMoviesApplication {
 
 	public  static void main(String[] args) throws JsonProcessingException {
