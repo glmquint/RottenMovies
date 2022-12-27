@@ -97,6 +97,12 @@ public class Movie {
             LinkedHashMap link = (LinkedHashMap)id;
             this.id = new ObjectId(link.get("$oid").toString());
         }
+
+    }
+
+    //USATA SOLO PER TEST, DA RIMUOVERE
+    public void setIdString(String id){
+        this.id = new ObjectId(id);
     }
 
     public String getPrimaryTitle() {

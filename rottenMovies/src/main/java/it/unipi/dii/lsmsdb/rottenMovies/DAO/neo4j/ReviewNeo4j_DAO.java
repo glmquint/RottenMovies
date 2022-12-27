@@ -28,44 +28,69 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
-    private boolean reviewMovieNeo4j(String userId, String movieId, String content, Date date, Boolean freshness) throws DAOException{
-        if(userId.isEmpty() ||movieId.isEmpty() || content.isEmpty() || date==null){
+    @Override
+    public boolean reviewMovie(BaseUser usr, Review review)  throws DAOException{
+
+        if(usr.getId().toString().isEmpty() ||review.getMovie().isEmpty() || review.getReviewContent().isEmpty() || review.getReviewDate()==null){
             return false;
         }
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String strDate = dateFormat.format(date);
+        String strDate = dateFormat.format(review.getReviewDate());
         Session session = driver.session();
+        boolean freshness = (review.getReviewType().equals("Fresh")) ? true : false;
         session.writeTransaction(tx -> {
             String query = "MATCH (b{id: $userId}), " +
-                    "(m:Movie{id: $movieId}) " +
+                    "(m:Movie{title: $movieTitle}) " +
                     "MERGE (b)-[r:REVIEWED {content: $content, date: date(\""+strDate+"\"), freshness: $freshness}]->(m)" +
                     "RETURN type(r) as Type, r.date as Date, r.freshness as Freshness";
-            Result result = tx.run(query, parameters("userId", userId, "movieId", movieId, "content", content, "freshness", freshness));
+            Result result = tx.run(query, parameters("userId", usr.getId().toString(),
+                    "movieTitle", review.getMovie(),
+                    "content", review.getReviewContent(),
+                    "freshness", freshness));
             System.out.println(result.peek().get("Type").asString());
             System.out.println(result.peek().get("Date"));
-            System.out.println(result.single().get("Freshness"));
+            System.out.println(result.peek().get("Freshness"));
             return 1;
         });
         return true;
+        /*try{
+            reviewMovieNeo4j(usr.getId().toString(), review.getMovie(), review.getReviewContent(), review.getReviewDate(), (review.getReviewType().equals("Fresh")) ? true : false);
+        } catch (Exception e){
+            System.err.println(e.getStackTrace());
+        }
+        return false;
+        */
     }
 
-    public boolean deleteReviewNeo4j(String user, String movie) throws DAOException{
-        if(user.isEmpty() || movie.isEmpty()){
+    @Override
+    public boolean delete(Review review)  throws DAOException{
+        if(review.getCriticName().isEmpty() || review.getMovie().isEmpty()){
             return false;
         }
         Session session = driver.session();
         session.writeTransaction(tx -> {
             String query = "MATCH (b{name: $user}) -[r:REVIEWED] -> (m:Movie{title: $movie})" +
                     "DELETE r";
-            Result result = tx.run(query, parameters("user", user, "movie", movie));
+            Result result = tx.run(query, parameters("user", review.getCriticName(),
+                    "movie", review.getMovie()));
 
             return 1;
         });
         return true;
+        /*try{
+            deleteReviewNeo4j(review.getCriticName(), review.getMovie());
+        } catch (Exception e){
+            System.err.println(e.getStackTrace());
+            return false;
+        }
+        return true;
+
+         */
     }
 
-    public ArrayList<ReviewFeedDTO> constructFeedNeo4j(String userId, int page) throws DAOException{
-        if(userId.isEmpty() || page<0){
+    @Override
+    public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException {
+        if(usr.getId().toString().isEmpty() || page<0){
             return null;
         }
         int skip = page*REVIEWS_IN_FEED;
@@ -76,7 +101,8 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
                     "RETURN m.title AS movieTitle,t.name AS criticName, r.date AS reviewDate, "+
                     "r.content AS content, r.freshness AS freshness " +
                     "ORDER BY r.date DESC SKIP $skip LIMIT $limit ";
-            Result result = tx.run(query, parameters("userId", userId, "skip", skip, "limit", REVIEWS_IN_FEED));
+            Result result = tx.run(query, parameters("userId", usr.getId().toString(),
+                    "skip", skip, "limit", REVIEWS_IN_FEED));
             ArrayList<ReviewFeedDTO> feed = new ArrayList<>();
             while(result.hasNext()){
                 Record r = result.next();
@@ -97,31 +123,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
             return feed;
         }));
         return reviewFeed;
-    }
-
-    @Override
-    public boolean reviewMovie(BaseUser usr, Review review)  throws DAOException{
-        try{
-            reviewMovieNeo4j(usr.getId().toString(), review.getMovie(), review.getReviewContent(), review.getReviewDate(), (review.getReviewType().equals("Fresh")) ? true : false);
-        } catch (Exception e){
-            System.err.println(e.getStackTrace());
-        }
-        return false;
-    }
-
-    @Override
-    public boolean delete(Review review)  throws DAOException{
-        try{
-            deleteReviewNeo4j(review.getCriticName(), review.getMovie());
-        } catch (Exception e){
-            System.err.println(e.getStackTrace());
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException {
+        /*
         ArrayList<ReviewFeedDTO> reviewList = new ArrayList<>();
         try{
             reviewList = constructFeedNeo4j(usr.getId().toString(), page);
@@ -129,6 +131,8 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
             System.err.println(e.getStackTrace());
         }
         return reviewList;
+
+         */
     }
 
     /*
