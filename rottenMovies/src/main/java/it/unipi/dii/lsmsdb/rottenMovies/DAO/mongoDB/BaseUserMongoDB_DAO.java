@@ -79,14 +79,6 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         return user_list;
     }
     public void queryBuildSearchByUsername(String username){
-        Bson new_query = Filters.eq("username", username);
-        if (query == null) {
-            query = new_query;
-            return;
-        }
-        query = Filters.and(query, new_query);
-    }
-    public void queryBuildSearchByUsernameContains(String username){
         Bson new_query = Filters.regex("username", username, "i");
         if (query == null) {
             query = new_query;
@@ -94,7 +86,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         query = Filters.and(query, new_query);
     }
-    public void queryBuildSearchByFirstNameContains(String firstname){
+    public void queryBuildSearchByFirstName(String firstname){
         Bson new_query = Filters.regex("first_name", firstname, "i");
         if (query == null) {
             query = new_query;
@@ -102,7 +94,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         query = Filters.and(query, new_query);
     }
-    public void queryBuildSearchByLastNameContains(String lastname){
+    public void queryBuildSearchByLastName(String lastname){
         Bson new_query = Filters.regex("last_name", lastname, "i");
         if (query == null) {
             query = new_query;
@@ -193,6 +185,18 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         return returnvalue;
     }
 
+    public boolean delete(BaseUser usr) throws DAOException{
+        queryBuildSearchById(usr.getId());
+        boolean result = true;
+        try{
+            executeDeleteQuery();
+        } catch (Exception e){
+            System.err.println(e.getStackTrace());
+        }
+        query = null;
+        return result;
+    }
+
     public boolean executeDeleteQuery() {
         ArrayList<BaseUserDTO> users_to_delete = executeSearchQuery(-1);
         MongoCollection<Document>  collectionUser = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
@@ -229,17 +233,10 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
          */
     }
-    public User getMostReviewUser() throws DAOException{
+    public BaseUserDTO getMostReviewUser() throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
-    public TopCritic getMostFollowedCritic() throws DAOException{
-        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
-    }
-    public boolean createBaseUser(String name, boolean isTop) throws DAOException{
-        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
-    }
-
-    public boolean deleteBaseUser(String name, boolean isTop) throws DAOException{
+    public TopCriticDTO getMostFollowedCritic() throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 

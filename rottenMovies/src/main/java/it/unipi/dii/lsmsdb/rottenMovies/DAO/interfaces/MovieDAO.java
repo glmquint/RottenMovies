@@ -3,8 +3,10 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces;
 import com.mongodb.client.MongoCollection;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.neo4j.driver.exceptions.NoSuchRecordException;
 
 import java.util.ArrayList;
 
@@ -22,7 +24,14 @@ public interface MovieDAO extends AutoCloseable {
     void queryBuildSearchByYear(int year, boolean afterYear) throws DAOException;
     void queryBuildSearchByTopRatings(int rating, boolean type) throws DAOException;
     void queryBuildsearchByUserRatings(int rating, boolean type) throws DAOException;
-    boolean update(MovieDTO updated) throws DAOException;
-    boolean insert(MovieDTO newOne) throws DAOException;
+    boolean update(Movie updated) throws DAOException;
+    boolean insert(Movie newOne) throws DAOException;
+    boolean delete (Movie movie) throws DAOException;
+
+    //public Boolean insertNeo4j(String id, String title) throws DAOException;
+
+    //public Boolean deleteNeo4j(String id) throws DAOException, NoSuchRecordException;
+
+    //public Boolean updateNeo4j(String id, String newTitle) throws DAOException, NoSuchRecordException;
 
 }

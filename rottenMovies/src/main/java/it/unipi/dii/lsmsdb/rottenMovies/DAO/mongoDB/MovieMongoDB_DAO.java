@@ -15,6 +15,7 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
@@ -24,6 +25,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.neo4j.driver.exceptions.NoSuchRecordException;
 
 import java.util.ArrayList;
 
@@ -74,7 +76,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         ArrayList<MovieDTO> movies_to_delete = executeSearchQuery(-1);
         // TODO: delete the user review of the deleted movie before executing deleteMany
         MongoCollection<Document>  collectionMovie = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
-        Boolean returnvalue=true;
+        boolean returnvalue=true;
         try { // now I delete the movie from collection movie
             DeleteResult result = collectionMovie.deleteMany(query);
             System.out.println("Deleted document count: " + result.getDeletedCount());
@@ -228,8 +230,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return personnelDBList;
     }
-    public boolean update(MovieDTO update){
-        Movie updated=new Movie(update);
+    public boolean update(Movie updated){
         MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
         ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(updated);
         Boolean returnvalue=true;
@@ -261,9 +262,9 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query=null;
         return returnvalue;
     }
-    public boolean insert(MovieDTO newOne){
+    public boolean insert(Movie newOne){
         MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
-        ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(new Movie(newOne));
+        ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(newOne);
         Boolean returnvalue=true;
         try {
             InsertOneResult result = collection.insertOne(new Document()
@@ -290,6 +291,31 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         query=null;
         return returnvalue;
+    }
+
+    public boolean delete(Movie movie) throws DAOException{
+        queryBuildSearchById(movie.getId());
+        boolean result = true;
+        try{
+            executeDeleteQuery();
+        } catch (Exception e){
+            System.err.println(e.getStackTrace());
+            result = false;
+        }
+        query = null;
+        return result;
+    }
+
+    public Boolean insertNeo4j(String id, String title) throws DAOException{
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
+    }
+
+    public Boolean deleteNeo4j(String id) throws DAOException, NoSuchRecordException{
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
+    }
+
+    public Boolean updateNeo4j(String id, String newTitle) throws DAOException, NoSuchRecordException {
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 
 }

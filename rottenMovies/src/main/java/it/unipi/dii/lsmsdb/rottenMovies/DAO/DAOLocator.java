@@ -25,7 +25,7 @@ public class DAOLocator {
     }
     public static BaseUserDAO getBaseUserDAO(DataRepositoryEnum dataRepositoryEnum){
         if (DataRepositoryEnum.MONGO.equals(dataRepositoryEnum)) {
-            return new BaseUserMongoDB_DAO();
+            return new it.unipi.dii.lsmsdb.rottenMovies.DAO.mongoDB.BaseUserMongoDB_DAO();
         } else if (DataRepositoryEnum.NEO4j.equals(dataRepositoryEnum)) {
             return new BaseUserNeo4j_DAO();
         }
