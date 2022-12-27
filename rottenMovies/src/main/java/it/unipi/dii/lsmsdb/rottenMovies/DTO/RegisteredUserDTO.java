@@ -10,7 +10,7 @@ public abstract class RegisteredUserDTO {
     protected RegisteredUserDTO(){}
     protected RegisteredUserDTO(RegisteredUser u){
         this.id=u.getId();
-        this.username=u.getPassword();
+        this.username=u.getUsername();
         this.password=u.getPassword();
     }
     public ObjectId getId() {

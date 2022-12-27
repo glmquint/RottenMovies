@@ -7,7 +7,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 
 public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
     @Override
-    public Boolean updateReviewsByDeletedBaseUser(BaseUser user) throws DAOException {
+    public boolean updateReviewsByDeletedBaseUser(BaseUser user) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 }

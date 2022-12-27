@@ -4,11 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoException;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.*;
-
-import static com.mongodb.client.model.Filters.*;
 
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
@@ -16,21 +15,25 @@ import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
-import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
  * @author Fabio
  * @author Guillaume
+ * @author Giacomo
  * <class>BaseUserMongoDB_DAO</class> queries the DB for BaseUser
  *  * based on different parameters like:
  *      - UserName
@@ -39,88 +42,107 @@ import java.util.List;
  */
 public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
 
-    /**
-     * <method>getUserByUsername</method> queries the DB based on a username to search
-     * @param Username is the username to search
-     * @return a BaseUser model
-     */
-    public BaseUser getByUsername(String Username) {
-        MongoCollection<Document> collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
-        BaseUser simpleUser = null;
-        ObjectMapper mapper = new ObjectMapper();
-        Document doc =  collection.find(Filters.eq("username", Username)).first();
-        String json_user;
-        if (doc == null) {
-            System.out.println("No results found.");
-            return null;
-        } else {
-            json_user = doc.toJson();
-        }
-        try {
-            if (doc.containsKey("date_of_birth")) {
-                simpleUser = mapper.readValue(json_user, User.class);
-            } else {
-                simpleUser = mapper.readValue(json_user, TopCritic.class);
-            }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return simpleUser;
+    public BaseUserMongoDB_DAO() {
+        super();
     }
-    public BaseUser getById(ObjectId id){
-        MongoCollection<Document> collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
-        BaseUser simpleUser = null;
-        ObjectMapper mapper = new ObjectMapper();
-        Document doc =  collection.find(Filters.eq("_id", id)).first();
-        String json_user;
-        if (doc == null) {
-            System.out.println("No results found.");
-            return null;
-        } else {
-            json_user = doc.toJson();
-        }
-        try {
-            if (doc.containsKey("date_of_birth")) {
-                simpleUser = mapper.readValue(json_user, User.class);
-            } else {
-                simpleUser = mapper.readValue(json_user, TopCritic.class);
-            }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return simpleUser;
+    public MongoCollection<Document> getCollection(){
+        return returnCollection(myClient, Constants.COLLECTION_STRING_USER);
     }
-    /**
-     * <method>getUser</method> queries the DB for all user
-     * @return a list containing all BaseUser
-     */
-    public List<BaseUser> getAll() {
-        MongoCollection<Document> collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
-        List<BaseUser> simpleUserList = new ArrayList<>();
+    public ArrayList<BaseUserDTO> executeSearchQuery(int page){
+        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER); //TODO: maybe use getCollection
         ObjectMapper mapper = new ObjectMapper();
-        MongoCursor<Document> cursor =  collection.find(exists("date_of_birth", true)).iterator();
-        BaseUser simpleUser = null;
+        FindIterable found = collection.find(query);
+        if (page >= 0) { // only internally. Never return all users without pagination on front-end
+            query=null;
+            found = found.skip(page * Constants.USERS_PER_PAGE).limit(Constants.USERS_PER_PAGE);
+        }
+        MongoCursor<Document> cursor = found.iterator();
+        ArrayList<BaseUserDTO> user_list = new ArrayList<>();
+        BaseUser simpleUser;
         String json_user;
+        Document doc;
         while(cursor.hasNext()){
-            Document doc = cursor.next();
+            doc = cursor.next();
             json_user = doc.toJson();
-            //System.out.println(json_movie);
             try {
                 if (doc.containsKey("date_of_birth")) {
                     simpleUser = mapper.readValue(json_user, User.class);
+                    user_list.add(new UserDTO((User) simpleUser));
                 } else {
                     simpleUser = mapper.readValue(json_user, TopCritic.class);
+                    user_list.add(new TopCriticDTO((TopCritic) simpleUser));
                 }
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
-            simpleUserList.add(simpleUser);
         }
-        return simpleUserList;
+        return user_list;
+    }
+    public void queryBuildSearchByUsername(String username){
+        Bson new_query = Filters.eq("username", username);
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+    public void queryBuildSearchByUsernameContains(String username){
+        Bson new_query = Filters.regex("username", username, "i");
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+    public void queryBuildSearchByFirstNameContains(String firstname){
+        Bson new_query = Filters.regex("first_name", firstname, "i");
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+    public void queryBuildSearchByLastNameContains(String lastname){
+        Bson new_query = Filters.regex("last_name", lastname, "i");
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
     }
 
-    public Boolean insert(BaseUser usr){
-        MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
+    public void queryBuildSearchByYearOfBirth(int year){
+        LocalDateTime start = LocalDateTime.of(year, 1, 1, 00, 00, 00);
+        LocalDateTime end = LocalDateTime.of(year, 12, 31, 23, 59, 59);
+        Bson new_query = Filters.and(Filters.gte("date_of_birth",start),Filters.lte("date_of_birth",end));
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+    public void queryBuildSearchByRegistrationDate(int year,int month,int day){
+        LocalDateTime start = LocalDateTime.of(year, month, day, 00, 00, 00);
+        LocalDateTime end = LocalDateTime.of(year, month, day, 23, 59, 59);
+        Bson new_query = Filters.and(Filters.gte("registration_date",start),Filters.lte("registration_date",end));
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+
+    public void queryBuildSearchById(ObjectId id){
+        Bson new_query = Filters.eq("_id", id);
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+
+    public boolean insert(BaseUser usr){
+        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
         try {
             Document newdoc = new Document()
                     .append("_id", new ObjectId())
@@ -144,10 +166,9 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         // also remember to add the user in Neo4j
         return true;
     }
-    public Boolean modify(BaseUser usr){
-        MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
-
-        Document baseUserFromDB = new Document().append("_id",  usr.getId());
+    public boolean update(BaseUser usr){
+        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
+        Boolean returnvalue=true;
         Bson updates = Updates.combine(
                     Updates.set("password", usr.getPassword()),
                     Updates.set("first_name", usr.getFirstName()),
@@ -159,38 +180,44 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
 
         UpdateOptions options = new UpdateOptions().upsert(true);
         try {
-            UpdateResult result = collection.updateOne(baseUserFromDB, updates, options);
+            query=null;
+            queryBuildSearchById(usr.getId());
+            UpdateResult result = collection.updateOne(query, updates, options);
             System.out.println("Modified document count: " + result.getModifiedCount());
         }
         catch (MongoException me) {
             System.err.println("Unable to update due to an error: " + me);
-            return false;
+            returnvalue=false;
         }
-        return true;
+        query=null;
+        return returnvalue;
     }
 
-    public Boolean delete(BaseUser user) {
-        MongoCollection<Document>  collectionUser = returnCollection(myClient, consts.COLLECTION_STRING_USER);
+    public boolean executeDeleteQuery() {
+        ArrayList<BaseUserDTO> users_to_delete = executeSearchQuery(-1);
+        MongoCollection<Document>  collectionUser = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
+        Boolean returnvalue=true;
+        for(BaseUserDTO b:users_to_delete){
+            b.setFirstName(Constants.USERS_MARKED_AS_DELETED);
+        }
+        /*
 
-        Bson queryUser = eq("_id", user.getId());
-        user.setFirstName("[[IS_GOING_TO_BE_DELETED]]"); // TODO: refactor to global constant
-        modify(user);
         ReviewDAO reviewdao = (ReviewDAO) new ReviewMongoDB_DAO(); // TODO: maybe use DAOLocator
         try {
             reviewdao.updateReviewsByDeletedBaseUser(user);
         } catch (Exception e){
             System.err.println(e.getStackTrace());
         }
-        try { // now I delete the user from collection user
-            DeleteResult result = collectionUser.deleteOne(queryUser);
+         */
+        try { // now I delete the users from collection user
+            DeleteResult result = collectionUser.deleteMany(query);
             System.out.println("Deleted document count: " + result.getDeletedCount());
         } catch (MongoException me) {
             System.err.println("Unable to delete due to an error: " + me);
-            return false;
+            returnvalue=false;
         }
-
-        // TODO: delete the review
-        return true;
+        query=null;
+        return returnvalue;
         /*
 
         List<SimplyfiedReview> reviews = simpleUser.getReviews();

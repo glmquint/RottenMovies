@@ -1,6 +1,5 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewDTO;
@@ -10,7 +9,6 @@ import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewUserDTO;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedHashMap;
 

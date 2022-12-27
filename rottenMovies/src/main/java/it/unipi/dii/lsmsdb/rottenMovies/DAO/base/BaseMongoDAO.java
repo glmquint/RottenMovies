@@ -15,8 +15,6 @@ import org.bson.conversions.Bson;
  * to the database (closeConnection)
  */
 public abstract class BaseMongoDAO implements AutoCloseable{
-    protected Constants consts;
-
     protected final MongoClient myClient;
     protected Bson query;
 
@@ -27,9 +25,8 @@ public abstract class BaseMongoDAO implements AutoCloseable{
 
 
     public BaseMongoDAO(){
-        consts = new Constants();
         System.out.println("connection established");
-        ConnectionString uri = new ConnectionString(consts.CONNECTION_STRING);
+        ConnectionString uri = new ConnectionString(Constants.CONNECTION_STRING);
         this.myClient = MongoClients.create(uri);
         query = null;
     }
@@ -41,7 +38,7 @@ public abstract class BaseMongoDAO implements AutoCloseable{
      * @return a document to make operation on the collection
      */
     public MongoCollection<Document> returnCollection(MongoClient myClient, String connectionString){
-        MongoDatabase db = myClient.getDatabase(consts.DATABASE_STRING);
+        MongoDatabase db = myClient.getDatabase(Constants.DATABASE_STRING);
         MongoCollection<Document> collection = db.getCollection(connectionString);
         return collection;
     }

@@ -45,7 +45,7 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
-    public Boolean executeDeleteQuery() throws DAOException {
+    public boolean executeDeleteQuery() throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
     public void queryBuildSearchByTitle (String title) throws DAOException {
@@ -70,12 +70,12 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
     }
 
     @Override
-    public Boolean update(MovieDTO updated) throws DAOException {
+    public boolean update(MovieDTO updated) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
     @Override
-    public Boolean insert(MovieDTO newOne) throws DAOException {
+    public boolean insert(MovieDTO newOne) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
