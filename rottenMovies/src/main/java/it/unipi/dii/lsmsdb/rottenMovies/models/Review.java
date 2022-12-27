@@ -58,6 +58,9 @@ public class Review {
             LinkedHashMap link = (LinkedHashMap)id;
             this.movie_id = new ObjectId(link.get("$oid").toString());
         }
+        else if (id instanceof ObjectId){
+            this.movie_id= (ObjectId) id;
+        }
     }
 
     public String getCriticName() {
