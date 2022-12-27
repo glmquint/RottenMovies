@@ -21,6 +21,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -45,15 +46,15 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         super();
     }
     public MongoCollection<Document> getCollection(){
-        return returnCollection(myClient, consts.COLLECTION_STRING_USER);
+        return returnCollection(myClient, Constants.COLLECTION_STRING_USER);
     }
     public ArrayList<BaseUserDTO> executeSearchQuery(int page){
-        MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_USER); //TODO: maybe use getCollection
+        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER); //TODO: maybe use getCollection
         ObjectMapper mapper = new ObjectMapper();
         FindIterable found = collection.find(query);
         if (page >= 0) { // only internally. Never return all users without pagination on front-end
             query=null;
-            found = found.skip(page * consts.USERS_PER_PAGE).limit(consts.USERS_PER_PAGE);
+            found = found.skip(page * Constants.USERS_PER_PAGE).limit(Constants.USERS_PER_PAGE);
         }
         MongoCursor<Document> cursor = found.iterator();
         ArrayList<BaseUserDTO> user_list = new ArrayList<>();
@@ -141,7 +142,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     }
 
     public boolean insert(BaseUser usr){
-        MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
+        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
         try {
             Document newdoc = new Document()
                     .append("_id", new ObjectId())
@@ -166,7 +167,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         return true;
     }
     public boolean update(BaseUser usr){
-        MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_USER);
+        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
         Boolean returnvalue=true;
         Bson updates = Updates.combine(
                     Updates.set("password", usr.getPassword()),
@@ -194,10 +195,10 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
 
     public boolean executeDeleteQuery() {
         ArrayList<BaseUserDTO> users_to_delete = executeSearchQuery(-1);
-        MongoCollection<Document>  collectionUser = returnCollection(myClient, consts.COLLECTION_STRING_USER);
+        MongoCollection<Document>  collectionUser = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
         Boolean returnvalue=true;
         for(BaseUserDTO b:users_to_delete){
-            b.setFirstName(consts.USERS_MARKED_AS_DELETED);
+            b.setFirstName(Constants.USERS_MARKED_AS_DELETED);
         }
         /*
 

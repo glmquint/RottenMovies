@@ -20,6 +20,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 import com.mongodb.client.model.UpdateOptions;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -42,18 +43,18 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public MongoCollection<Document> getCollection(){
-        return returnCollection(myClient, consts.COLLECTION_STRING_MOVIE); // TODO: check accessed via instance reference
+        return returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE); // TODO: check accessed via instance reference
     }
 
     public ArrayList<MovieDTO> executeSearchQuery(int page){
-        MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
         Movie movie;
         String json_movie;
         ObjectMapper mapper = new ObjectMapper();
         FindIterable found = collection.find(query);
         if (page >= 0) { // only internally. Never return all movies without pagination on front-end
             query=null;
-            found = found.skip(page * consts.MOVIES_PER_PAGE).limit(consts.MOVIES_PER_PAGE);
+            found = found.skip(page * Constants.MOVIES_PER_PAGE).limit(Constants.MOVIES_PER_PAGE);
         }
         MongoCursor<Document> cursor = found.iterator();
         ArrayList<MovieDTO> movie_list = new ArrayList<>();
@@ -72,7 +73,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     public boolean executeDeleteQuery(){
         ArrayList<MovieDTO> movies_to_delete = executeSearchQuery(-1);
         // TODO: delete the user review of the deleted movie before executing deleteMany
-        MongoCollection<Document>  collectionMovie = returnCollection(myClient, consts.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collectionMovie = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
         Boolean returnvalue=true;
         try { // now I delete the movie from collection movie
             DeleteResult result = collectionMovie.deleteMany(query);
@@ -125,15 +126,6 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     public void queryBuildSearchById(ObjectId id){
         Bson new_query = Filters.eq("_id", id);
         if (query == null) {
-            query = new_query;
-            return;
-        }
-        query = Filters.and(query, new_query);
-    }
-
-    public void queryBuildSearchPersonnel(String worker){
-        Bson new_query = Filters.and(elemMatch("personnel", eq("primaryName", worker)));
-        if (query == null){
             query = new_query;
             return;
         }
@@ -238,7 +230,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
     public boolean update(MovieDTO update){
         Movie updated=new Movie(update);
-        MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
         ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(updated);
         Boolean returnvalue=true;
         Bson updates = Updates.combine(
@@ -270,7 +262,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return returnvalue;
     }
     public boolean insert(MovieDTO newOne){
-        MongoCollection<Document>  collection = returnCollection(myClient, consts.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
         ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(new Movie(newOne));
         Boolean returnvalue=true;
         try {
