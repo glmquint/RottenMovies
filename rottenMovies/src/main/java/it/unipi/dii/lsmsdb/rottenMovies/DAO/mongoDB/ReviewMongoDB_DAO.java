@@ -11,6 +11,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewFeedDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
+import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -80,6 +81,19 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             elem_array=cursor.next().getInteger("count");
             System.out.println(elem_array);
         }
+        if(usr instanceof User){
+            // inc audience_count
+            //update rating and status
+        }
+        else { // it's a TopCritic
+            if(review.getReviewType()=="Fresh"){
+                // increment tomatometer_fresh_critics_count
+            }
+            else {
+                // increment tomatometer_rotten_critics_count
+            }
+            // updates tomatomer_rating and status
+        }
         review.setCriticName(usr.getUsername());
         BasicDBObject reviewMovie = buildMovieReviewField(review);
         Bson filterMovie = eq("_id",  review.getMovie_id());
@@ -89,13 +103,9 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         BasicDBObject simplyfiedreview = buildSimplyfiedReview(review,elem_array);
         Bson updateMovieUser = push("reviews", simplyfiedreview);
         userCollection.updateOne(filterUsr,updateMovieUser);
-
-
         Bson updateUsr = push("last_3_reviews", reviewLast3);
         userCollection.updateOne(filterUsr,updateUsr);
         userCollection.updateOne(filterUsr,popFirst("last_3_reviews"));
-
-
         return true;
     }
 
