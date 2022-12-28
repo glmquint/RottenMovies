@@ -1,12 +1,24 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
-public class TopCriticSuggestionDTO {
-    private String username;
-    private double rate;
+import org.bson.types.ObjectId;
 
-    public TopCriticSuggestionDTO(String username, double rate) {
+public class TopCriticSuggestionDTO {
+    ObjectId id;
+    private String username;
+    private int rate;
+
+    public TopCriticSuggestionDTO(String id, String username, int rate) {
+        this.id = new ObjectId(id);
         this.username = username;
         this.rate = rate;
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -17,18 +29,20 @@ public class TopCriticSuggestionDTO {
         this.username = username;
     }
 
-    public double getRate() {
+    public int getRate() {
         return rate;
     }
 
-    public void setRate(double rate) {
+
+    public void setRate(int rate) {
         this.rate = rate;
     }
 
     @Override
     public String toString() {
         return "TopCriticSuggestionDTO{" +
-                "username='" + username + '\'' +
+                "id=" + id +
+                ", username='" + username + '\'' +
                 ", rate=" + rate +
                 '}';
     }

@@ -221,7 +221,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
             String query = "MATCH(u:User{name:$name})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic) "+
                     "WHERE NOT (u)-[:FOLLOWS]->(t) " +
                     "RETURN 100*(toFloat(sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/(count(m.title)+2)) as Rate, "+
-                    "t.name as Name ORDER BY Rate DESC SKIP $skip LIMIT $limit";
+                    "t.name as Name, t.id as Id ORDER BY Rate DESC SKIP $skip LIMIT $limit";
             Result result = tx.run(query, parameters("name", usr.getUsername(),
                     "skip", skip, "limit", SUGGESTIONS_IN_FEED));
             ArrayList<TopCriticSuggestionDTO> feed = new ArrayList<>();
@@ -229,8 +229,9 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
                 Record r = result.next();
 
                 feed.add(new TopCriticSuggestionDTO(
+                        r.get("Id").asString(),
                         r.get("Name").asString(),
-                        r.get("Rate").asDouble()
+                        (int) r.get("Rate").asDouble()
                 ));
             }
             return feed;
