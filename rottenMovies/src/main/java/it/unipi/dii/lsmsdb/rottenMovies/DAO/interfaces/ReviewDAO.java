@@ -12,6 +12,7 @@ import java.util.Date;
 public interface ReviewDAO extends AutoCloseable {
     boolean reviewMovie(BaseUser usr, Review review) throws DAOException;
     boolean delete(Review review) throws DAOException;
+    boolean update(BaseUser usr, Review review) throws DAOException;
 
     ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException;
 

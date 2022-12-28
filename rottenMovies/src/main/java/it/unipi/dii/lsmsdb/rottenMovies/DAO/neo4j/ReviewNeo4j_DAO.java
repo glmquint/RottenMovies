@@ -126,6 +126,9 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         }
         return reviewList;
     }
+    public boolean update(BaseUser usr, Review review) throws DAOException {
+        throw new DAOException("Wrong DB");
+    }
 
     /*
         MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)

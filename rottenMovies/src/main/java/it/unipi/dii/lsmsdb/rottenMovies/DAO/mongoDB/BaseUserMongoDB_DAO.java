@@ -157,7 +157,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         // also remember to add the user in Neo4j
         return true;
     }
-    public boolean update(BaseUser usr){
+    public boolean update(BaseUser usr) throws DAOException{
         MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
         boolean returnvalue=true;
         Bson updates = Updates.combine(
