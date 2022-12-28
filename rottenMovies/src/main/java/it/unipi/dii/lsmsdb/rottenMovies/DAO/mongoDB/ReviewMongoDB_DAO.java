@@ -31,10 +31,7 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         throw new DAOException("method not implemented for Mongo DB");
     }
 
-    @Override
-    public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException {
-        throw new DAOException("method not implemented for Mongo DB");
-    }
+
 
     /*
     ==========================================================================

@@ -88,52 +88,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
          */
     }
 
-    @Override
-    public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException {
-        if(usr.getId().toString().isEmpty() || page<0){
-            return null;
-        }
-        int skip = page*REVIEWS_IN_FEED;
 
-        Session session = driver.session();
-        ArrayList<ReviewFeedDTO> reviewFeed = session.readTransaction((TransactionWork<ArrayList<ReviewFeedDTO>>)(tx -> {
-            String query = "MATCH(u:User{id:$userId})-[f:FOLLOWS]->(t:TopCritic)-[r:REVIEWED]->(m:Movie) "+
-                    "RETURN m.title AS movieTitle,t.name AS criticName, r.date AS reviewDate, "+
-                    "r.content AS content, r.freshness AS freshness " +
-                    "ORDER BY r.date DESC SKIP $skip LIMIT $limit ";
-            Result result = tx.run(query, parameters("userId", usr.getId().toString(),
-                    "skip", skip, "limit", REVIEWS_IN_FEED));
-            ArrayList<ReviewFeedDTO> feed = new ArrayList<>();
-            while(result.hasNext()){
-                Record r = result.next();
-                Date date;
-                try {
-                    date = new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(r.get("reviewDate").asLocalDate()));
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
-                feed.add(new ReviewFeedDTO(
-                        r.get("movieTitle").asString(),
-                        r.get("criticName").asString(),
-                        r.get("content").asString(),
-                        r.get("freshness").asBoolean(),
-                        date
-                ));
-            }
-            return feed;
-        }));
-        return reviewFeed;
-        /*
-        ArrayList<ReviewFeedDTO> reviewList = new ArrayList<>();
-        try{
-            reviewList = constructFeedNeo4j(usr.getId().toString(), page);
-        } catch (Exception e){
-            System.err.println(e.getStackTrace());
-        }
-        return reviewList;
-
-         */
-    }
 
     /*
         MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)

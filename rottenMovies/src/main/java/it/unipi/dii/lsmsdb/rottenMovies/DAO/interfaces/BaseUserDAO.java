@@ -3,6 +3,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces;
 import com.mongodb.client.MongoCollection;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewFeedDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import org.bson.Document;
@@ -25,7 +26,8 @@ public interface BaseUserDAO extends AutoCloseable{
     boolean executeDeleteQuery() throws DAOException;
     BaseUserDTO getMostReviewUser() throws DAOException;
     TopCriticDTO getMostFollowedCritic() throws DAOException;
-    boolean followTopCritic(String userName, String topCriticName) throws DAOException;
-    boolean unfollowTopCritic(String userName, String topCriticName) throws DAOException;
+    boolean followTopCritic(BaseUser user, BaseUser topCritic) throws DAOException;
+    boolean unfollowTopCritic(BaseUser user, BaseUser topCritic) throws DAOException;
+    public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException;
 
 }

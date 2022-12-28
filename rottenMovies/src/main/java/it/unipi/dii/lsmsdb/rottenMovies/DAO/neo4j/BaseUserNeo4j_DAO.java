@@ -5,6 +5,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseNeo4jDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewFeedDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
@@ -13,8 +14,14 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.*;
 import org.bson.Document;
+import org.neo4j.driver.Record;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
+import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.*;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -55,14 +62,15 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         return new TopCriticDTO(topCritic);
     }
 
-    private boolean createBaseUser(String id, String name, boolean isTop) throws DAOException{
-        if(id.isEmpty() || name.isEmpty()){
+    public boolean insert(BaseUser usr) throws DAOException {
+        if(usr.getId().toString().isEmpty() || usr.getUsername().isEmpty()){
             return  false;
         }
+
         Session session = driver.session();
         String newUserName = session.writeTransaction((TransactionWork<String>)  tx ->{
             String query;
-            if(isTop){
+            if(usr instanceof TopCritic){
                 query = "MERGE (t:TopCritic{id: $id}) "+
                         "ON CREATE SET t.id = $id, t.name= $name "+
                         "RETURN t.name as Name";
@@ -73,25 +81,29 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
                         "RETURN u.name as Name";
             }
 
-            Result result = tx.run(query, parameters("id", id, "name", name));
+            Result result = tx.run(query, parameters("id", usr.getId().toString(), "name", usr.getUsername()));
             return result.single().get("Name").asString();
         });
         System.out.println(newUserName);
         return true;
     }
 
-    private boolean deleteBaseUser(String id) throws DAOException{
-        if(id.isEmpty()){
+    public boolean delete(BaseUser usr) throws DAOException{
+        if(usr.getId().toString().isEmpty()){
             return  false;
         }
         Session session = driver.session();
         session.writeTransaction(tx ->{
             String query = "MATCH (b{id: $id}) " +
-                        "DETACH DELETE b";
-            Result result = tx.run(query, parameters("id", id));
+                    "DETACH DELETE b";
+            Result result = tx.run(query, parameters("id", usr.getId().toString()));
             return 1;
         });
         return true;
+
+    }
+    public boolean update(BaseUser usr) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
     private boolean updateBaseUser(String id, String newName) throws DAOException{
@@ -109,8 +121,10 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         });
         return true;
     }
-    public boolean followTopCritic(String userName, String topCriticName) throws DAOException{
-        if(userName.isEmpty() || topCriticName.isEmpty()){
+    public boolean followTopCritic(BaseUser user, BaseUser topCritic) throws DAOException{
+        if(!(user instanceof  User) || !(topCritic instanceof TopCritic) )
+            return false;
+        if(user.getUsername().isEmpty() || topCritic.getUsername().isEmpty()){
             return  false;
         }
         Session session = driver.session();
@@ -119,8 +133,9 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
                             "(t:TopCritic{name: $topCriticName}) " +
                             "MERGE (u)-[f:FOLLOWS]->(t)" +
                             "RETURN type(f) as Type";
-            Result result = tx.run(query, parameters("userName", userName, "topCriticName", topCriticName));
-            System.out.println(result.single().get("Type").asString());
+            Result result = tx.run(query, parameters("userName", user.getUsername(),
+                    "topCriticName", topCritic.getUsername()));
+            System.out.println(result.peek().get("Type").asString());
             return 1;
         });
         return true;
@@ -129,9 +144,11 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     /*MATCH (n {name: 'Andy'})-[r:KNOWS]->()
     DELETE r*/
 
-    public boolean unfollowTopCritic(String userName, String topCriticName) throws DAOException {
-        if (userName.isEmpty() || topCriticName.isEmpty()) {
+    public boolean unfollowTopCritic(BaseUser user, BaseUser topCritic) throws DAOException {
+        if(!(user instanceof  User) || !(topCritic instanceof TopCritic) )
             return false;
+        if(user.getUsername().isEmpty() || topCritic.getUsername().isEmpty()){
+            return  false;
         }
         Session session = driver.session();
         session.writeTransaction(tx -> {
@@ -139,11 +156,68 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
                     "-[f:FOLLOWS]->"+
                     "(t:TopCritic{name: $topCriticName}) " +
                     "DELETE f";
-            Result result = tx.run(query, parameters("userName", userName, "topCriticName", topCriticName));
+            Result result = tx.run(query, parameters("userName", user.getUsername(),
+                    "topCriticName", topCritic.getUsername()));
             return 1;
         });
         return true;
     }
+
+    @Override
+    public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException {
+        if(usr.getId().toString().isEmpty() || page<0){
+            return null;
+        }
+        int skip = page*REVIEWS_IN_FEED;
+
+        Session session = driver.session();
+        ArrayList<ReviewFeedDTO> reviewFeed = session.readTransaction((TransactionWork<ArrayList<ReviewFeedDTO>>)(tx -> {
+            String query = "MATCH(u:User{id:$userId})-[f:FOLLOWS]->(t:TopCritic)-[r:REVIEWED]->(m:Movie) "+
+                    "RETURN m.title AS movieTitle,t.name AS criticName, r.date AS reviewDate, "+
+                    "r.content AS content, r.freshness AS freshness " +
+                    "ORDER BY r.date DESC SKIP $skip LIMIT $limit ";
+            Result result = tx.run(query, parameters("userId", usr.getId().toString(),
+                    "skip", skip, "limit", REVIEWS_IN_FEED));
+            ArrayList<ReviewFeedDTO> feed = new ArrayList<>();
+            while(result.hasNext()){
+                Record r = result.next();
+                Date date;
+                try {
+                    date = new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(r.get("reviewDate").asLocalDate()));
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+                feed.add(new ReviewFeedDTO(
+                        r.get("movieTitle").asString(),
+                        r.get("criticName").asString(),
+                        r.get("content").asString(),
+                        r.get("freshness").asBoolean(),
+                        date
+                ));
+            }
+            return feed;
+        }));
+        return reviewFeed;
+        /*
+        ArrayList<ReviewFeedDTO> reviewList = new ArrayList<>();
+        try{
+            reviewList = constructFeedNeo4j(usr.getId().toString(), page);
+        } catch (Exception e){
+            System.err.println(e.getStackTrace());
+        }
+        return reviewList;
+
+         */
+    }
+
+    /*
+    MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
+     WHERE NOT (u)-[:FOLLOWS]->(t)
+     RETURN 100*toFloat( sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/ (count(m.title)+2) as perc,
+     t.name as name, collect(m.title) as movies, collect(r.freshness=r2.freshness) as alignement ORDER by perc DESC LIMIT 20
+     */
+
+
     public MongoCollection<Document> getCollection() throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
@@ -171,34 +245,9 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     public boolean executeDeleteQuery() throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public boolean insert(BaseUser usr) throws DAOException {
-        try{
-            createBaseUser(usr.getId().toString(), usr.getUsername(), usr instanceof TopCritic);
-        } catch (Exception e){
-            System.err.println(e.getStackTrace());
-            return false;
-        }
-        return true;
-    }
-    public boolean update(BaseUser usr) throws DAOException {
-        try{
-            updateBaseUser(usr.getId().toString(), usr.getUsername());
-        } catch (Exception e){
-            System.err.println(e.getStackTrace());
-            return false;
-        }
-        return true;
-    }
 
-    public boolean delete(BaseUser usr) throws DAOException{
-        try{
-            deleteBaseUser(usr.getId().toString());
-        } catch (Exception e){
-            System.err.println(e.getStackTrace());
-            return false;
-        }
-        return true;
-    }
+
+
     /*
     @Override
     public User getByUsername(String name) throws DAOException {
