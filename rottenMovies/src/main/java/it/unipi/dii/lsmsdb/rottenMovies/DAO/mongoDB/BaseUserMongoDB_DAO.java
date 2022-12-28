@@ -15,10 +15,7 @@ import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewFeedDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
@@ -250,6 +247,10 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     }
 
     public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException{
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
+    }
+
+    public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 }

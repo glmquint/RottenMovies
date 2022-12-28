@@ -4,10 +4,7 @@ import com.mongodb.client.MongoCollection;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseNeo4jDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewFeedDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
@@ -101,9 +98,6 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         });
         return true;
 
-    }
-    public boolean update(BaseUser usr) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
     private boolean updateBaseUser(String id, String newName) throws DAOException{
@@ -212,18 +206,53 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
 
     /*
     MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
-     WHERE NOT (u)-[:FOLLOWS]->(t)
-     RETURN 100*toFloat( sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/ (count(m.title)+2) as perc,
-     t.name as name, collect(m.title) as movies, collect(r.freshness=r2.freshness) as alignement ORDER by perc DESC LIMIT 20
+    WHERE NOT (u)-[:FOLLOWS]->(t)
+    RETURN 100*toFloat( sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/(count(m.title)+2) as perc,
+    t.name as name ORDER by perc DESC LIMIT 20
      */
+
+    public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException{
+        if(usr.getId().toString().isEmpty() || page<0){
+            return null;
+        }
+        int skip = page*SUGGESTIONS_IN_FEED;
+        Session session = driver.session();
+        ArrayList<TopCriticSuggestionDTO> suggestionFeed = session.readTransaction((TransactionWork<ArrayList<TopCriticSuggestionDTO>>)(tx -> {
+            String query = "MATCH(u:User{name:$name})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic) "+
+                    "WHERE NOT (u)-[:FOLLOWS]->(t) " +
+                    "RETURN 100*(toFloat(sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/(count(m.title)+2)) as Rate, "+
+                    "t.name as Name ORDER BY Rate DESC SKIP $skip LIMIT $limit";
+            Result result = tx.run(query, parameters("name", usr.getUsername(),
+                    "skip", skip, "limit", SUGGESTIONS_IN_FEED));
+            ArrayList<TopCriticSuggestionDTO> feed = new ArrayList<>();
+            while(result.hasNext()){
+                Record r = result.next();
+
+                feed.add(new TopCriticSuggestionDTO(
+                        r.get("Name").asString(),
+                        r.get("Rate").asDouble()
+                ));
+            }
+            return feed;
+        }));
+        return suggestionFeed;
+
+    }
+
+    @Override
+    public ArrayList<BaseUserDTO> executeSearchQuery(int page) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+
+    public boolean update(BaseUser usr) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
 
 
     public MongoCollection<Document> getCollection() throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public ArrayList<BaseUserDTO> executeSearchQuery(int page) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
+
     public void queryBuildSearchByUsername(String username) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }

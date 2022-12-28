@@ -5,6 +5,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewFeedDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticSuggestionDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -29,5 +30,7 @@ public interface BaseUserDAO extends AutoCloseable{
     boolean followTopCritic(BaseUser user, BaseUser topCritic) throws DAOException;
     boolean unfollowTopCritic(BaseUser user, BaseUser topCritic) throws DAOException;
     public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException;
+
+    public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException;
 
 }

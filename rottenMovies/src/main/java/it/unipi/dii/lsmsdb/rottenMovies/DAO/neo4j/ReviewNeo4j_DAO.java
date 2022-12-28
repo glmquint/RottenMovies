@@ -88,7 +88,28 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
          */
     }
 
+    /*
+        CONTROLLO REVIEW BOMBING IN BASE A DUE PERIODI DEFINITI, PERIODO DI CONTROLLO E CHECK SUI DATI
+        MATCH(m:Movie{title:"Joker"})<-[r:REVIEWED]-()
+         WITH SUM(CASE WHEN r.date>=date("2019-01-01") AND r.date<date("2020-01-01")  THEN 1 ELSE 0 END) as PreviousCount,
+         100*toFloat(SUM(CASE WHEN r.date>=date("2019-01-01") AND r.date<date("2020-01-01") AND r.freshness = true THEN 1 ELSE 0 END))/SUM(CASE WHEN r.date>=date("2019-01-01") AND r.date<date("2020-01-01")  THEN 1 ELSE 0 END) as PreviousRate,
+         SUM(CASE WHEN r.date>=date("2020-01-01") AND r.date<date("2021-01-01")  THEN 1 ELSE 0 END) as LaterCount,
+          100*toFloat(SUM(CASE WHEN r.date>=date("2020-01-01") AND r.date<date("2021-01-01") AND r.freshness = true THEN 1 ELSE 0 END))/SUM(CASE WHEN r.date>=date("2020-01-01") AND r.date<date("2021-01-01")  THEN 1 ELSE 0 END) as LaterRate
+          RETURN PreviousCount, PreviousRate, LaterCount, LaterRate, toFloat(LaterRate)/PreviousRate as totalRate, toFloat(LaterCount)/(PreviousCount) as bs
 
+     */
+
+    /*
+
+    CONTROLLO REVIEW BOMBING IN BASE A STORICO VS PERIODO DEFINITO
+    MATCH (m:Movie)<-[r:REVIEWED]-()
+    WITH  SUM(CASE WHEN r.date<date("2019-12-01") THEN 1 ELSE 0 END) as PreviousCount,
+    100*toFloat(SUM(CASE WHEN r.date<date("2019-12-01") AND r.freshness = true THEN 1 ELSE 0 END))/SUM(CASE WHEN r.date<date("2019-12-01") THEN 1 ELSE 0 END) as PreviousRate,
+    SUM(CASE WHEN r.date>=date("2019-12-01") AND r.date<date("2020-01-01") THEN 1 ELSE 0 END) as LaterCount,
+    100*toFloat(SUM(CASE WHEN r.date>=date("2019-12-01") AND r.date<date("2020-01-01") AND r.freshness = true THEN 1 ELSE 0 END))/SUM(CASE WHEN r.date>=date("2019-12-01") AND r.date<date("2020-01-01") THEN 1 ELSE 0 END) as LaterRate
+    RETURN PreviousCount, PreviousRate, LaterCount, LaterRate
+
+     */
 
     /*
         MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
