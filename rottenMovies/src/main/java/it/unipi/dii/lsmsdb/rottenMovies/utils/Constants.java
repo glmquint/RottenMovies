@@ -13,4 +13,5 @@ public class Constants {
     public static final int REVIEWS_IN_FEED = 10;
     public static final int SUGGESTIONS_IN_FEED = 5;
     public static final String DELETED_USER = "Deleted User";
+    public static final String DELETED_REVIEW = "Deleted Review";
 }

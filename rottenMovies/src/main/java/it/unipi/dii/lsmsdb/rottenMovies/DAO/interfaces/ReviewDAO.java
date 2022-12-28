@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public interface ReviewDAO extends AutoCloseable {
-    boolean updateReviewsByDeletedBaseUser(BaseUser user) throws DAOException;
-
     boolean reviewMovie(BaseUser usr, Review review) throws DAOException;
     boolean delete(Review review) throws DAOException;
 

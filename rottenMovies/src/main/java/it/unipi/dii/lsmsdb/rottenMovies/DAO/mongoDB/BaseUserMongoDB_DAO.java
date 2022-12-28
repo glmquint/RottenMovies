@@ -219,16 +219,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         query=null;
         return returnvalue;
-        /*
 
-        List<SimplyfiedReview> reviews = simpleUser.getReviews();
-
-        for (SimplyfiedReview r: reviews) {
-            Document doc2=collectionMovie.find(eq("primaryTitle", r.getPrimaryTitle())).projection(fields(include("primaryTitle","review"),excludeId(), slice("review", r.getIndex(),1))).first();
-
-            System.out.println(doc2.get("review"));
-        }
-         */
     }
     public BaseUserDTO getMostReviewUser() throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");

@@ -2,6 +2,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.mongoDB;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.*;
@@ -16,11 +17,12 @@ import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
+import javax.print.Doc;
+import java.util.*;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.*;
 import static com.mongodb.client.model.Updates.popFirst;
 import static com.mongodb.client.model.Updates.push;
 
@@ -30,13 +32,6 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
     }
     private MongoCollection<Document> getUserCollection(){
         return returnCollection(myClient, Constants.COLLECTION_STRING_USER);
-    }
-    public boolean updateReviewsByDeletedBaseUser(BaseUser user){
-        // TODO: implement this method
-        if(user.getFirstName()!= Constants.USERS_MARKED_AS_DELETED)
-            return false;
-
-        return true;
     }
     private BasicDBObject buildLast3ReviewField(Review r){
         BasicDBObject reviewLast3 = new BasicDBObject();
@@ -65,28 +60,45 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         reviewMovie.put("review_index",index);
         return reviewMovie;
     }
+
+    private HashMap<String,Integer> updateMovieRating (Document doc,boolean freshreview){ // utitliy function
+        HashMap<String,Integer> map = new HashMap<>();
+        Set<String> keyset=doc.keySet();
+        for(String s: keyset){
+            map.put(s,doc.getInteger(s));
+        }
+        System.out.println(map);
+        return map;
+
+    }
+
     @Override
     public boolean reviewMovie(BaseUser usr, Review review) throws DAOException{
         // TODO: remember to update the movie status (number of votes, etc)
         MongoCollection<Document> movieCollection = getMovieCollection();
         MongoCollection<Document> userCollection = getUserCollection();
+        /*
         BasicDBObject reviewLast3 = buildLast3ReviewField(review);
         Bson match = new Document("$match", Filters.eq("_id", review.getMovie_id()));
-        Bson projection = new Document("$size", "$review" );
-        Bson project = Aggregates.project(new Document("count", projection) );
+        Bson project = Aggregates.project(fields(include("tomatometer_rating","audience_rating","tomatometer_fresh_critics_count",
+                "tomatometer_rotten_critics_count"), excludeId(),Projections.computed("count",new Document("$size", "$review" ))));
         AggregateIterable res=movieCollection.aggregate(Arrays.asList(match, project));
         MongoCursor<Document> cursor = res.cursor();
-        int elem_array = 0;
+        boolean freshReview = (review.getReviewType()=="Fresh");
         while(cursor.hasNext()){
-            elem_array=cursor.next().getInteger("count");
-            System.out.println(elem_array);
+           updateMovieRating(cursor.next(),freshReview);
         }
+
+
         if(usr instanceof User){
             // inc audience_count
             //update rating and status
+            if(freshReview){
+
+            }
         }
         else { // it's a TopCritic
-            if(review.getReviewType()=="Fresh"){
+            if(freshReview){
                 // increment tomatometer_fresh_critics_count
             }
             else {
@@ -94,6 +106,7 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             }
             // updates tomatomer_rating and status
         }
+
         review.setCriticName(usr.getUsername());
         BasicDBObject reviewMovie = buildMovieReviewField(review);
         Bson filterMovie = eq("_id",  review.getMovie_id());
@@ -106,14 +119,47 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         Bson updateUsr = push("last_3_reviews", reviewLast3);
         userCollection.updateOne(filterUsr,updateUsr);
         userCollection.updateOne(filterUsr,popFirst("last_3_reviews"));
+
+        */
         return true;
     }
 
     @Override
-    public boolean delete(Review review)throws DAOException{
-        throw new DAOException("method not implemented for Mongo DB");
-    }
+    public boolean delete(Review review) throws DAOException{
+        if(review.getCriticName()==null){
+            return false;
+        }
+        MongoCollection<Document> movieCollection = getMovieCollection();
+        MongoCollection<Document> userCollection = getUserCollection();
 
+        Document user=userCollection.find(eq("username", review.getCriticName())).first();
+        Bson filterUsr = eq("username", review.getCriticName());
+        Bson filterMovie = eq("_id",review.getMovie_id());
+        userCollection.updateOne(filterUsr,Updates.pull("last_3_reviews",filterMovie));
+
+        Bson projection = Projections.fields( excludeId(), elemMatch("reviews", eq("primaryTitle", review.getMovie())));
+        Document doc= userCollection.find(filterUsr).projection(projection).first();
+        Object obj = doc.get("reviews");
+        Document doc2 = null;
+        if (obj instanceof ArrayList) {
+            ArrayList<?> dboArrayNested = (ArrayList<?>) obj;
+            for (Object dboNestedObj : dboArrayNested) {
+                if (dboNestedObj instanceof Document) {
+                    doc2=Document.class.cast(dboNestedObj);
+                }
+            }
+        }
+        else {
+            return false;
+        }
+
+        int index=doc2.getInteger("review_index");
+        Document set=new Document("$set", new Document("review."+index+".critic_name",Constants.DELETED_REVIEW));
+        movieCollection.updateOne(filterMovie, set);
+        Bson updates = Updates.combine(Updates.pull("reviews",eq("movie_id",review.getMovie_id())));
+        userCollection.updateOne(filterUsr,updates);
+        return true;
+    }
     @Override
     public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException {
         throw new DAOException("method not implemented for Mongo DB");
