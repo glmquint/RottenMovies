@@ -27,6 +27,10 @@ public class MovieService {
                 String v = entry.getValue();
                 if (k.equals("title")) {
                     moviedao.queryBuildSearchByTitleContains(v);
+                } else if (k.equals("startYear") || k.equals("endYear")){
+                    if (!v.isEmpty()) {
+                        moviedao.queryBuildSearchByYear(Integer.parseInt(v), k.equals("startYear"));
+                    }
                 }
             }
             movie_page.setEntries(moviedao.executeSearchQuery(page));
