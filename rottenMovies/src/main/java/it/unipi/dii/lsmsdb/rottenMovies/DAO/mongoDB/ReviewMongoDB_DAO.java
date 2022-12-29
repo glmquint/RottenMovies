@@ -171,7 +171,7 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         MongoCollection<Document> movieCollection = getMovieCollection();
 
         if(reviewUpdated.getMovie_id()==null || usr.getId()==null){
-            System.out.println("ReviewMongoDB_DAO.update[ERROR]:review fields cannot be null values! Check movie_id");
+            System.out.println("ReviewMongoDB_DAO.update[ERROR]:review fields cannot be null values! Check movie_id and user_id");
             return false;
         }
         ArrayList<Review> last3 = usr.getLast3Reviews();
@@ -193,20 +193,26 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             userCollection.updateOne(eq("_id",usr.getId()),updates);
         }
         ArrayList<SimplyfiedReview> listrev = usr.getReviews();
+        found=false;
         for(SimplyfiedReview s:listrev){
             if(s.getMovieID().equals(reviewUpdated.getMovie_id())){
                 index=s.getIndex();
+                found=true;
                 break;
             }
         }
+        if (!found) {
+            return false;
+        }
         Bson updates = Updates.combine(
-                Updates.set("review."+index+".review_type",reviewUpdated.getReviewType()),
-                Updates.set("review."+index+".review_score", reviewUpdated.getReviewScore()),
-                Updates.set("review."+index+".review_date", reviewUpdated.getReviewDate()),
-                Updates.set("review."+index+".review_content", reviewUpdated.getReviewContent()));
-        movieCollection.updateOne(eq("_id",reviewUpdated.getMovie_id()),updates);
+                Updates.set("review." + index + ".review_type", reviewUpdated.getReviewType()),
+                Updates.set("review." + index + ".review_score", reviewUpdated.getReviewScore()),
+                Updates.set("review." + index + ".review_date", reviewUpdated.getReviewDate()),
+                Updates.set("review." + index + ".review_content", reviewUpdated.getReviewContent()));
+        movieCollection.updateOne(eq("_id", reviewUpdated.getMovie_id()), updates);
         // TODO: update the rating in movie, maybe you can use find one and update
         return true;
+
     }
     @Override
     public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException {

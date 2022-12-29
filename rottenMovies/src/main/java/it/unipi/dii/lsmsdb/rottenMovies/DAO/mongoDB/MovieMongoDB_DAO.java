@@ -45,7 +45,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public MongoCollection<Document> getCollection(){
-        return returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE); // TODO: check accessed via instance reference
+        return returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
     }
 
     public ArrayList<MovieDTO> executeSearchQuery(int page){
@@ -107,7 +107,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
          */
     }
 
-    public void queryBuildSearchByTitle(String title){
+    public void queryBuildSearchByTitleExact(String title){
         Bson new_query = Filters.eq("primaryTitle", title);
         if (query == null) {
             query = new_query;
@@ -116,7 +116,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query = Filters.and(query, new_query);
     }
 
-    public void queryBuildSearchByTitleContains(String title){
+    public void queryBuildSearchByTitle(String title){
         Bson new_query = Filters.regex("primaryTitle", title, "i");
         if (query == null) {
             query = new_query;
@@ -135,7 +135,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public void queryBuildSearchPersonnel(String worker){
-        Bson new_query = Filters.and(elemMatch("personnel", eq("primaryName", worker)));
+        Bson new_query = Filters.elemMatch("personnel", regex("primaryName", worker,"i"));
         if (query == null){
             query = new_query;
             return;

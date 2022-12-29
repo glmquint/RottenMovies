@@ -67,38 +67,6 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         return true;
     }
 
-
-
-    /*@Override
-    public MovieDTO searchByTitle(String title) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
-
-    @Override
-    public MovieDTO searchById(ObjectId id) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
-
-    @Override
-    public ArrayList<MovieDTO> searchByYearRange(int startYear, int endYear) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
-
-    @Override
-    public ArrayList<MovieDTO> searchByTopRatings(int rating, boolean type) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
-
-    @Override
-    public ArrayList<MovieDTO> searchByUserRatings(int rating, boolean type) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
-
-    @Override
-    public Boolean delete(MovieDTO toDelete) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
-     */
     public ArrayList<MovieDTO> executeSearchQuery(int page) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
@@ -106,10 +74,10 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
     public boolean executeDeleteQuery() throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public void queryBuildSearchByTitle (String title) throws DAOException {
+    public void queryBuildSearchByTitleExact(String title) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public void queryBuildSearchByTitleContains(String title) throws DAOException {
+    public void queryBuildSearchByTitle(String title) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
     public void queryBuildSearchById(ObjectId id) throws DAOException {
@@ -121,7 +89,9 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
     public void queryBuildsearchByUserRatings(int rating, boolean type) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-
+    public void queryBuildSearchPersonnel(String worker) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
     @Override
     public void queryBuildSearchByYear(int year, boolean afterYear) throws DAOException{
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");

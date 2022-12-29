@@ -6,7 +6,6 @@ import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.neo4j.driver.exceptions.NoSuchRecordException;
 
 import java.util.ArrayList;
 
@@ -18,12 +17,13 @@ public interface MovieDAO extends AutoCloseable {
     MongoCollection<Document> getCollection() throws DAOException;
     ArrayList<MovieDTO> executeSearchQuery(int page) throws DAOException;
     boolean executeDeleteQuery() throws DAOException;
-    void queryBuildSearchByTitle (String title) throws DAOException;
-    void queryBuildSearchByTitleContains(String title) throws DAOException;
+    void queryBuildSearchByTitleExact(String title) throws DAOException;
+    void queryBuildSearchByTitle(String title) throws DAOException;
     void queryBuildSearchById(ObjectId id) throws DAOException;
     void queryBuildSearchByYear(int year, boolean afterYear) throws DAOException;
     void queryBuildSearchByTopRatings(int rating, boolean type) throws DAOException;
     void queryBuildsearchByUserRatings(int rating, boolean type) throws DAOException;
+    void queryBuildSearchPersonnel(String worker) throws DAOException;
     boolean update(Movie updated) throws DAOException;
     boolean insert(Movie newOne) throws DAOException;
     boolean delete (Movie movie) throws DAOException;
