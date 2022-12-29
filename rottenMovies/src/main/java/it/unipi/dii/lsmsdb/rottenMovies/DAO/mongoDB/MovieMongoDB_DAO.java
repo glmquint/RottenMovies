@@ -44,12 +44,8 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         super();
     }
 
-    public MongoCollection<Document> getCollection(){
-        return returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
-    }
-
     public ArrayList<MovieDTO> executeSearchQuery(int page){
-        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collection = getMovieCollection();
         Movie movie;
         String json_movie;
         ObjectMapper mapper = new ObjectMapper();
@@ -75,7 +71,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     public boolean executeDeleteQuery(){
         ArrayList<MovieDTO> movies_to_delete = executeSearchQuery(-1);
         // TODO: delete the user review of the deleted movie before executing deleteMany
-        MongoCollection<Document>  collectionMovie = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collectionMovie = getMovieCollection();
         boolean returnvalue=true;
         try { // now I delete the movie from collection movie
             DeleteResult result = collectionMovie.deleteMany(query);
@@ -270,7 +266,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return personnelDBList;
     }
     public boolean update(Movie updated){
-        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collection = getMovieCollection();
         ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(updated);
         boolean returnvalue=true;
         Bson updates = Updates.combine(
@@ -306,7 +302,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return returnvalue;
     }
     public boolean insert(Movie newOne){
-        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collection = getMovieCollection();
         ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(newOne);
         boolean returnvalue=true;
         try {

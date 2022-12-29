@@ -14,7 +14,6 @@ import java.util.ArrayList;
  * <interface>MovieDao</interface> interface for the DAO of the movie
  */
 public interface MovieDAO extends AutoCloseable {
-    MongoCollection<Document> getCollection() throws DAOException;
     ArrayList<MovieDTO> executeSearchQuery(int page) throws DAOException;
     boolean executeDeleteQuery() throws DAOException;
     void queryBuildSearchByTitleExact(String title) throws DAOException;

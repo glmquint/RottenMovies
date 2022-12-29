@@ -18,29 +18,27 @@ public abstract class BaseMongoDAO implements AutoCloseable{
     protected final MongoClient myClient;
     protected Bson query;
 
-
     public Bson getQuery() {
         return query;
     }
 
-
     public BaseMongoDAO(){
-        System.out.println("connection established");
+        System.out.println("[DEBUG]:connection established");
         ConnectionString uri = new ConnectionString(Constants.CONNECTION_STRING);
         this.myClient = MongoClients.create(uri);
         query = null;
     }
 
-    /**
-     * <method>returnCollection</method>  returns a collection from the connected DB
-     * @param myClient is the object used to handle the connection
-     * @param connectionString is the string used to select a particular collection
-     * @return a document to make operation on the collection
-     */
-    public MongoCollection<Document> returnCollection(MongoClient myClient, String connectionString){
+    private MongoCollection<Document> returnCollection(String connectionString){
         MongoDatabase db = myClient.getDatabase(Constants.DATABASE_STRING);
         MongoCollection<Document> collection = db.getCollection(connectionString);
         return collection;
+    }
+    public MongoCollection<Document> getMovieCollection(){
+       return returnCollection(Constants.COLLECTION_STRING_MOVIE);
+    }
+    public MongoCollection<Document> getUserCollection(){
+        return returnCollection(Constants.COLLECTION_STRING_USER);
     }
 
     /**
@@ -48,7 +46,7 @@ public abstract class BaseMongoDAO implements AutoCloseable{
      */
     @Override
     public void close () throws RuntimeException{
-        System.out.println("closed conenction");
+        System.out.println("[DEBUG]:closed connection");
         this.myClient.close();
     }
 

@@ -44,11 +44,8 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     public BaseUserMongoDB_DAO() {
         super();
     }
-    public MongoCollection<Document> getCollection(){
-        return returnCollection(myClient, Constants.COLLECTION_STRING_USER);
-    }
     public ArrayList<BaseUserDTO> executeSearchQuery(int page){
-        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER); //TODO: maybe use getCollection
+        MongoCollection<Document>  collection = getUserCollection();
         ObjectMapper mapper = new ObjectMapper();
         FindIterable found = collection.find(query);
         if (page >= 0) { // only internally. Never return all users without pagination on front-end
@@ -133,7 +130,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     }
 
     public boolean insert(BaseUser usr){
-        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
+        MongoCollection<Document>  collection = getUserCollection();
         try {
             Document newdoc = new Document()
                     .append("_id", new ObjectId())
@@ -158,7 +155,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         return true;
     }
     public boolean update(BaseUser usr) throws DAOException{
-        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
+        MongoCollection<Document>  collection = getUserCollection();
         boolean returnvalue=true;
         Bson updates = Updates.combine(
                     Updates.set("password", usr.getPassword()),
@@ -198,8 +195,8 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
 
     public boolean executeDeleteQuery() {
         ArrayList<BaseUserDTO> users_to_delete = executeSearchQuery(-1);
-        MongoCollection<Document>  collectionUser = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
-        MongoCollection<Document>  collectionMovie = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collectionUser = getUserCollection();
+        MongoCollection<Document>  collectionMovie = getMovieCollection();
         boolean returnvalue=true;
         ArrayList<SimplyfiedReviewDTO> listrev;
         Document set;

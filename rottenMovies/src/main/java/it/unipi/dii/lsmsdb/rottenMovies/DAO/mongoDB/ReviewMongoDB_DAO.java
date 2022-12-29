@@ -28,12 +28,6 @@ import static com.mongodb.client.model.Updates.popFirst;
 import static com.mongodb.client.model.Updates.push;
 
 public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
-    private MongoCollection<Document> getMovieCollection(){
-        return returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
-    }
-    private MongoCollection<Document> getUserCollection(){
-        return returnCollection(myClient, Constants.COLLECTION_STRING_USER);
-    }
     private BasicDBObject buildLast3ReviewField(Review r){
         BasicDBObject reviewLast3 = new BasicDBObject();
         reviewLast3.put("_id",r.getMovie_id());
