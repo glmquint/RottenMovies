@@ -105,26 +105,29 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     */
     /**
      * <method>getMostReviewUser</method>
+     *
      * @return the user non-top critic with the most review made
      * @throws DAOException
      */
     @Override
-    public BaseUserDTO getMostReviewUser() throws DAOException {
+    public ArrayList<UserDTO> getMostReviewUser() throws DAOException {
         Session session = driver.session();
-        User user = new User();
-
-        String mostReviewUser = session.readTransaction((TransactionWork<String>) tx ->{
+        ArrayList<UserDTO> userList = session.readTransaction((TransactionWork<ArrayList<UserDTO>>) tx ->{
             String query = "MATCH (u:User)-[:REVIEWED]->(m:Movie) " +
                     "RETURN u.name AS Name, count(*) as NumMovies " +
                     "ORDER BY NumMovies DESC " +
-                    "LIMIT 1";
+                    "LIMIT 5";
             Result result = tx.run(query);
-            System.out.println(result.peek().get("NumMovies"));
-            return result.single().get("Name").asString();
-
+            ArrayList<UserDTO> list = new ArrayList<>();
+            while(result.hasNext()){
+                Record r = result.next();
+                UserDTO user = new UserDTO();
+                user.setUsername(r.get("Name").asString());
+                list.add(user);
+            }
+            return list;
         });
-        user.setUsername((mostReviewUser));
-        return new UserDTO(user);
+        return userList;
     }
 
     /**
