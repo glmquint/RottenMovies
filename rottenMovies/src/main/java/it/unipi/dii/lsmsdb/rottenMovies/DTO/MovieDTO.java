@@ -1,6 +1,5 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
