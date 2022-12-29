@@ -3,6 +3,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.neo4j;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseNeo4jDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieReviewBombingDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewFeedDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
@@ -15,6 +16,8 @@ import org.neo4j.driver.TransactionWork;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -89,6 +92,50 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
     }
 
     /*
+
+   CONTROLLO REVIEW BOMBING IN BASE A STORICO VS PERIODO DEFINITO
+   MATCH (m:Movie)<-[r:REVIEWED]-()
+   WITH  SUM(CASE WHEN r.date<date("2019-12-01") THEN 1 ELSE 0 END) as PreviousCount,
+   100*toFloat(SUM(CASE WHEN r.date<date("2019-12-01") AND r.freshness = true THEN 1 ELSE 0 END))/SUM(CASE WHEN r.date<date("2019-12-01") THEN 1 ELSE 0 END) as PreviousRate,
+   SUM(CASE WHEN r.date>=date("2019-12-01") AND r.date<date("2020-01-01") THEN 1 ELSE 0 END) as LaterCount,
+   100*toFloat(SUM(CASE WHEN r.date>=date("2019-12-01") AND r.date<date("2020-01-01") AND r.freshness = true THEN 1 ELSE 0 END))/SUM(CASE WHEN r.date>=date("2019-12-01") AND r.date<date("2020-01-01") THEN 1 ELSE 0 END) as LaterRate
+   RETURN PreviousCount, PreviousRate, LaterCount, LaterRate
+
+    */
+    public MovieReviewBombingDTO checkReviewBombing(Movie movie, LocalDate date) throws  DAOException{
+        MovieReviewBombingDTO reviewBombingList = new MovieReviewBombingDTO();
+        if(movie.getPrimaryTitle().isEmpty() || date == null){
+            return reviewBombingList;
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String strDate = date.format(formatter);
+        LocalDate today = LocalDate.now();
+        String todayString = today.format(formatter);
+        Session session = driver.session();
+        reviewBombingList = session.readTransaction((TransactionWork<MovieReviewBombingDTO>)(tx -> {
+            String query = "MATCH (m:Movie{title:$movieTitle})<-[r:REVIEWED]-() " +
+                    "WITH SUM(CASE WHEN r.date<date(\""+strDate+"\") THEN 1 ELSE 0 END) as StoricCount, " +
+                    "100*toFloat(SUM(CASE WHEN r.date<date(\""+strDate+"\") AND r.freshness = true THEN 1 ELSE 0 END))" +
+                    "/SUM(CASE WHEN r.date<date(\""+strDate+"\") THEN 1 ELSE 0 END) as StoricRate, " +
+                    "SUM(CASE WHEN r.date>=date(\""+strDate+"\") AND r.date<date(\""+todayString+"\") THEN 1 ELSE 0 END) as TargetCount, " +
+                    "100*toFloat(SUM(CASE WHEN r.date>=date(\""+strDate+"\") AND r.date<date(\""+todayString+"\") AND r.freshness = true THEN 1 ELSE 0 END))" +
+                    "/SUM(CASE WHEN r.date>=date(\""+strDate+"\") AND r.date<date(\""+todayString+"\") THEN 1 ELSE 0 END) as TargetRate " +
+                    "RETURN StoricCount, StoricRate, TargetCount, TargetRate";
+            Result result = tx.run(query, parameters("movieTitle", movie.getPrimaryTitle(),
+                    "date", strDate));
+            MovieReviewBombingDTO feed = new MovieReviewBombingDTO(
+                    movie.getPrimaryTitle(),
+                    result.peek().get("StoricCount").asInt(),
+                    (int)result.peek().get("StoricRate").asDouble(),
+                    result.peek().get("TargetCount").asInt(),
+                    (int)result.peek().get("TargetRate").asDouble(),
+                    date
+            );
+            return feed;
+        }));
+        return reviewBombingList;
+    }
+    /*
         CONTROLLO REVIEW BOMBING IN BASE A DUE PERIODI DEFINITI, PERIODO DI CONTROLLO E CHECK SUI DATI
         MATCH(m:Movie{title:"Joker"})<-[r:REVIEWED]-()
          WITH SUM(CASE WHEN r.date>=date("2019-01-01") AND r.date<date("2020-01-01")  THEN 1 ELSE 0 END) as PreviousCount,
@@ -99,17 +146,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
 
      */
 
-    /*
 
-    CONTROLLO REVIEW BOMBING IN BASE A STORICO VS PERIODO DEFINITO
-    MATCH (m:Movie)<-[r:REVIEWED]-()
-    WITH  SUM(CASE WHEN r.date<date("2019-12-01") THEN 1 ELSE 0 END) as PreviousCount,
-    100*toFloat(SUM(CASE WHEN r.date<date("2019-12-01") AND r.freshness = true THEN 1 ELSE 0 END))/SUM(CASE WHEN r.date<date("2019-12-01") THEN 1 ELSE 0 END) as PreviousRate,
-    SUM(CASE WHEN r.date>=date("2019-12-01") AND r.date<date("2020-01-01") THEN 1 ELSE 0 END) as LaterCount,
-    100*toFloat(SUM(CASE WHEN r.date>=date("2019-12-01") AND r.date<date("2020-01-01") AND r.freshness = true THEN 1 ELSE 0 END))/SUM(CASE WHEN r.date>=date("2019-12-01") AND r.date<date("2020-01-01") THEN 1 ELSE 0 END) as LaterRate
-    RETURN PreviousCount, PreviousRate, LaterCount, LaterRate
-
-     */
 
     /*
         MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
