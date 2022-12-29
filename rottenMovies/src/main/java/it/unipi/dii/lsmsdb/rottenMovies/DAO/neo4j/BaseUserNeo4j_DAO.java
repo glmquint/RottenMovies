@@ -26,7 +26,7 @@ import static org.neo4j.driver.Values.parameters;
  * @author Fabio
  * @author Giacomo
  * @author Guillaume
- * <class>BaseUserNeo4j_DAO</class> allow to use methods to interact with the GraphDB
+ * <class>BaseUserNeo4j_DAO</class> allow to use methods to interact with the GraphDB specifically for the User/TopCritic entities
  */
 public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     /**
@@ -64,7 +64,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
 
     /**
      * <method>delete</method> removes an entry from the GraphDB and all of its relationship
-     * @param usr is the BaseUser model to delete from the GraphDB
+     * @param usr is the BaseUser model used to get the info to retrieve and delete from the GraphDB
      * @return true in case of success
      * @throws DAOException
      */

@@ -16,7 +16,20 @@ import java.util.ArrayList;
 
 import static org.neo4j.driver.Values.parameters;
 
+/**
+ * @author Fabio
+ * @author Giacomo
+ * @author Guillaume
+ * <class>MovieNeo4j_DAO</class> allow to use methods to interact with the GraphDB specifically for the movie entities
+ */
 public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
+    /**
+     * <method>insert</method> add a new entity to the GraphDB
+     * @param movie is the model from which the new entity is generate
+     * @return true in case of success
+     * @throws DAOException
+     */
+    @Override
     public boolean insert(Movie movie) throws DAOException{
         String id = movie.getId().toString();
         String title = movie.getPrimaryTitle();
@@ -34,7 +47,13 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         });
         return true;
     }
-
+    /**
+     * <method>delete</method> remove an entity to the GraphDB
+     * @param movie is the model used to get the info to retrieve and delete from the GraphDB
+     * @return true in case of success
+     * @throws DAOException
+     */
+    @Override
     public boolean delete(Movie movie) throws DAOException, NoSuchRecordException{
         String id = movie.getId().toString();
         if(id.isEmpty()){
@@ -50,6 +69,7 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         return true;
     }
 
+/* NEVER USED
     public boolean update(Movie movie) throws DAOException, NoSuchRecordException {
         String id = movie.getId().toString();
         String newTitle = movie.getPrimaryTitle();
@@ -67,25 +87,32 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         return true;
     }
 
+ */
+@Override
     public ArrayList<MovieDTO> executeSearchQuery(int page) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-
+    @Override
     public boolean executeDeleteQuery() throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    @Override
     public void queryBuildSearchByTitle (String title) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    @Override
     public void queryBuildSearchByTitleContains(String title) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    @Override
     public void queryBuildSearchById(ObjectId id) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    @Override
     public void queryBuildSearchByTopRatings(int rating, boolean type) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    @Override
     public void queryBuildsearchByUserRatings(int rating, boolean type) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
