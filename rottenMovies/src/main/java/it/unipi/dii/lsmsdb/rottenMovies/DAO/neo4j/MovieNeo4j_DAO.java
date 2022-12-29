@@ -69,7 +69,7 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         return true;
     }
 
-/* NEVER USED
+    //NEVER USED
     public boolean update(Movie movie) throws DAOException, NoSuchRecordException {
         String id = movie.getId().toString();
         String newTitle = movie.getPrimaryTitle();
@@ -87,7 +87,6 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         return true;
     }
 
- */
 @Override
     public ArrayList<MovieDTO> executeSearchQuery(int page) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");

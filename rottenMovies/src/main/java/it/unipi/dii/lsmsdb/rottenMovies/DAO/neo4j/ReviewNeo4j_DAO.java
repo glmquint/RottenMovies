@@ -24,13 +24,20 @@ import java.util.List;
 
 import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.REVIEWS_IN_FEED;
 import static org.neo4j.driver.Values.parameters;
-
+/**
+ * @author Fabio
+ * @author Giacomo
+ * @author Guillaume
+ * <class>ReviewNeo4j_DAO</class> allow to use methods to interact with the GraphDB specifically for the REVIEWED relationship
+ */
 public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
-    @Override
-    public boolean updateReviewsByDeletedBaseUser(BaseUser user) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
-
+    /**
+     * <method>reviewMovie</method> create a relationship between a User/TopCritic and a Movie
+     * @param usr is the User/TopCritic who wrote the review
+     * @param review is the Review written by usr
+     * @return true in case of success
+     * @throws DAOException
+     */
     @Override
     public boolean reviewMovie(BaseUser usr, Review review)  throws DAOException{
 
@@ -56,15 +63,13 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
             return 1;
         });
         return true;
-        /*try{
-            reviewMovieNeo4j(usr.getId().toString(), review.getMovie(), review.getReviewContent(), review.getReviewDate(), (review.getReviewType().equals("Fresh")) ? true : false);
-        } catch (Exception e){
-            System.err.println(e.getStackTrace());
-        }
-        return false;
-        */
     }
-
+    /**
+     * <method>delete</method> delete a relationship between a User/TopCritic and a Movie
+     * @param review is the Review written by usr that needs to be deleted
+     * @return true in case of success
+     * @throws DAOException
+     */
     @Override
     public boolean delete(Review review)  throws DAOException{
         if(review.getCriticName().isEmpty() || review.getMovie().isEmpty()){
@@ -80,28 +85,15 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
             return 1;
         });
         return true;
-        /*try{
-            deleteReviewNeo4j(review.getCriticName(), review.getMovie());
-        } catch (Exception e){
-            System.err.println(e.getStackTrace());
-            return false;
-        }
-        return true;
-
-         */
     }
 
-    /*
-
-   CONTROLLO REVIEW BOMBING IN BASE A STORICO VS PERIODO DEFINITO
-   MATCH (m:Movie)<-[r:REVIEWED]-()
-   WITH  SUM(CASE WHEN r.date<date("2019-12-01") THEN 1 ELSE 0 END) as PreviousCount,
-   100*toFloat(SUM(CASE WHEN r.date<date("2019-12-01") AND r.freshness = true THEN 1 ELSE 0 END))/SUM(CASE WHEN r.date<date("2019-12-01") THEN 1 ELSE 0 END) as PreviousRate,
-   SUM(CASE WHEN r.date>=date("2019-12-01") AND r.date<date("2020-01-01") THEN 1 ELSE 0 END) as LaterCount,
-   100*toFloat(SUM(CASE WHEN r.date>=date("2019-12-01") AND r.date<date("2020-01-01") AND r.freshness = true THEN 1 ELSE 0 END))/SUM(CASE WHEN r.date>=date("2019-12-01") AND r.date<date("2020-01-01") THEN 1 ELSE 0 END) as LaterRate
-   RETURN PreviousCount, PreviousRate, LaterCount, LaterRate
-
-    */
+    /**
+     * <method>checkReviewBombing</method> check if a particular film was reviewed bombed
+     * @param movie is the target movie to check for review bombing
+     * @param month is the number of month from today's date in whith to check for review bombing
+     * @return a MovieReviewBombingDTO used to visualize the result of the query
+     * @throws DAOException
+     */
     public MovieReviewBombingDTO checkReviewBombing(Movie movie, int month) throws  DAOException{
         MovieReviewBombingDTO reviewBombingList = new MovieReviewBombingDTO();
         if(movie.getPrimaryTitle().isEmpty() || month < 0){
@@ -135,29 +127,9 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         }));
         return reviewBombingList;
     }
-    /*
-        CONTROLLO REVIEW BOMBING IN BASE A DUE PERIODI DEFINITI, PERIODO DI CONTROLLO E CHECK SUI DATI
-        MATCH(m:Movie{title:"Joker"})<-[r:REVIEWED]-()
-         WITH SUM(CASE WHEN r.date>=date("2019-01-01") AND r.date<date("2020-01-01")  THEN 1 ELSE 0 END) as PreviousCount,
-         100*toFloat(SUM(CASE WHEN r.date>=date("2019-01-01") AND r.date<date("2020-01-01") AND r.freshness = true THEN 1 ELSE 0 END))/SUM(CASE WHEN r.date>=date("2019-01-01") AND r.date<date("2020-01-01")  THEN 1 ELSE 0 END) as PreviousRate,
-         SUM(CASE WHEN r.date>=date("2020-01-01") AND r.date<date("2021-01-01")  THEN 1 ELSE 0 END) as LaterCount,
-          100*toFloat(SUM(CASE WHEN r.date>=date("2020-01-01") AND r.date<date("2021-01-01") AND r.freshness = true THEN 1 ELSE 0 END))/SUM(CASE WHEN r.date>=date("2020-01-01") AND r.date<date("2021-01-01")  THEN 1 ELSE 0 END) as LaterRate
-          RETURN PreviousCount, PreviousRate, LaterCount, LaterRate, toFloat(LaterRate)/PreviousRate as totalRate, toFloat(LaterCount)/(PreviousCount) as bs
 
-     */
-
-
-
-    /*
-        MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
-        WHERE NOT (u)-[:FOLLOWS]->(t)
-        RETURN 100*toFloat( sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/ (count(m.title)+2) as perc,
-        t.name as name ORDER by perc DESC LIMIT 10
-
-
-        MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
-        WHERE NOT (u)-[:FOLLOWS]->(t)
-        RETURN 100*toFloat( sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/ (count(m.title)+2) as perc,
-        t.name as name, collect(m.title) as movies, collect(r.freshness=r2.freshness) as alignement ORDER by perc DESC LIMIT 20
-     */
+    @Override
+    public boolean updateReviewsByDeletedBaseUser(BaseUser user) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
 }
