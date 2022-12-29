@@ -105,8 +105,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     */
     /**
      * <method>getMostReviewUser</method>
-     *
-     * @return the user non-top critic with the most review made
+     * @return a list of  5 of user non-top critic with the most review made
      * @throws DAOException
      */
     @Override
