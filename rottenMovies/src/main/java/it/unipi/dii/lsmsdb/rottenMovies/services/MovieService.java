@@ -7,7 +7,6 @@ import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MovieService {
@@ -31,6 +30,24 @@ public class MovieService {
                     if (!v.isEmpty()) {
                         moviedao.queryBuildSearchByYear(Integer.parseInt(v), k.equals("startYear"));
                     }
+                } else if (k.equals("workers")){
+                    String[] workers = v.split(",");
+                    for (String w: workers){
+                        System.out.println("Worker: " + w.trim());
+                    }
+                    moviedao.queryBuildSearchPersonnel(
+                            v.split(","),
+                            request.containsKey("includeAllWorkers") && request.get("includeAllWorkers").equals("on")
+                    );
+                } else if (k.equals("genres")){
+                    String[] genres = v.split(",");
+                    for (String w: genres){
+                        System.out.println("Genres: " + w.trim());
+                    }
+                    moviedao.queryBuildSearchGenres(
+                            v.split(","),
+                            request.containsKey("includeAllGenres") && request.get("includeAllGenres").equals("on")
+                    );
                 }
             }
             movie_page.setEntries(moviedao.executeSearchQuery(page));

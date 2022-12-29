@@ -134,8 +134,47 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query = Filters.and(query, new_query);
     }
 
-    public void queryBuildSearchPersonnel(String worker){
-        Bson new_query = Filters.elemMatch("personnel", regex("primaryName", worker,"i"));
+    public void queryBuildSearchPersonnel(String[] workers, boolean includeAll){
+        if (workers.length==0){
+            return;
+        }
+        Bson new_query = null;
+        for (String worker: workers) {
+            worker = worker.trim();
+            if (new_query == null){
+                new_query = Filters.elemMatch("personnel", regex("primaryName", worker, "i"));
+            } else {
+                if (includeAll) {
+                    new_query = Filters.and(new_query, Filters.elemMatch("personnel", regex("primaryName", worker, "i")));
+                } else {
+                    new_query = Filters.or(new_query, Filters.elemMatch("personnel", regex("primaryName", worker, "i")));
+                }
+            }
+        }
+        if (query == null){
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+
+    public void queryBuildSearchGenres(String[] genres, boolean includeAll){
+        if (genres.length==0){
+            return;
+        }
+        Bson new_query = null;
+        for (String genre: genres) {
+            genre = genre.trim();
+            if (new_query == null){
+                new_query = Filters.regex("genres", genre, "i");
+            } else {
+                if (includeAll) {
+                    new_query = Filters.and(new_query, Filters.regex("genres", genre, "i"));
+                } else {
+                    new_query = Filters.or(new_query, Filters.regex("genres", genre, "i"));
+                }
+            }
+        }
         if (query == null){
             query = new_query;
             return;

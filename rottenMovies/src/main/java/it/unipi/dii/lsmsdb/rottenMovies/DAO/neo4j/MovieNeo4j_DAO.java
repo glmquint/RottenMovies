@@ -89,9 +89,15 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
     public void queryBuildsearchByUserRatings(int rating, boolean type) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public void queryBuildSearchPersonnel(String worker) throws DAOException {
+    public void queryBuildSearchPersonnel(String[] workers, boolean includeAll) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+
+    @Override
+    public void queryBuildSearchGenres(String[] genres, boolean includeAll) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+
     @Override
     public void queryBuildSearchByYear(int year, boolean afterYear) throws DAOException{
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
