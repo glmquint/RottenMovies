@@ -12,4 +12,6 @@ public class Constants {
     public static final String USERS_MARKED_AS_DELETED="[[IS_GOING_TO_BE_DELETED]]";
     public static final int REVIEWS_IN_FEED = 10;
     public static final int SUGGESTIONS_IN_FEED = 5;
+    public static final String DELETED_USER = "Deleted User";
+    public static final String DELETED_REVIEW = "Deleted Review";
 }

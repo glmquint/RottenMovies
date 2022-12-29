@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewMovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewUserDTO;
+import org.bson.types.ObjectId;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -14,6 +15,8 @@ import java.util.LinkedHashMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Review {
+    @JsonProperty("_id")
+    private ObjectId movie_id;
     @JsonProperty("critic_name")
     private String criticName;
     @JsonProperty("primaryTitle")
@@ -38,12 +41,28 @@ public class Review {
         this.reviewDate=r.getReviewDate();
         this.reviewContent=r.getReviewContent();
         if(r instanceof ReviewUserDTO){
+            this.movie_id=((ReviewUserDTO) r).getMovie_id();
             this.movie= ((ReviewUserDTO) r).getMovie();
         }
         else if (r instanceof ReviewMovieDTO){
             this.criticName=((ReviewMovieDTO)r).getCriticName();
         }
     }
+
+    public ObjectId getMovie_id() {
+        return movie_id;
+    }
+
+    public void setMovie_id(Object id) {
+        if(id instanceof LinkedHashMap<?,?>){
+            LinkedHashMap link = (LinkedHashMap)id;
+            this.movie_id = new ObjectId(link.get("$oid").toString());
+        }
+        else if (id instanceof ObjectId){
+            this.movie_id= (ObjectId) id;
+        }
+    }
+
     public String getCriticName() {
         return criticName;
     }
@@ -137,14 +156,25 @@ public class Review {
     public String toString() {
         Date date = new Date();
         DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
-        return "Review{" +
-                "criticName='" + criticName + '\'' +
-                ", movie='" + movie + '\'' +
-                ", topCritic=" + topCritic + '\'' +
-                ", reviewType='" + reviewType + '\'' +
-                ", reviewScore='" + reviewScore + '\'' +
-                ", reviewDate=" + df2.format(date) + '\'' +
-                ", reviewContent='" + reviewContent + '\'' +
-                '}';
+        if (movie == null) {
+            return "Review{" +
+                    "criticName='" + criticName + '\'' +
+                    ", topCritic=" + topCritic + '\'' +
+                    ", reviewType='" + reviewType + '\'' +
+                    ", reviewScore='" + reviewScore + '\'' +
+                    ", reviewDate=" + df2.format(date) + '\'' +
+                    ", reviewContent='" + reviewContent + '\'' +
+                    '}';
+        } else {
+            return "Review{" +
+                    "id=" + movie_id.toString() + '\'' +
+                    ", movie='" + movie + '\'' +
+                    ", topCritic=" + topCritic + '\'' +
+                    ", reviewType='" + reviewType + '\'' +
+                    ", reviewScore='" + reviewScore + '\'' +
+                    ", reviewDate=" + df2.format(date) + '\'' +
+                    ", reviewContent='" + reviewContent + '\'' +
+                    '}';
+        }
     }
 }

@@ -233,7 +233,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     public boolean update(Movie updated){
         MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
         ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(updated);
-        Boolean returnvalue=true;
+        boolean returnvalue=true;
         Bson updates = Updates.combine(
                 Updates.set("year", updated.getYear()),
                 Updates.set("runtimeMinutes", updated.getRuntimeMinutes()),
@@ -265,7 +265,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     public boolean insert(Movie newOne){
         MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
         ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(newOne);
-        Boolean returnvalue=true;
+        boolean returnvalue=true;
         try {
             InsertOneResult result = collection.insertOne(new Document()
                     .append("_id", new ObjectId())

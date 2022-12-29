@@ -97,6 +97,9 @@ public class Movie {
             LinkedHashMap link = (LinkedHashMap)id;
             this.id = new ObjectId(link.get("$oid").toString());
         }
+        else if (id instanceof ObjectId){
+            this.id= (ObjectId) id;
+        }
     }
 
     public String getPrimaryTitle() {

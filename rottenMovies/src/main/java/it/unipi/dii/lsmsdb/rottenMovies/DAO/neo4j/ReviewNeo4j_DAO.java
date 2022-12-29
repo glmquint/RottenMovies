@@ -23,10 +23,6 @@ import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.REVIEWS_IN_FEED;
 import static org.neo4j.driver.Values.parameters;
 
 public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
-    @Override
-    public boolean updateReviewsByDeletedBaseUser(BaseUser user) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
 
     private boolean reviewMovieNeo4j(String userId, String movieId, String content, Date date, Boolean freshness) throws DAOException{
         if(userId.isEmpty() ||movieId.isEmpty() || content.isEmpty() || date==null){
@@ -129,6 +125,9 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
             System.err.println(e.getStackTrace());
         }
         return reviewList;
+    }
+    public boolean update(BaseUser usr, Review review) throws DAOException {
+        throw new DAOException("Wrong DB");
     }
 
     /*
