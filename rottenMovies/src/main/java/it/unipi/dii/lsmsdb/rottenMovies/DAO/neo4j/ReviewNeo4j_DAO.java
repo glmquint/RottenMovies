@@ -102,13 +102,13 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
    RETURN PreviousCount, PreviousRate, LaterCount, LaterRate
 
     */
-    public MovieReviewBombingDTO checkReviewBombing(Movie movie, LocalDate date) throws  DAOException{
+    public MovieReviewBombingDTO checkReviewBombing(Movie movie, int month) throws  DAOException{
         MovieReviewBombingDTO reviewBombingList = new MovieReviewBombingDTO();
-        if(movie.getPrimaryTitle().isEmpty() || date == null){
+        if(movie.getPrimaryTitle().isEmpty() || month < 0){
             return reviewBombingList;
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String strDate = date.format(formatter);
+        String strDate = LocalDate.now().minusMonths(month).format(formatter);
         LocalDate today = LocalDate.now();
         String todayString = today.format(formatter);
         Session session = driver.session();
@@ -129,7 +129,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
                     (int)result.peek().get("StoricRate").asDouble(),
                     result.peek().get("TargetCount").asInt(),
                     (int)result.peek().get("TargetRate").asDouble(),
-                    date
+                    LocalDate.now().minusMonths(month)
             );
             return feed;
         }));

@@ -49,7 +49,7 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 
-    public MovieReviewBombingDTO checkReviewBombing(Movie movie, LocalDate date) throws DAOException{
+    public MovieReviewBombingDTO checkReviewBombing(Movie movie, int month) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 }

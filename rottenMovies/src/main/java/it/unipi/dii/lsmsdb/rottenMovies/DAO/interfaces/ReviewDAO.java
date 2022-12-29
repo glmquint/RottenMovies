@@ -17,7 +17,7 @@ public interface ReviewDAO extends AutoCloseable {
     boolean reviewMovie(BaseUser usr, Review review) throws DAOException;
     boolean delete(Review review) throws DAOException;
 
-    public MovieReviewBombingDTO checkReviewBombing(Movie movie, LocalDate date) throws DAOException;
+    public MovieReviewBombingDTO checkReviewBombing(Movie movie, int month) throws DAOException;
 
 
 }
