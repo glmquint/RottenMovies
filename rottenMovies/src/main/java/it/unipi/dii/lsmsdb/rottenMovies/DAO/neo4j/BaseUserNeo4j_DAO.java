@@ -22,43 +22,20 @@ import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.*;
 
 import static org.neo4j.driver.Values.parameters;
 
+/**
+ * @author Fabio
+ * @author Giacomo
+ * @author Guillaume
+ * <class>BaseUserNeo4j_DAO</class> allow to use methods to interact with the GraphDB
+ */
 public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
-
-    public BaseUserDTO getMostReviewUser() throws DAOException {
-        Session session = driver.session();
-        User user = new User();
-
-        String mostReviewUser = session.readTransaction((TransactionWork<String>) tx ->{
-            String query = "MATCH (u:User)-[:REVIEWED]->(m:Movie) " +
-                    "RETURN u.name AS Name, count(*) as NumMovies " +
-                    "ORDER BY NumMovies DESC " +
-                    "LIMIT 1";
-            Result result = tx.run(query);
-            System.out.println(result.peek().get("NumMovies"));
-            return result.single().get("Name").asString();
-
-        });
-        user.setUsername((mostReviewUser));
-        return new UserDTO(user);
-    }
-
-    public TopCriticDTO getMostFollowedCritic() throws DAOException{
-        Session session = driver.session();
-        TopCritic topCritic = new TopCritic();
-        String mostFollowedCritic = session.readTransaction((TransactionWork<String>) tx ->{
-            String query = "MATCH (t:TopCritic)<-[:FOLLOWS]-(u:User) " +
-                    "RETURN t.name AS Name, count(*) as NumMovies " +
-                    "ORDER BY NumMovies DESC " +
-                    "LIMIT 1";
-            Result result = tx.run(query);
-            System.out.println(result.peek().get("NumMovies"));
-            return result.single().get("Name").asString();
-
-        });
-        topCritic.setUsername((mostFollowedCritic));
-        return new TopCriticDTO(topCritic);
-    }
-
+    /**
+     * <method>insert</method> create a new entry in the GraphDB
+     * @param usr is the BaseUser model to insert into the DB
+     * @return true in case of success
+     * @throws DAOException
+     */
+    @Override
     public boolean insert(BaseUser usr) throws DAOException {
         if(usr.getId().toString().isEmpty() || usr.getUsername().isEmpty()){
             return  false;
@@ -85,6 +62,13 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         return true;
     }
 
+    /**
+     * <method>delete</method> removes an entry from the GraphDB and all of its relationship
+     * @param usr is the BaseUser model to delete from the GraphDB
+     * @return true in case of success
+     * @throws DAOException
+     */
+    @Override
     public boolean delete(BaseUser usr) throws DAOException{
         if(usr.getId().toString().isEmpty()){
             return  false;
@@ -99,6 +83,9 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         return true;
 
     }
+
+    /*
+    NOT USED BUT I'LL KEEP IT JUST IN CASE, WILL REMOVE BEFORE FINAL VERSION
 
     private boolean updateBaseUser(String id, String newName) throws DAOException{
         if(id.isEmpty() || newName.isEmpty()){
@@ -115,6 +102,62 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         });
         return true;
     }
+    */
+    /**
+     * <method>getMostReviewUser</method>
+     * @return the user non-top critic with the most review made
+     * @throws DAOException
+     */
+    @Override
+    public BaseUserDTO getMostReviewUser() throws DAOException {
+        Session session = driver.session();
+        User user = new User();
+
+        String mostReviewUser = session.readTransaction((TransactionWork<String>) tx ->{
+            String query = "MATCH (u:User)-[:REVIEWED]->(m:Movie) " +
+                    "RETURN u.name AS Name, count(*) as NumMovies " +
+                    "ORDER BY NumMovies DESC " +
+                    "LIMIT 1";
+            Result result = tx.run(query);
+            System.out.println(result.peek().get("NumMovies"));
+            return result.single().get("Name").asString();
+
+        });
+        user.setUsername((mostReviewUser));
+        return new UserDTO(user);
+    }
+
+    /**
+     * <method>getMostFollowedCritic</method>
+     * @return the top critic user with the most followers
+     * @throws DAOException
+     */
+    @Override
+    public TopCriticDTO getMostFollowedCritic() throws DAOException{
+        Session session = driver.session();
+        TopCritic topCritic = new TopCritic();
+        String mostFollowedCritic = session.readTransaction((TransactionWork<String>) tx ->{
+            String query = "MATCH (t:TopCritic)<-[:FOLLOWS]-(u:User) " +
+                    "RETURN t.name AS Name, count(*) as NumMovies " +
+                    "ORDER BY NumMovies DESC " +
+                    "LIMIT 1";
+            Result result = tx.run(query);
+            System.out.println(result.peek().get("NumMovies"));
+            return result.single().get("Name").asString();
+
+        });
+        topCritic.setUsername((mostFollowedCritic));
+        return new TopCriticDTO(topCritic);
+    }
+
+    /**
+     * <method>followTopCritic</method> create a relationship of type FOLLOWS between a user and a top critic
+     * @param user is the non-top critic user that wants to follow a top critic
+     * @param topCritic is the top critic user target of the follow operation
+     * @return true in case of success
+     * @throws DAOException
+     */
+    @Override
     public boolean followTopCritic(BaseUser user, BaseUser topCritic) throws DAOException{
         if(!(user instanceof  User) || !(topCritic instanceof TopCritic) )
             return false;
@@ -135,9 +178,14 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         return true;
     }
 
-    /*MATCH (n {name: 'Andy'})-[r:KNOWS]->()
-    DELETE r*/
-
+    /**
+     * <method>unfollowTopCritic</method> eliminate a relationship of type FOLLOWS between a user and a top critic
+     * @param user is the non-top critic user that wants to unfollow a top critic
+     * @param topCritic is the top critic user target of the unfollow operation
+     * @return true in case of success
+     * @throws DAOException
+     */
+    @Override
     public boolean unfollowTopCritic(BaseUser user, BaseUser topCritic) throws DAOException {
         if(!(user instanceof  User) || !(topCritic instanceof TopCritic) )
             return false;
@@ -157,6 +205,13 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         return true;
     }
 
+    /**
+     * <method>getFeed</method> generate a feed of the review made by a followed top critic user
+     * @param usr is the non-top critic user that want to see the feed
+     * @param page is the number of visualization page, is used to determine which review to return
+     * @return a list of ReviewFeedDTO used to create a feed for the reviews made by top critic user
+     * @throws DAOException
+     */
     @Override
     public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException {
         if(usr.getId().toString().isEmpty() || page<0){
@@ -192,25 +247,16 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
             return feed;
         }));
         return reviewFeed;
-        /*
-        ArrayList<ReviewFeedDTO> reviewList = new ArrayList<>();
-        try{
-            reviewList = constructFeedNeo4j(usr.getId().toString(), page);
-        } catch (Exception e){
-            System.err.println(e.getStackTrace());
-        }
-        return reviewList;
-
-         */
     }
 
-    /*
-    MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
-    WHERE NOT (u)-[:FOLLOWS]->(t)
-    RETURN 100*toFloat( sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/(count(m.title)+2) as perc,
-    t.name as name ORDER by perc DESC LIMIT 20
+    /**
+     * <method>getSuggestion</method> generate feed to suggest to a base user some top critic that he/she doesn't follow
+     * @param usr is the non-top critic user that want to see the feed
+     * @param page is the number of visualization page, is used to determine which top critic suggestion to return
+     * @return a list of TopCriticSuggestionDTO to visualize the suggested top critic
+     * @throws DAOException
      */
-
+    @Override
     public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException{
         if(usr.getId().toString().isEmpty() || page<0){
             return null;
@@ -245,70 +291,44 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
+    @Override
     public boolean update(BaseUser usr) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-
-
+    @Override
     public MongoCollection<Document> getCollection() throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-
+    @Override
     public void queryBuildSearchByUsername(String username) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    @Override
     public void queryBuildSearchByLastName(String lastname) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    @Override
     public void queryBuildSearchByFirstName(String firstname) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    @Override
     public void queryBuildSearchByYearOfBirth(int year) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    @Override
     public void queryBuildSearchByRegistrationDate(int year,int month,int day) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    @Override
     public void queryBuildSearchById(ObjectId id) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    @Override
     public boolean executeDeleteQuery() throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
 
 
-    /*
-    @Override
-    public User getByUsername(String name) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
 
-
-    @Override
-    public List<BaseUser> getAll() throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
-
-    @Override
-    public Boolean insert(BaseUser usr) throws DAOException {
-        // TODO: actually we need to insert new users in Neo4J too,
-        //  need to switch
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
-
-    public Boolean delete(BaseUser usr) {
-        //TODO: implement the delete query in Neo4j
-        return true;
-    }
-
-    @Override
-    public Boolean modify(BaseUser usr) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
-    public BaseUser getById(ObjectId id) throws DAOException{
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
-
-     */
 }
