@@ -56,75 +56,88 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         return reviewMovie;
     }
 
-    private HashMap<String,Integer> updateMovieRating (Document doc,boolean freshreview){ // utitliy function
-        HashMap<String,Integer> map = new HashMap<>();
-        Set<String> keyset=doc.keySet();
-        for(String s: keyset){
-            map.put(s,doc.getInteger(s));
-        }
-        System.out.println(map);
-        return map;
-
-    }
-
     @Override
     public boolean reviewMovie(BaseUser usr, Review review) throws DAOException{
         if(usr.getId()==null || review.getMovie_id()==null){
             System.out.println("ReviewMongoDB_DAO.reviewMovie[ERROR]:review fields cannot be null values! Check user_id,movie_id");
             return false;
         }
-        // TODO: remember to update the movie status (number of votes, etc)
+        
         MongoCollection<Document> movieCollection = getMovieCollection();
         MongoCollection<Document> userCollection = getUserCollection();
-        /*
+
+        boolean freshReview = (review.getReviewType()=="Fresh");
         BasicDBObject reviewLast3 = buildLast3ReviewField(review);
+        Bson movieFilter = eq("_id", review.getMovie_id());
+        /*
         Bson match = new Document("$match", Filters.eq("_id", review.getMovie_id()));
         Bson project = Aggregates.project(fields(include("tomatometer_rating","audience_rating","tomatometer_fresh_critics_count",
                 "tomatometer_rotten_critics_count"), excludeId(),Projections.computed("count",new Document("$size", "$review" ))));
         AggregateIterable res=movieCollection.aggregate(Arrays.asList(match, project));
         MongoCursor<Document> cursor = res.cursor();
-        boolean freshReview = (review.getReviewType()=="Fresh");
         while(cursor.hasNext()){
            updateMovieRating(cursor.next(),freshReview);
         }
-
+        */
+        Bson projectfield=Projections.fields(excludeId(),include("user_fresh_count","user_rotten_count","top_critic_rotten_count","top_critic_fresh_count"));
+        Document res = movieCollection.find(movieFilter).projection(projectfield).first();
+        int user_fresh=res.getInteger("user_fresh_count");
+        int user_rotten=res.getInteger("user_rotten_count");
+        int critic_fresh=res.getInteger("top_critic_fresh_count");
+        int critic_rotten=res.getInteger("top_critic_rotten_count");
+        int elemOrSum=critic_fresh+critic_rotten+user_fresh+user_rotten;
 
         if(usr instanceof User){
-            // inc audience_count
-            //update rating and status
             if(freshReview){
-
+                user_fresh++;
             }
+            else {
+                user_rotten++;
+            }
+            Double div = (double)user_fresh/((double) user_fresh+(double) user_rotten);
+            int user_rating= (int) (div*100);
+            String status=(user_rating>=60)?"Upright":"Spilled";
+            Bson updates = Updates.combine(
+                    Updates.set("user_fresh_count",user_fresh),
+                    Updates.set("user_rotten_count",user_rotten),
+                    Updates.set("user_rating",user_rating),
+                    Updates.set("user_status",status));
+            movieCollection.updateOne(movieFilter,updates);
         }
         else { // it's a TopCritic
             if(freshReview){
-                // increment tomatometer_fresh_critics_count
+                critic_fresh++;
             }
             else {
-                // increment tomatometer_rotten_critics_count
+                critic_rotten++;
             }
-            // updates tomatomer_rating and status
+            Double div = (double)critic_fresh/((double) critic_fresh+(double) critic_rotten);
+            int critic_rating= (int) (div*100);
+            String critic_status=(critic_rating>=60)?((critic_rating>=75 && (elemOrSum)>=80 && (critic_fresh+critic_rotten)>=5)?"Certified Fresh":"Fresh"):"Rotten";
+            Bson updates = Updates.combine(
+                    Updates.set("top_critic_fresh_count",critic_fresh),
+                    Updates.set("top_critic_rotten_count",critic_rotten),
+                    Updates.set("top_critic_rating",critic_rating),
+                    Updates.set("top_critic_status",critic_status));
+            movieCollection.updateOne(movieFilter,updates);
         }
 
         review.setCriticName(usr.getUsername());
         BasicDBObject reviewMovie = buildMovieReviewField(review);
-        Bson filterMovie = eq("_id",  review.getMovie_id());
-        Bson filterUsr = eq("_id", usr.getId());
         Bson updateMovie = push("review", reviewMovie);
-        movieCollection.updateOne(filterMovie,updateMovie);
-        BasicDBObject simplyfiedreview = buildSimplyfiedReview(review,elem_array);
+        movieCollection.updateOne(movieFilter,updateMovie);
+        Bson filterUsr = eq("_id", usr.getId());
+        BasicDBObject simplyfiedreview = buildSimplyfiedReview(review,elemOrSum);
         Bson updateMovieUser = push("reviews", simplyfiedreview);
         userCollection.updateOne(filterUsr,updateMovieUser);
         Bson updateUsr = push("last_3_reviews", reviewLast3);
         userCollection.updateOne(filterUsr,updateUsr);
         userCollection.updateOne(filterUsr,popFirst("last_3_reviews"));
-
-        */
         return true;
     }
 
     @Override
-    public boolean delete(Review review) throws DAOException{
+    public boolean delete(Review review) {
         if(review.getCriticName()==null || review.getMovie_id()==null || review.getMovie()==null){
             System.out.println("ReviewMongoDB_DAO.delete[ERROR]:review fields cannot be null values! Check critic_name,movie_id and primaryTitle");
             return false;
