@@ -24,28 +24,28 @@ public class Movie {
     private ArrayList<String> genres;
     @JsonProperty("production_company")
     private String productionCompany;
-    //@JsonProperty("tomatometer_status")
-    @JsonProperty("tomatometer_status")
-    private String tomatometerStatus;
-    @JsonProperty("tomatometer_rating")
-    private int tomatometerRating;
-    @JsonProperty("audience_status")
-    private String audienceStatus;
-    @JsonProperty("audience_rating")
-    private int audienceRating;
-    @JsonProperty("audience_count")
-    private int audienceCount;
-    @JsonProperty("tomatometer_fresh_critics_count")
-    private int tomatometerFreshCriticsCount;
-    @JsonProperty("tomatometer_rotten_critics_count")
-    private int tomatometerRottenCriticsCount;
+    @JsonProperty("top_critic_status")
+    private String top_critic_status;
+    @JsonProperty("top_critic_rating")
+    private int top_critic_rating;
+    @JsonProperty("user_status")
+    private String user_status;
+    @JsonProperty("user_rating")
+    private int user_rating;
+    @JsonProperty("user_fresh_count")
+    private int user_fresh_count;
+    @JsonProperty("user_rotten_count")
+    private int user_rotten_count;
+    @JsonProperty("top_critic_fresh_count")
+    private int top_critic_fresh_count;
+    @JsonProperty("top_critic_rotten_count")
+    private int top_critic_rotten_count;
     @JsonProperty("personnel")
     private ArrayList<Personnel> personnel;
     @JsonProperty("review")
     private ArrayList<Review> reviews;
-
-    @JsonProperty("critic_consensus")
-    private String criticConsensus;
+    //@JsonProperty("critic_consensus")
+    //private String criticConsensus;
 
     public Movie() {
     }
@@ -56,14 +56,14 @@ public class Movie {
         this.runtimeMinutes = moviedto.getRuntimeMinutes();
         this.genres = moviedto.getGenres();
         this.productionCompany = moviedto.getProductionCompany();
-        this.tomatometerStatus = moviedto.getTomatometerStatus();
-        this.tomatometerRating = moviedto.getTomatometerRating();
-        this.audienceStatus = moviedto.getAudienceStatus();
-        this.audienceRating = moviedto.getAudienceRating();
-        this.audienceCount = moviedto.getAudienceCount();
-        this.tomatometerFreshCriticsCount = moviedto.getTomatometerFreshCriticsCount();
-        this.tomatometerRottenCriticsCount = moviedto.getTomatometerRottenCriticsCount();
-        this.criticConsensus = moviedto.getCriticConsensus();
+        this.top_critic_status = moviedto.getTomatometerStatus();
+        this.top_critic_rating = moviedto.getTomatometerRating();
+        this.user_status = moviedto.getAudienceStatus();
+        this.user_rating = moviedto.getAudienceRating();
+        this.user_fresh_count = moviedto.getAudienceCount();
+        this.top_critic_fresh_count = moviedto.getTomatometerFreshCriticsCount();
+        this.top_critic_rotten_count = moviedto.getTomatometerRottenCriticsCount();
+        //this.criticConsensus = moviedto.getCriticConsensus();
         ArrayList<ReviewMovieDTO> reviewsDTO = moviedto.getReviews();
         ArrayList<Review> reviews = null;
         if (reviewsDTO != null){
@@ -157,71 +157,83 @@ public class Movie {
         this.productionCompany = productionCompany;
     }
 
-    public String getTomatometerStatus() {
-        return tomatometerStatus;
+    public String getTop_critic_status() {
+        return top_critic_status;
     }
 
-    public void setTomatometerStatus(String tomatometerStatus) {
-        this.tomatometerStatus = tomatometerStatus;
+    public void setTop_critic_status(String top_critic_status) {
+        this.top_critic_status = top_critic_status;
     }
 
-    public int gettomatometerRating() {
-        return tomatometerRating;
+    public int getTop_critic_rating() {
+        return top_critic_rating;
     }
 
-    public void settomatometerRating(Object tomatometerRating) {
-        if(tomatometerRating instanceof  Integer)
-            this.tomatometerRating = (int)tomatometerRating;
+    public void setTop_critic_rating(Object top_critic_rating) {
+        if(top_critic_rating instanceof  Integer)
+            this.top_critic_rating = (int)top_critic_rating;
         else
-            this.tomatometerRating = 0;
+            this.top_critic_rating = 0;
     }
 
-    public String getAudienceStatus() {
-        return audienceStatus;
+    public String getUser_status() {
+        return user_status;
     }
 
-    public void setAudienceStatus(String audienceStatus) {
-        this.audienceStatus = audienceStatus;
+    public void setUser_status(String user_status) {
+        this.user_status = user_status;
     }
 
-    public int getaudienceRating() {
-        return audienceRating;
+    public int getUser_rating() {
+        return user_rating;
     }
 
-    public void setaudienceRating(Object audienceRating) {
-        if(audienceRating instanceof  Integer)
-            this.audienceRating = (int)audienceRating;
+    public void setUser_rating(Object user_rating) {
+        if(user_rating instanceof  Integer)
+            this.user_rating = (int)user_rating;
         else
-            this.audienceRating = 0;
+            this.user_rating = 0;
     }
 
-    public int getAudienceCount() {
-        return audienceCount;
+    public int getUser_fresh_count() {
+        return user_fresh_count;
     }
 
-    public void setAudienceCount(Object audienceCount) {
-        if(audienceCount instanceof  Integer)
-            this.audienceCount = (int)audienceCount;
+    public void setUser_fresh_count(Object user_fresh_count) {
+        if(user_fresh_count instanceof  Integer)
+            this.user_fresh_count = (int) user_fresh_count;
         else
-            this.audienceCount = 0;
+            this.user_fresh_count = 0;
     }
 
-    public int getTomatometerFreshCriticsCount() {
-        return tomatometerFreshCriticsCount;
+    public int getUser_rotten_count() {
+        return user_rotten_count;
     }
 
-    public void setTomatometerFreshCriticsCount(int tomatometerFreshCriticsCount) {
-        this.tomatometerFreshCriticsCount = tomatometerFreshCriticsCount;
+    public void setUser_rotten_count(Object user_rotten_count) {
+        if(user_rotten_count instanceof  Integer)
+            this.user_rotten_count = (int) user_rotten_count;
+        else
+            this.user_rotten_count = 0;
     }
 
-    public int getTomatometerRottenCriticsCount() {
-        return tomatometerRottenCriticsCount;
+    public int getTop_critic_fresh_count() {
+        return top_critic_fresh_count;
     }
 
-    public void setTomatometerRottenCriticsCount(int tomatometerRottenCriticsCount) {
-        this.tomatometerRottenCriticsCount = tomatometerRottenCriticsCount;
+    public void setTop_critic_fresh_count(int top_critic_fresh_count) {
+        this.top_critic_fresh_count = top_critic_fresh_count;
     }
 
+    public int getTop_critic_rotten_count() {
+        return top_critic_rotten_count;
+    }
+
+    public void setTop_critic_rotten_count(int top_critic_rotten_count) {
+        this.top_critic_rotten_count = top_critic_rotten_count;
+    }
+
+    /*
     public String getCriticConsensus() {
         return criticConsensus;
     }
@@ -229,6 +241,8 @@ public class Movie {
     public void setCriticConsensus(String criticConsensus) {
         this.criticConsensus = criticConsensus;
     }
+
+     */
 
     public ArrayList<Personnel> getpersonnel() {
         return personnel;
@@ -248,7 +262,7 @@ public class Movie {
 
     @Override
     public String toString() {
-        if (id == null){
+        if (id==null){
             return "Movie{}";
         }
         return "Movie{" +
@@ -258,36 +272,16 @@ public class Movie {
                 ", runtimeMinutes=" + runtimeMinutes +
                 ", genres=" + genres +
                 ", productionCompany='" + productionCompany + '\'' +
-                ", tomatometerStatus='" + tomatometerStatus + '\'' +
-                ", tomatometerRating=" + tomatometerRating +
-                ", audienceStatus='" + audienceStatus + '\'' +
-                ", audienceRating=" + audienceRating +
-                ", audienceCount=" + audienceCount +
-                ", tomatometerFreshCriticsCount=" + tomatometerFreshCriticsCount +
-                ", tomatometerRottenCriticsCount=" + tomatometerRottenCriticsCount +
+                ", top_critic_status='" + top_critic_status + '\'' +
+                ", top_critic_rating=" + top_critic_rating +
+                ", user_status='" + user_status + '\'' +
+                ", user_rating=" + user_rating +
+                ", user_fresh_count=" + user_fresh_count +
+                ", user_rotten_count=" + user_rotten_count +
+                ", top_critic_fresh_count=" + top_critic_fresh_count +
+                ", top_critic_rotten_count=" + top_critic_rotten_count +
                 ", personnel=" + personnel +
                 ", reviews=" + reviews +
-                ", criticConsensus='" + criticConsensus + '\'' +
                 '}';
-    }
-
-    public String lessDataString(){
-        if (id == null){
-            return "Movie{}";
-        }
-        return "Movie{"+'\n'+
-                "primaryTitle='" + primaryTitle + '\n' +
-                "year=" + year + '\n' +
-                "runtimeMinutes=" + runtimeMinutes + '\n' +
-                "genres=" + genres + '\n' +
-                "productionCompany='" + productionCompany + '\n' +
-                "tomatometerStatus='" + tomatometerStatus + '\n' +
-                "tomatometerRating=" + tomatometerRating + '\n' +
-                "audienceStatus=" + audienceStatus + '\n' +
-                "audienceRating=" + audienceRating + '\n' +
-                "audienceCount=" + audienceCount + '\n' +
-                "tomatometerFreshCriticsCount=" + tomatometerFreshCriticsCount + '\n' +
-                "tomatometerRottenCriticsCount=" + tomatometerRottenCriticsCount + '\n' +
-                "}";
     }
 }

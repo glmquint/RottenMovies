@@ -1,5 +1,6 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
@@ -19,25 +20,27 @@ public class MovieDTO {
 
         private String productionCompany;
 
-        private String tomatometerStatus;
+        private String top_critic_status;
 
-        private int tomatometerRating;
+        private int top_critic_rating;
 
-        private String audienceStatus;
+        private String user_status;
 
-        private int audienceRating;
+        private int user_rating;
 
-        private int audienceCount;
+        private int user_fresh_count;
 
-        private int tomatometerFreshCriticsCount;
+        private int user_rotten_count;
 
-        private int tomatometerRottenCriticsCount;
+        private int top_critic_fresh_count;
+
+        private int top_critic_rotten_count;
 
         private ArrayList<PersonnelDTO> personnel;
 
         private ArrayList<ReviewMovieDTO> reviews;
 
-        private String criticConsensus;
+        //private String criticConsensus;
 
     public MovieDTO() {
     }
@@ -49,14 +52,15 @@ public class MovieDTO {
         this.runtimeMinutes=movie.getRuntimeMinutes();
         this.genres=movie.getGenres();
         this.productionCompany=movie.getProductionCompany();
-        this.tomatometerStatus=movie.getTomatometerStatus();
-        this.tomatometerRating=movie.gettomatometerRating();
-        this.audienceStatus=movie.getAudienceStatus();
-        this.audienceRating=movie.getaudienceRating();
-        this.audienceCount=movie.getAudienceCount();
-        this.tomatometerFreshCriticsCount=movie.getTomatometerFreshCriticsCount();
-        this.tomatometerRottenCriticsCount= movie.getTomatometerRottenCriticsCount();
-        this.criticConsensus=movie.getCriticConsensus();
+        this.top_critic_status=movie.getTop_critic_status();
+        this.top_critic_rating=movie.getTop_critic_rating();
+        this.user_status=movie.getUser_status();
+        this.user_rating=movie.getUser_rating();
+        this.user_fresh_count=movie.getUser_fresh_count();
+        this.user_rotten_count=movie.getUser_rotten_count();
+        this.top_critic_fresh_count=movie.getTop_critic_fresh_count();
+        this.top_critic_rotten_count= movie.getTop_critic_rotten_count();
+        //this.criticConsensus=movie.getCriticConsensus();
         ArrayList<Review> reviews=movie.getReviews();
         ArrayList<ReviewMovieDTO> reviewsdto = null;
         if (reviews != null) {
@@ -128,60 +132,68 @@ public class MovieDTO {
         this.productionCompany = productionCompany;
     }
 
-    public String getTomatometerStatus() {
-        return tomatometerStatus;
+    public String getTop_critic_status() {
+        return top_critic_status;
     }
 
-    public void setTomatometerStatus(String tomatometerStatus) {
-        this.tomatometerStatus = tomatometerStatus;
+    public void setTop_critic_status(String top_critic_status) {
+        this.top_critic_status = top_critic_status;
     }
 
-    public int getTomatometerRating() {
-        return tomatometerRating;
+    public int getTop_critic_rating() {
+        return top_critic_rating;
     }
 
-    public void setTomatometerRating(int tomatometerRating) {
-        this.tomatometerRating = tomatometerRating;
+    public void setTop_critic_rating(int top_critic_rating) {
+        this.top_critic_rating = top_critic_rating;
     }
 
-    public String getAudienceStatus() {
-        return audienceStatus;
+    public String getUser_status() {
+        return user_status;
     }
 
-    public void setAudienceStatus(String audienceStatus) {
-        this.audienceStatus = audienceStatus;
+    public void setUser_status(String user_status) {
+        this.user_status = user_status;
     }
 
-    public int getAudienceRating() {
-        return audienceRating;
+    public int getUser_rating() {
+        return user_rating;
     }
 
-    public void setAudienceRating(int audienceRating) {
-        this.audienceRating = audienceRating;
+    public void setUser_rating(int user_rating) {
+        this.user_rating = user_rating;
     }
 
-    public int getAudienceCount() {
-        return audienceCount;
+    public int getUser_fresh_count() {
+        return user_fresh_count;
     }
 
-    public void setAudienceCount(int audienceCount) {
-        this.audienceCount = audienceCount;
+    public void setUser_fresh_count(int user_fresh_count) {
+        this.user_fresh_count = user_fresh_count;
     }
 
-    public int getTomatometerFreshCriticsCount() {
-        return tomatometerFreshCriticsCount;
+    public int getUser_rotten_count() {
+        return user_rotten_count;
     }
 
-    public void setTomatometerFreshCriticsCount(int tomatometerFreshCriticsCount) {
-        this.tomatometerFreshCriticsCount = tomatometerFreshCriticsCount;
+    public void setUser_rotten_count(int user_rotten_count) {
+        this.user_rotten_count = user_rotten_count;
     }
 
-    public int getTomatometerRottenCriticsCount() {
-        return tomatometerRottenCriticsCount;
+    public int getTop_critic_fresh_count() {
+        return top_critic_fresh_count;
     }
 
-    public void setTomatometerRottenCriticsCount(int tomatometerRottenCriticsCount) {
-        this.tomatometerRottenCriticsCount = tomatometerRottenCriticsCount;
+    public void setTop_critic_fresh_count(int top_critic_fresh_count) {
+        this.top_critic_fresh_count = top_critic_fresh_count;
+    }
+
+    public int getTop_critic_rotten_count() {
+        return top_critic_rotten_count;
+    }
+
+    public void setTop_critic_rotten_count(int top_critic_rotten_count) {
+        this.top_critic_rotten_count = top_critic_rotten_count;
     }
 
     public ArrayList<PersonnelDTO> getPersonnel() {
@@ -199,7 +211,7 @@ public class MovieDTO {
     public void setReviews(ArrayList<ReviewMovieDTO> reviews) {
         this.reviews = reviews;
     }
-
+    /*
     public String getCriticConsensus() {
         return criticConsensus;
     }
@@ -207,5 +219,5 @@ public class MovieDTO {
     public void setCriticConsensus(String criticConsensus) {
         this.criticConsensus = criticConsensus;
     }
-
+    */
 }
