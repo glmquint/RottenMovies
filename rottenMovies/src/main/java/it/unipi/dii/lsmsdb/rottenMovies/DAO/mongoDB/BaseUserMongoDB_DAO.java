@@ -17,6 +17,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.models.SimplyfiedReview;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
@@ -43,11 +44,8 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     public BaseUserMongoDB_DAO() {
         super();
     }
-    public MongoCollection<Document> getCollection(){
-        return returnCollection(myClient, Constants.COLLECTION_STRING_USER);
-    }
     public ArrayList<BaseUserDTO> executeSearchQuery(int page){
-        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER); //TODO: maybe use getCollection
+        MongoCollection<Document>  collection = getUserCollection();
         ObjectMapper mapper = new ObjectMapper();
         FindIterable found = collection.find(query);
         if (page >= 0) { // only internally. Never return all users without pagination on front-end
@@ -132,7 +130,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     }
 
     public boolean insert(BaseUser usr){
-        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
+        MongoCollection<Document>  collection = getUserCollection();
         try {
             Document newdoc = new Document()
                     .append("_id", new ObjectId())
@@ -156,9 +154,9 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         // also remember to add the user in Neo4j
         return true;
     }
-    public boolean update(BaseUser usr){
-        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
-        Boolean returnvalue=true;
+    public boolean update(BaseUser usr) throws DAOException{
+        MongoCollection<Document>  collection = getUserCollection();
+        boolean returnvalue=true;
         Bson updates = Updates.combine(
                     Updates.set("password", usr.getPassword()),
                     Updates.set("first_name", usr.getFirstName()),
@@ -197,20 +195,18 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
 
     public boolean executeDeleteQuery() {
         ArrayList<BaseUserDTO> users_to_delete = executeSearchQuery(-1);
-        MongoCollection<Document>  collectionUser = returnCollection(myClient, Constants.COLLECTION_STRING_USER);
-        Boolean returnvalue=true;
-        for(BaseUserDTO b:users_to_delete){
-            b.setFirstName(Constants.USERS_MARKED_AS_DELETED);
+        MongoCollection<Document>  collectionUser = getUserCollection();
+        MongoCollection<Document>  collectionMovie = getMovieCollection();
+        boolean returnvalue=true;
+        ArrayList<SimplyfiedReviewDTO> listrev;
+        Document set;
+        for(BaseUserDTO b:users_to_delete){ // now I set the critic_name in the review field of movie as DELETED_USER
+            listrev=b.getReviews();
+            for(SimplyfiedReviewDTO s:listrev){
+                set=new Document("$set", new Document("review."+s.getIndex()+".critic_name",Constants.DELETED_USER));
+                collectionMovie.updateOne(new Document("_id",s.getMovieID()), set);
+            }
         }
-        /*
-
-        ReviewDAO reviewdao = (ReviewDAO) new ReviewMongoDB_DAO(); // TODO: maybe use DAOLocator
-        try {
-            reviewdao.updateReviewsByDeletedBaseUser(user);
-        } catch (Exception e){
-            System.err.println(e.getStackTrace());
-        }
-         */
         try { // now I delete the users from collection user
             DeleteResult result = collectionUser.deleteMany(query);
             System.out.println("Deleted document count: " + result.getDeletedCount());
@@ -220,16 +216,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         query=null;
         return returnvalue;
-        /*
 
-        List<SimplyfiedReview> reviews = simpleUser.getReviews();
-
-        for (SimplyfiedReview r: reviews) {
-            Document doc2=collectionMovie.find(eq("primaryTitle", r.getPrimaryTitle())).projection(fields(include("primaryTitle","review"),excludeId(), slice("review", r.getIndex(),1))).first();
-
-            System.out.println(doc2.get("review"));
-        }
-         */
     }
     public ArrayList<UserDTO> getMostReviewUser() throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");

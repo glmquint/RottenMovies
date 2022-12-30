@@ -31,6 +31,7 @@ import static org.neo4j.driver.Values.parameters;
  * <class>ReviewNeo4j_DAO</class> allow to use methods to interact with the GraphDB specifically for the REVIEWED relationship
  */
 public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
+
     /**
      * <method>reviewMovie</method> create a relationship between a User/TopCritic and a Movie
      * @param usr is the User/TopCritic who wrote the review
@@ -40,6 +41,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
      */
     @Override
     public boolean reviewMovie(BaseUser usr, Review review)  throws DAOException{
+
 
         if(usr.getId().toString().isEmpty() ||review.getMovie().isEmpty() || review.getReviewContent().isEmpty() || review.getReviewDate()==null){
             return false;
@@ -128,8 +130,26 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         return reviewBombingList;
     }
 
-    @Override
+
     public boolean updateReviewsByDeletedBaseUser(BaseUser user) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+
+    public boolean update(BaseUser usr, Review review) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+
+    /*
+        MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
+        WHERE NOT (u)-[:FOLLOWS]->(t)
+        RETURN 100*toFloat( sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/ (count(m.title)+2) as perc,
+        t.name as name ORDER by perc DESC LIMIT 10
+
+
+        MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
+        WHERE NOT (u)-[:FOLLOWS]->(t)
+        RETURN 100*toFloat( sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/ (count(m.title)+2) as perc,
+        t.name as name, collect(m.title) as movies, collect(r.freshness=r2.freshness) as alignement ORDER by perc DESC LIMIT 20
+     */
+
 }

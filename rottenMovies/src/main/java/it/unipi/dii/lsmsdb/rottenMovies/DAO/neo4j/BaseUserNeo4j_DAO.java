@@ -297,10 +297,8 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     public boolean update(BaseUser usr) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    @Override
-    public MongoCollection<Document> getCollection() throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
+
+
     @Override
     public void queryBuildSearchByUsername(String username) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
