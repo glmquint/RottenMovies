@@ -17,7 +17,6 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
-import it.unipi.dii.lsmsdb.rottenMovies.models.SimplyfiedReview;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
@@ -47,7 +46,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     public ArrayList<BaseUserDTO> executeSearchQuery(int page){
         MongoCollection<Document>  collection = getUserCollection();
         ObjectMapper mapper = new ObjectMapper();
-        FindIterable found = collection.find(query);
+        FindIterable<Document> found = collection.find(query);
         if (page >= 0) { // only internally. Never return all users without pagination on front-end
             query=null;
             found = found.skip(page * Constants.USERS_PER_PAGE).limit(Constants.USERS_PER_PAGE);
