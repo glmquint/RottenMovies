@@ -18,7 +18,6 @@ import org.bson.conversions.Bson;
 
 import java.util.*;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.*;
 import static com.mongodb.client.model.Updates.popFirst;
@@ -53,8 +52,50 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         reviewMovie.put("review_index",index);
         return reviewMovie;
     }
+    @Override
+    public boolean reviewMovie(BaseUser usr, Review review) {
+        if(usr.getId()==null || review.getMovie_id()==null){
+            System.out.println("ReviewMongoDB_DAO.reviewMovie[ERROR]:review fields cannot be null values! Check user_id,movie_id");
+            return false;
+        }
+
+        MongoCollection<Document> movieCollection = getMovieCollection();
+        MongoCollection<Document> userCollection = getUserCollection();
+
+        boolean freshReview = (review.getReviewType().equals("Fresh"));
+        BasicDBObject reviewLast3 = buildLast3ReviewField(review);
+        Bson movieFilter = eq("_id", review.getMovie_id());
+
+        int newReviewIndex=updateMovieRating(movieCollection,movieFilter,(usr instanceof TopCritic),freshReview,true);
+        review.setCriticName(usr.getUsername());
+        BasicDBObject reviewMovie = buildMovieReviewField(review);
+        Bson updateMovie = push("review", reviewMovie);
+        Bson filterUsr = eq("_id", usr.getId());
+        BasicDBObject simplyfiedReview = buildSimplyfiedReview(review,newReviewIndex);
+
+        try{
+            UpdateResult result=movieCollection.updateOne(movieFilter,updateMovie);
+            System.out.println("Modified document count: " + result.getModifiedCount());
+
+            Bson updateMovieUser = push("reviews", simplyfiedReview);
+            result=userCollection.updateOne(filterUsr,updateMovieUser);
+            System.out.println("Modified document count: " + result.getModifiedCount());
+
+            Bson updateUsr = push("last_3_reviews", reviewLast3);
+            result=userCollection.updateOne(filterUsr,updateUsr);
+            System.out.println("Modified document count: " + result.getModifiedCount());
+
+            result=userCollection.updateOne(filterUsr,popFirst("last_3_reviews"));
+            System.out.println("Modified document count: " + result.getModifiedCount());
+        }
+        catch (MongoException me) {
+            System.err.println("Unable to update due to an error: " + me);
+            return false;
+        }
+        return true;
+    }
     private int calculateRating(int fresh, int rotten){
-        Double div = ((double)fresh/((double) fresh+(double) rotten));
+        double div = ((double)fresh/((double) fresh+(double) rotten));
         return (int) ((div*100)+0.5);
     }
     private String calculateTopCriticStatus(int critic_rating, int totalReviewCount, int critic_fresh, int critic_rotten){
@@ -121,42 +162,13 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             updates = Updates.combine(updates, Updates.set("top_critic_rating",critic_rating));
         }
         try{
-            UpdateResult result=movieCollection.updateOne(movieFilter,updates,new UpdateOptions().upsert(true));
+            UpdateResult result=movieCollection.updateOne(movieFilter,updates);
             System.out.println("Modified document count: " + result.getModifiedCount());
         }
         catch (MongoException me) {
             System.err.println("Unable to update due to an error: " + me);
         }
         return totalReviewCount;
-    }
-    @Override
-    public boolean reviewMovie(BaseUser usr, Review review) {
-        if(usr.getId()==null || review.getMovie_id()==null){
-            System.out.println("ReviewMongoDB_DAO.reviewMovie[ERROR]:review fields cannot be null values! Check user_id,movie_id");
-            return false;
-        }
-
-        MongoCollection<Document> movieCollection = getMovieCollection();
-        MongoCollection<Document> userCollection = getUserCollection();
-
-        boolean freshReview = (review.getReviewType().equals("Fresh"));
-        BasicDBObject reviewLast3 = buildLast3ReviewField(review);
-        Bson movieFilter = eq("_id", review.getMovie_id());
-
-        int newReviewIndex=updateMovieRating(movieCollection,movieFilter,(usr instanceof TopCritic),freshReview,true);
-        review.setCriticName(usr.getUsername());
-        BasicDBObject reviewMovie = buildMovieReviewField(review);
-        Bson updateMovie = push("review", reviewMovie);
-        movieCollection.updateOne(movieFilter,updateMovie); // TODO: try - catch
-        Bson filterUsr = eq("_id", usr.getId());
-        BasicDBObject simplyfiedReview = buildSimplyfiedReview(review,newReviewIndex);
-        Bson updateMovieUser = push("reviews", simplyfiedReview);
-        userCollection.updateOne(filterUsr,updateMovieUser);
-        Bson updateUsr = push("last_3_reviews", reviewLast3);
-        userCollection.updateOne(filterUsr,updateUsr);
-        userCollection.updateOne(filterUsr,popFirst("last_3_reviews"));
-        return true;
-
     }
 
     @Override
@@ -168,10 +180,8 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         MongoCollection<Document> movieCollection = getMovieCollection();
         MongoCollection<Document> userCollection = getUserCollection();
 
-        Document user=userCollection.find(eq("username", review.getCriticName())).first();
         Bson filterUsr = eq("username", review.getCriticName());
         Bson filterMovie = eq("_id",review.getMovie_id());
-        userCollection.updateOne(filterUsr,Updates.pull("last_3_reviews",filterMovie));
 
         Bson projection = Projections.fields( excludeId(), elemMatch("reviews", eq("primaryTitle", review.getMovie())));
         Document doc= userCollection.find(filterUsr).projection(projection).first();
@@ -179,21 +189,33 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         Document doc2 = null;
         if (obj instanceof ArrayList) {
             ArrayList<?> dboArrayNested = (ArrayList<?>) obj;
-            for (Object dboNestedObj : dboArrayNested) {
+            Object dboNestedObj = dboArrayNested.get(0);
                 if (dboNestedObj instanceof Document) {
-                    doc2=Document.class.cast(dboNestedObj);
+                    doc2= (Document) dboNestedObj;
                 }
-            }
+                else
+                    return false;
         }
         else {
             return false;
         }
-
         int index=doc2.getInteger("review_index");
-        Document set=new Document("$set", new Document("review."+index+".critic_name",Constants.DELETED_REVIEW));
-        movieCollection.updateOne(filterMovie, set);
-        Bson updates = Updates.combine(Updates.pull("reviews",eq("movie_id",review.getMovie_id())));
-        userCollection.updateOne(filterUsr,updates);
+        try{
+            UpdateResult result=userCollection.updateOne(filterUsr,Updates.pull("last_3_reviews",filterMovie));
+            System.out.println("Modified document count: " + result.getModifiedCount());
+
+            Document set=new Document("$set", new Document("review."+index+".critic_name",Constants.DELETED_REVIEW));
+            result=movieCollection.updateOne(filterMovie, set);
+            System.out.println("Modified document count: " + result.getModifiedCount());
+
+            Bson updates = Updates.combine(Updates.pull("reviews",eq("movie_id",review.getMovie_id())));
+            result=userCollection.updateOne(filterUsr,updates);
+            System.out.println("Modified document count: " + result.getModifiedCount());
+        }
+        catch (MongoException me) {
+            System.err.println("Unable to update due to an error: " + me);
+            return false;
+        }
         return true;
     }
     public boolean update (BaseUser usr,Review reviewUpdated){
@@ -205,9 +227,9 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         MongoCollection<Document> movieCollection = getMovieCollection();
 
         ArrayList<Review> last3 = usr.getLast3Reviews();
-        //boolean found=false;
+
         boolean needsRatingUpdate=false;
-        HashMap<String,String> changedFields = new HashMap();
+        HashMap<String,String> changedFields = new HashMap<>();
         int index=0;
         for(Review r:last3){
             if(r.getMovie_id().equals(reviewUpdated.getMovie_id())){
@@ -230,7 +252,14 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             for(String k:changedFields.keySet()) {
                 updates=Updates.combine(updates,Updates.set("last_3_reviews."+index+k,changedFields.get(k)));
             }
-            userCollection.updateOne(eq("_id",usr.getId()),updates);
+            try {
+                UpdateResult result=userCollection.updateOne(eq("_id", usr.getId()), updates);
+                System.out.println("Modified document count: " + result.getModifiedCount());
+            }
+            catch (MongoException me){
+                System.err.println("Unable to update due to an error: " + me);
+                return false;
+            }
         }
 
         ArrayList<SimplyfiedReview> listrev = usr.getReviews();
@@ -274,7 +303,14 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             for (String k : changedFields.keySet()) {
                 updates = Updates.combine(updates, Updates.set("review." + index + k, changedFields.get(k)));
             }
-            movieCollection.updateOne(movieFilter, updates);
+            try {
+                UpdateResult result=movieCollection.updateOne(movieFilter, updates);
+                System.out.println("Modified document count: " + result.getModifiedCount());
+            }
+            catch (MongoException me){
+                System.err.println("Unable to update due to an error: " + me);
+                return false;
+            }
         }
         return true;
     }
