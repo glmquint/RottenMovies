@@ -736,6 +736,44 @@ db.runCommand(
 )
                 
 ```
+### user date generation
+```js
+total = db.user.find().count();
+i = 0;
+
+db.user.find().forEach(
+    x => {
+        print(x.username);
+        dayOfBirth=Math.floor(Math.random() * (28) + 1);
+        monthOfBirth=Math.floor(Math.random() * (12 - 2 + 1) + 2);
+        yearOfBirth=Math.floor(Math.random() * (2006 - 1970 + 1) + 1970);
+        date=new Date(yearOfBirth,monthOfBirth,dayOfBirth);
+        date.setUTCHours(0,0,0,0);
+        
+        db.user.updateOne(
+            {"username": x.username,
+            "date_of_birth" : {$exists:true} },
+            { $set: { "date_of_birth" : date } }
+        )
+        
+        yearOfSubScription=yearOfBirth+16;
+        monthOfSubScription=((monthOfBirth+Math.floor(Math.random() * (8) + 1))%12)+1;
+        dayOfSubScription=((dayOfBirth+Math.floor(Math.random() * (24) + 1))%28)+1;
+        date=new Date(yearOfSubScription,monthOfSubScription,dayOfSubScription);
+        date.setUTCHours(0,0,0,0);
+        
+        db.user.updateOne(
+            {"username": x.username},
+            {$set: 
+                {"registration_date": date}
+            }
+        );
+        
+        print(100*i++/total);
+    }
+);
+```
+
 #### modify users date_of_birth  
 ```js
 db.user.updateMany({"date_of_birth":{$exists:true}}, {$set: {"date_of_birth": new Date("1970-07-20")}} )
