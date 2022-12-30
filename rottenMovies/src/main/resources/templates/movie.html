@@ -8,13 +8,48 @@
 </head>
 
 <body>
-  <header>
-    <!-- place navbar here -->
-  </header>
+<header>
+    <div class="collapse bg-dark" id="navbarHeader">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-md-7 py-4">
+                    <h4 class="text-white">Explore</h4>
+                    <p class="text-muted">Explore our vast catalogue of movies and leave a review</p>
+                </div>
+                <div class="col-sm-4 offset-md-1 py-4">
+                    <h4 class="text-white">Links</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Login</a></li>
+                        <li><a href="#" class="text-white">Home</a></li>
+                        <li><a href="#" class="text-white">About</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="navbar navbar-dark bg-dark shadow-sm py-5">
+        <div class="container">
+            <a href="/" class="navbar-brand d-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="me-2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                <strong>rotten Movies</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </div>
+</header>
   <main>
-      <h1 th:text="${movie}"></h1>
-      <p th:text="${c_idx}"></p>
-      <p th:text="${page}"></p>
+      <div class="container">
+          <div class="card shadow">
+          <h1 th:text="${movie}">Titolo</h1>
+          <p th:text="${c_idx}"></p>
+          <p th:text="${page}"></p>
+          </div>
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+          </div>
+      </div>
   </main>
   <footer>
     <!-- place footer here -->
