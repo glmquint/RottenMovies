@@ -1,0 +1,38 @@
+
+    ### Return the best year between a certain set in terms of movies produces
+
+```js
+    
+    
+    db.movie.aggregate([
+        {$match:{year:{$gt:1940, $lt:1950}}},
+        {$group:
+            {
+            _id: "$year",
+            topCritic:{$avg:"$top_critic_rating"},
+            rate:{$avg:"$user_rating"}
+            }
+        }, 
+        {$sort:{topCritic:-1, rate:-1}}
+    ])
+
+```
+
+ ### Return the most succesfull production houses who have made at least 10 movies
+
+```js
+db.movie.aggregate([
+    {$group:
+        {
+            _id: "$production_company",
+            topCritic:{$avg:"$top_critic_rating"},
+            rate:{$avg:"$user_rating"},
+            count:{$sum:1}
+        }
+    }, 
+    {$match:{count:{$gte:10}}},
+    {$sort:{topCritic:-1, rate:-1}},
+    {$limit:10}
+])
+
+ ```
