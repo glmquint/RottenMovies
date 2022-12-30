@@ -290,7 +290,100 @@ db.movie.find().forEach(
     }
 );
 ```
+### create rating movie fields 
 
+```js
+total = db.movie.find().count();
+i = 0;
+
+db.movie.find().forEach(
+    x => {
+        print(x.primaryTitle);
+        y=x.review;
+        top_critic_fresh_count=0;
+        top_critic_rotten_count=0;
+        user_fresh_count=0;
+        user_rotten_count=0;
+        y.forEach(rev => {
+            if(rev.top_critic){
+                if(rev.review_type=="Fresh"){
+                    top_critic_fresh_count++;
+                }
+                else{ 
+                    top_critic_rotten_count++;
+                }
+            }
+            else {
+                if(rev.review_type=="Fresh"){
+                    user_fresh_count++;
+                }
+                else {
+                    user_rotten_count++;
+                }
+            }
+            top_critic_status="";
+            top_critic_rating=0;
+            if(top_critic_fresh_count!=0 || top_critic_rotten_count!=0){
+                top_critic_rating=~~(((top_critic_fresh_count/(top_critic_rotten_count+top_critic_fresh_count))*100)+0.5);
+                if(top_critic_rating>=60){
+                    top_critic_status="Fresh";
+                    if(top_critic_rating>=75 && 
+                        (top_critic_fresh_count+top_critic_rotten_count+user_fresh_count+user_rotten_count>=80)&&
+                        (top_critic_fresh_count+top_critic_rotten_count>=5)){
+                            top_critic_status="Certified Fresh";
+                    }
+                }
+                else{
+                    top_critic_status="Rotten";
+                }
+            }
+            user_status="";
+            user_rating=0;
+            if(user_fresh_count!=0 || user_rotten_count!=0){
+                user_rating=~~(((user_fresh_count/(user_fresh_count+user_rotten_count))*100)+0.5);
+                if(user_rating>=60){
+                    user_status="Upright";
+                }
+                else{
+                    user_status="Spilled";
+                }
+            }
+            
+        })
+               
+        db.movie.updateOne(
+            {"primaryTitle": x.primaryTitle},
+            {$set: 
+                {"top_critic_fresh_count": top_critic_fresh_count,
+                "top_critic_rotten_count": top_critic_rotten_count,
+                "user_fresh_count": user_fresh_count,
+                "user_rotten_count": user_rotten_count,
+                "tomatometer_rating": top_critic_rating,
+                "tomatometer_status": top_critic_status,
+                "audience_status": user_status,
+                "audience_rating": user_rating
+                }
+            }
+        )
+        db.movie.updateOne(
+            {"primaryTitle": x.primaryTitle},
+            {$rename:{'tomatometer_status':'top_critic_status',
+                    'tomatometer_rating':'top_critic_rating',
+                    'audience_status':'user_status',
+                    'audience_rating':'user_rating'}
+            }
+        )
+        db.movie.updateOne(
+            {"primaryTitle": x.primaryTitle},
+            {$unset: {audience_count:"",tomatometer_fresh_critics_count:"",tomatometer_rotten_critics_count:""}}
+
+        )
+        print(100*i++/total);
+    }
+
+);
+
+```
 #### parse type strings to floats and integers
 ```js
 db.movie.find().forEach(

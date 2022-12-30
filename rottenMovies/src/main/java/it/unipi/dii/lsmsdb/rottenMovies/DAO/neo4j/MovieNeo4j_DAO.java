@@ -103,8 +103,4 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
-    @Override
-    public MongoCollection<Document> getCollection() {
-        return null;
-    }
 }

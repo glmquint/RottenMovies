@@ -44,12 +44,8 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         super();
     }
 
-    public MongoCollection<Document> getCollection(){
-        return returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
-    }
-
     public ArrayList<MovieDTO> executeSearchQuery(int page){
-        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collection = getMovieCollection();
         Movie movie;
         String json_movie;
         ObjectMapper mapper = new ObjectMapper();
@@ -75,7 +71,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     public boolean executeDeleteQuery(){
         ArrayList<MovieDTO> movies_to_delete = executeSearchQuery(-1);
         // TODO: delete the user review of the deleted movie before executing deleteMany
-        MongoCollection<Document>  collectionMovie = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collectionMovie = getMovieCollection();
         boolean returnvalue=true;
         try { // now I delete the movie from collection movie
             DeleteResult result = collectionMovie.deleteMany(query);
@@ -199,9 +195,9 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     public void queryBuildSearchByTopRatings(int rating, boolean type){
         Bson new_query;
         if(type)
-            new_query =  Filters.gte("tomatometer_rating", rating);
+            new_query =  Filters.gte("top_critic_rating", rating);
         else{
-            new_query =  Filters.lte("tomatometer_rating", rating);
+            new_query =  Filters.lte("top_critic_rating", rating);
         }
         if (query == null) {
             query = new_query;
@@ -212,9 +208,9 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     public void queryBuildsearchByUserRatings(int rating, boolean type){
         Bson new_query;
         if(type)
-            new_query =  Filters.gte("audience_rating", rating);
+            new_query =  Filters.gte("user_rating", rating);
         else{
-            new_query =  Filters.lte("audience_rating", rating);
+            new_query =  Filters.lte("user_rating", rating);
         }
         if (query == null) {
             query = new_query;
@@ -270,24 +266,28 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return personnelDBList;
     }
     public boolean update(Movie updated){
-        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collection = getMovieCollection();
         ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(updated);
         boolean returnvalue=true;
         Bson updates = Updates.combine(
                 Updates.set("year", updated.getYear()),
                 Updates.set("runtimeMinutes", updated.getRuntimeMinutes()),
                 Updates.set("production_company", updated.getProductionCompany()),
-                Updates.set("tomatometer_status", updated.getTomatometerStatus()),
-                Updates.set("tomatometer_rating", updated.gettomatometerRating()),
-                Updates.set("audience_status", updated.getAudienceStatus()),
-                Updates.set("audience_rating", updated.getaudienceRating()),
-                Updates.set("audience_count", updated.getAudienceCount()),
-                Updates.set("tomatometer_fresh_critics_count", updated.getTomatometerFreshCriticsCount()),
-                Updates.set("tomatometer_rotten_critics_count", updated.getTomatometerRottenCriticsCount()),
+                Updates.set("top_critic_status", updated.getTop_critic_status()),
+                Updates.set("top_critic_rating", updated.getTop_critic_rating()),
+                Updates.set("user_status", updated.getUser_status()),
+                Updates.set("user_rating", updated.getUser_rating()),
+                Updates.set("user_fresh_count", updated.getUser_fresh_count()),
+                Updates.set("user_rotten_count", updated.getUser_rotten_count()),
+                Updates.set("top_critic_fresh_count", updated.getTop_critic_fresh_count()),
+                Updates.set("top_critic_rotten_count", updated.getTop_critic_rotten_count()),
                 Updates.set("personnel",personnelDBList));
+        /*
         if(updated.getCriticConsensus()!=null){ // not all movies have critic_consensus
             updates=Updates.combine(updates,Updates.set("critics_consensus", updated.getCriticConsensus()));
         }
+
+         */
         UpdateOptions options = new UpdateOptions().upsert(true);
         try {
             query = null;
@@ -302,7 +302,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return returnvalue;
     }
     public boolean insert(Movie newOne){
-        MongoCollection<Document>  collection = returnCollection(myClient, Constants.COLLECTION_STRING_MOVIE);
+        MongoCollection<Document>  collection = getMovieCollection();
         ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(newOne);
         boolean returnvalue=true;
         try {
@@ -312,14 +312,15 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                     .append("year", newOne.getYear())
                     .append("runtimeMinutes", newOne.getRuntimeMinutes())
                     .append("production_company", newOne.getProductionCompany())
-                    .append("critics_consensus", "")
-                    .append("tomatometer_status", "")
-                    .append("tomatometer_rating", 0)
-                    .append("audience_status", "")
-                    .append("audience_rating", 0)
-                    .append("audience_count", 0)
-                    .append("tomatometer_fresh_critics_count", 0)
-                    .append("tomatometer_rotten_critics_count", 0)
+                    //.append("critics_consensus", "")
+                    .append("top_critic_status", "")
+                    .append("top_critic_rating", 0)
+                    .append("user_status", "")
+                    .append("user_rating", 0)
+                    .append("user_fresh_count", 0)
+                    .append("user_rotten_count", 0)
+                    .append("top_critic_fresh_count", 0)
+                    .append("top_critic_rotten_count", 0)
                     .append("personnel", personnelDBList)
                     .append("review", new ArrayList<BasicDBObject>()));
 

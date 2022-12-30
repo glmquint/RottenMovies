@@ -11,7 +11,6 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 
 public interface BaseUserDAO extends AutoCloseable{
-    MongoCollection<Document> getCollection() throws DAOException;
     void queryBuildSearchByUsername(String username) throws DAOException;
     void queryBuildSearchByLastName(String lastname) throws DAOException;
     void queryBuildSearchByFirstName(String lastname) throws DAOException;
