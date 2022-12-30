@@ -10,9 +10,12 @@
             {
             _id: "$year",
             topCritic:{$avg:"$top_critic_rating"},
-            rate:{$avg:"$user_rating"}
+            rate:{$avg:"$user_rating"},
+            count:{$sum:1}
             }
-        }, 
+        },
+        {$match:{count:{$gte:20}}},
+        {$limit: 10}, 
         {$sort:{topCritic:-1, rate:-1}}
     ])
 
