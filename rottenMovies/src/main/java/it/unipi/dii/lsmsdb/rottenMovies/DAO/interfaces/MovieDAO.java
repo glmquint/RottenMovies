@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.sortOptions;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -14,7 +15,8 @@ import java.util.ArrayList;
  * <interface>MovieDao</interface> interface for the DAO of the movie
  */
 public interface MovieDAO extends AutoCloseable {
-    ArrayList<MovieDTO> executeSearchQuery(int page) throws DAOException;
+
+    ArrayList<MovieDTO> executeSearchQuery(int page, sortOptions sort_opt, int asc) throws DAOException;
     boolean executeDeleteQuery() throws DAOException;
     void queryBuildSearchByTitleExact(String title) throws DAOException;
     void queryBuildSearchByTitle(String title) throws DAOException;

@@ -22,6 +22,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 import com.mongodb.client.model.UpdateOptions;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.sortOptions;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -44,12 +45,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         super();
     }
 
-    public ArrayList<MovieDTO> executeSearchQuery(int page){
+    public ArrayList<MovieDTO> executeSearchQuery(int page, sortOptions sort_opt, int asc){
         MongoCollection<Document>  collection = getMovieCollection();
         Movie movie;
         String json_movie;
         ObjectMapper mapper = new ObjectMapper();
-        FindIterable found = collection.find(query);
+        FindIterable found = collection.find(query).sort(sort_opt.getField(asc));
         if (page >= 0) { // only internally. Never return all movies without pagination on front-end
             query=null;
             found = found.skip(page * Constants.MOVIES_PER_PAGE).limit(Constants.MOVIES_PER_PAGE);
@@ -69,7 +70,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public boolean executeDeleteQuery(){
-        ArrayList<MovieDTO> movies_to_delete = executeSearchQuery(-1);
+        ArrayList<MovieDTO> movies_to_delete = executeSearchQuery(-1, sortOptions.ALPHABET, 1);
         // TODO: delete the user review of the deleted movie before executing deleteMany
         MongoCollection<Document>  collectionMovie = getMovieCollection();
         boolean returnvalue=true;
