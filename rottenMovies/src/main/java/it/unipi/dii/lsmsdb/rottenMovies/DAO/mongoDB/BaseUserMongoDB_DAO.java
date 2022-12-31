@@ -128,6 +128,14 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         query = Filters.and(query, new_query);
     }
 
+    public void queryBuildSearchPasswordEquals(String password){
+        Bson new_query = Filters.eq("password", password);
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
     public boolean insert(BaseUser usr){
         MongoCollection<Document>  collection = getUserCollection();
         try {
