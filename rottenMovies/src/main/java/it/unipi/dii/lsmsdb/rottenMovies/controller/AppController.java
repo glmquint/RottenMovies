@@ -93,6 +93,7 @@ public class AppController {
             page = 0;
         }
         model.addAttribute("movie", movieService.getMovie(page, mid, -1));
+        model.addAttribute("page", page);
         return "movie";
     }
 
