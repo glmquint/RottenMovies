@@ -3,14 +3,18 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.mongoDB;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.mongodb.MongoException;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.*;
+
+import static com.mongodb.client.model.Accumulators.avg;
+import static com.mongodb.client.model.Accumulators.sum;
 import static com.mongodb.client.model.Filters.*;
 
-import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
@@ -21,7 +25,6 @@ import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewMovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
-import com.mongodb.client.model.UpdateOptions;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -29,6 +32,9 @@ import org.bson.types.ObjectId;
 import org.neo4j.driver.exceptions.NoSuchRecordException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -340,6 +346,30 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return result;
     }
 
+    public HashMap<String, HashMap<String,Double>> mostSuccesfullProductionHouses(int numberOfMovies){
+        MongoCollection<Document>  collection = getMovieCollection();
+        AggregateIterable<Document> aggregateResult = collection.aggregate(
+                Arrays.asList(
+                        Aggregates.group("$production_company",
+                                avg("top_critic", "$top_critic_rating"),
+                                avg("user_rating", "$user_rating"),
+                                sum("count",1)),
+                        Aggregates.match(gte("count",numberOfMovies)),
+                        Aggregates.sort(Sorts.descending("top_critic","user_rating")),
+                        Aggregates.limit(Constants.MOVIES_PER_PAGE)
+                )
+        );
+        HashMap<String, HashMap<String,Double>> resultSet = new HashMap<>();
+        MongoCursor<Document> cursor = aggregateResult.iterator();
+        while (cursor.hasNext()){
+            Document doc = cursor.next();
+            resultSet.put(doc.getString("_id"),new HashMap<String,Double>());
+            resultSet.get(doc.getString("_id")).put("top_critic",doc.getDouble("top_critic"));
+            resultSet.get(doc.getString("_id")).put("user_rating",doc.getDouble("user_rating"));
+            resultSet.get(doc.getString("_id")).put("count",(double)(doc.getInteger("count")));
+        }
+        return resultSet;
+    }
     public Boolean insertNeo4j(String id, String title) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
