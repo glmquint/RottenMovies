@@ -39,3 +39,19 @@ db.movie.aggregate([
 ])
 
  ```
+
+ ### Return the most reviewd genres by a signle user
+```js
+db.movie.aggregate([
+    {$match:
+        {primaryTitle:
+            {$in:db.user.find({ username: "Abbie Bernstein" }, { "reviews.primaryTitle": 1, "_id": 0 }).toArray()[0]['reviews'].map(x=>x['primaryTitle'])}
+        }
+    },
+    {$unwind:"$genres"}, 
+    {$group:{_id:"$genres", count:{$sum:1}}}, 
+    {$sort:{count:-1}}, 
+    {$limit: 10}
+])
+
+  ```
