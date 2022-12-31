@@ -1,13 +1,12 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DAO.neo4j;
 
-import com.mongodb.client.MongoCollection;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseNeo4jDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
-import it.unipi.dii.lsmsdb.rottenMovies.utils.sortOptions;
-import org.bson.Document;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.ReviewProjectionOptions;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -68,7 +67,7 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         return true;
     }
 
-    public ArrayList<MovieDTO> executeSearchQuery(int page, sortOptions sort_opt, int asc) throws DAOException {
+    public ArrayList<MovieDTO> executeSearchQuery(int page, SortOptions sort_opt, ReviewProjectionOptions proj_opt) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 

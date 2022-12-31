@@ -3,22 +3,19 @@ package it.unipi.dii.lsmsdb.rottenMovies.utils;
 import com.mongodb.BasicDBObject;
 import org.bson.conversions.Bson;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-public enum sortOptions {
+public enum SortOptionsEnum {
         ALPHABET("primaryTitle"),
         DATE("year"),
         USER_RATING("user_rating"),
-        TOP_CRITIC_RATING("top_critic_rating");
+        TOP_CRITIC_RATING("top_critic_rating"),
+        NO_SORT("no_sort");
 
         private String field;
 
-        sortOptions(String envField) {
+        SortOptionsEnum(String envField) {
             this.field = envField;
         }
-
-        public Bson getField(int asc) {
-            return new BasicDBObject(field,asc);
+        public String getField() {
+                return this.field;
         }
 }
