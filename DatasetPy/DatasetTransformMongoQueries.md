@@ -744,9 +744,9 @@ i = 0;
 db.user.find().forEach(
     x => {
         print(x.username);
-        dayOfBirth=Math.floor(Math.random() * (28) + 1);
-        monthOfBirth=Math.floor(Math.random() * (12 - 2 + 1) + 2);
-        yearOfBirth=Math.floor(Math.random() * (2006 - 1970 + 1) + 1970);
+        dayOfBirth=Math.floor(Math.random() * (28) + 1); // (max - min +1)+min
+        monthOfBirth=Math.floor(Math.random() * (12) + 1);
+        yearOfBirth=Math.floor(Math.random() * (37) + 1970); // 2006 - 1970 + 1
         date=new Date(yearOfBirth,monthOfBirth,dayOfBirth);
         date.setUTCHours(0,0,0,0);
         
@@ -756,9 +756,10 @@ db.user.find().forEach(
             { $set: { "date_of_birth" : date } }
         )
         
-        yearOfSubScription=yearOfBirth+16;
-        monthOfSubScription=((monthOfBirth+Math.floor(Math.random() * (8) + 1))%12)+1;
-        dayOfSubScription=((dayOfBirth+Math.floor(Math.random() * (24) + 1))%28)+1;
+        startyear=yearOfBirth+16;
+        yearOfSubScription=Math.floor(Math.random() * (2023 - startyear) + startyear); // 2022 - startyear + 1
+        monthOfSubScription=Math.floor(Math.random() * (12) + 1);
+        dayOfSubScription=Math.floor(Math.random() * (28) + 1);
         date=new Date(yearOfSubScription,monthOfSubScription,dayOfSubScription);
         date.setUTCHours(0,0,0,0);
         
