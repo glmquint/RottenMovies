@@ -384,6 +384,26 @@ db.movie.find().forEach(
 );
 
 ```
+### update review date to use only ISODate
+```js
+total = db.movie.find().count();
+i = 0;
+
+db.movie.find().forEach(
+    x => {
+        print(x.primaryTitle);
+        x.review.forEach(rev =>{
+            //print(rev.review_date);
+            date=new Date(rev.review_date);
+            //print(date);
+            db.movie.updateOne(
+                { "primaryTitle": x.primaryTitle, "review.critic_name": rev.critic_name}, 
+                { "$set": { "review.$.review_date": date } }
+            )
+        })
+        print(100*i++/total);   
+});
+```
 #### parse type strings to floats and integers
 ```js
 db.movie.find().forEach(
