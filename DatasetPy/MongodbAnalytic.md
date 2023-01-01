@@ -57,7 +57,45 @@ db.movie.aggregate([
     {$sort:{topCritic:-1, rate:-1}},
     {$limit:10}
 ])
- ```
+```
+### Return the best decade for movies in terms of rating DEPRECATED
+```js
+db.movie.aggregate([
+    {
+        $bucket:
+        {
+            groupBy: "$year",
+            boundaries: [1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020, 2030],
+            default: "Without date",
+            output:
+                {
+                    "topCritic":{$avg:"$top_critic_rating"},
+                    "rate":{$avg:"$user_rating"}, 
+                }
+        }
+    },
+    {$sort:{topCritic:-1, rate:-1}}
+    
+])
+```
+### Return the best years in terms of ratings
+```js
+    db.movie.aggregate([
+        {$group:
+            {
+            _id: "$year",
+            topCritic:{$avg:"$top_critic_rating"},
+            rate:{$avg:"$user_rating"},
+            count:{$sum:1}
+            }
+        },
+        {$match:{count:{$gte:20}}},
+        {$limit: 10}, 
+        {$sort:{topCritic:-1, rate:-1}}
+    ])
+
+
+```
  ### Return the most reviewd genres by a signle user
 ```js
 db.movie.aggregate([
@@ -73,7 +111,7 @@ db.movie.aggregate([
 ])
 
   ```
- ### Return the division of the user in terms of generation
+ ### Return the population of the user in terms of generation
 ```js
     
     db.user.aggregate([
@@ -114,45 +152,8 @@ db.movie.aggregate([
         
 ])
 ``` 
-### Return the best decade for movies in terms of rating
-```js
-db.movie.aggregate([
-    {
-        $bucket:
-        {
-            groupBy: "$year",
-            boundaries: [1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020, 2030],
-            default: "Without date",
-            output:
-                {
-                    "topCritic":{$avg:"$top_critic_rating"},
-                    "rate":{$avg:"$user_rating"}, 
-                }
-        }
-    },
-    {$sort:{topCritic:-1, rate:-1}}
-    
-])
-```
-### Return the best years in terms of ratings
-```js
-    db.movie.aggregate([
-        {$group:
-            {
-            _id: "$year",
-            topCritic:{$avg:"$top_critic_rating"},
-            rate:{$avg:"$user_rating"},
-            count:{$sum:1}
-            }
-        },
-        {$match:{count:{$gte:20}}},
-        {$limit: 10}, 
-        {$sort:{topCritic:-1, rate:-1}}
-    ])
 
-
-```
-### Return the film with most reviews
+### Return the film with most reviews ALREADY IMPLEMENTED IN NEO4J
 ```js
 db.user.aggregate([
     {$unwind:"$reviews"}, 
