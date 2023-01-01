@@ -25,16 +25,17 @@ public class MovieService {
     public PageDTO<MovieDTO> listMoviePage(int page, HashMap<String, String> request){
         PageDTO<MovieDTO> movie_page = new PageDTO<>();
         try(MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
-            moviedao.queryBuildSearchByTitle("");
+            //moviedao.queryBuildSearchByTitle("");
             for (Map.Entry<String, String> entry : request.entrySet()) {
                 String k = entry.getKey();
                 String v = entry.getValue();
+                if (v.isEmpty()){
+                    continue;
+                }
                 if (k.equals("title")) {
                     moviedao.queryBuildSearchByTitle(v);
                 } else if (k.equals("startYear") || k.equals("endYear")){
-                    if (!v.isEmpty()) {
-                        moviedao.queryBuildSearchByYear(Integer.parseInt(v), k.equals("startYear"));
-                    }
+                    moviedao.queryBuildSearchByYear(Integer.parseInt(v), k.equals("startYear"));
                 } else if (k.equals("workers")){
                     String[] workers = v.split(",");
                     for (String w: workers){

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -22,12 +23,15 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 import com.mongodb.client.model.UpdateOptions;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.*;
+import org.bson.BsonDocument;
 import org.bson.Document;
+import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.exceptions.NoSuchRecordException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /**
@@ -49,6 +53,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         Movie movie;
         String json_movie;
         ObjectMapper mapper = new ObjectMapper();
+        try {
+            BsonDocument bsonDocument = query.toBsonDocument(BsonDocument.class, Bson.DEFAULT_CODEC_REGISTRY);
+            System.out.println("EXECUTING FIND: " + bsonDocument);
+        } catch (Exception e){
+            System.err.println(e);
+        }
         FindIterable found = collection.find(query);
         Bson bson_check = sort_opt.getSort();
         if (bson_check != null){
@@ -64,10 +74,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         MongoCursor<Document> cursor = found.iterator();
         ArrayList<MovieDTO> movie_list = new ArrayList<>();
+        System.out.println("========================RETURNED MOVIES============================");
         while(cursor.hasNext()){
             json_movie = cursor.next().toJson();
             try {
                 movie = mapper.readValue(json_movie, Movie.class);
+                System.out.println(movie);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
@@ -114,6 +126,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public void queryBuildSearchByTitleExact(String title){
+        System.out.println("SEARCH BY TITLE EXACT: " + title);
         Bson new_query = Filters.eq("primaryTitle", title);
         if (query == null) {
             query = new_query;
@@ -123,6 +136,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public void queryBuildSearchByTitle(String title){
+        System.out.println("SEARCH BY TITLE: " + title);
         Bson new_query = Filters.regex("primaryTitle", title, "i");
         if (query == null) {
             query = new_query;
@@ -132,6 +146,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public void queryBuildSearchById(ObjectId id){
+        System.out.println("SEARCH BY ID: " + id);
         Bson new_query = Filters.eq("_id", id);
         if (query == null) {
             query = new_query;
@@ -141,6 +156,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public void queryBuildSearchPersonnel(String[] workers, boolean includeAll){
+        System.out.println("SEARCH BY personnel: " + String.join(", ", workers));
         if (workers.length==0){
             return;
         }
@@ -165,6 +181,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public void queryBuildSearchGenres(String[] genres, boolean includeAll){
+        System.out.println("SEARCH BY GENRES: " + String.join(", ", genres));
         if (genres.length==0){
             return;
         }
@@ -189,6 +206,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public void queryBuildSearchByYear(int year, boolean afterYear){
+        System.out.println("SEARCH BY YEAR: " + year + ((afterYear)?" AFTER":" BEFORE"));
         Bson new_query = null;
         if (afterYear) {
             new_query = Filters.and(gte("year", year));
@@ -203,6 +221,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     }
 
     public void queryBuildSearchByTopRatings(int rating, boolean type){
+        System.out.println("SEARCH BY TOP RATINGS: " + rating + ((type)?" GREATER":" LOWER"));
         Bson new_query;
         if(type)
             new_query =  Filters.gte("top_critic_rating", rating);
@@ -216,6 +235,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query = Filters.and(query, new_query);
     }
     public void queryBuildsearchByUserRatings(int rating, boolean type){
+        System.out.println("SEARCH BY USER RATING: " + rating + ((type)?" GREATER":" LOWER"));
         Bson new_query;
         if(type)
             new_query =  Filters.gte("user_rating", rating);
