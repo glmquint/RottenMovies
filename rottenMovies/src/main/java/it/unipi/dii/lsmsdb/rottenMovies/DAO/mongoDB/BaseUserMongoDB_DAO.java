@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoException;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -26,6 +27,11 @@ import org.bson.types.ObjectId;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import static com.mongodb.client.model.Accumulators.avg;
+import static com.mongodb.client.model.Accumulators.sum;
+import static com.mongodb.client.model.Filters.*;
 
 
 /**
@@ -121,6 +127,14 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
 
     public void queryBuildSearchById(ObjectId id){
         Bson new_query = Filters.eq("_id", id);
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+    public void queryBuildSearchByUsernameExact(String username){
+        Bson new_query = Filters.eq("username", username);
         if (query == null) {
             query = new_query;
             return;
@@ -224,6 +238,21 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         query=null;
         return returnvalue;
 
+    }
+    public void getMostReviewedGenres (ObjectId user_id){
+        MongoCollection<Document>  collectionMovie = getMovieCollection();
+        MongoCollection<Document>  collectionUser = getUserCollection();
+        FindIterable <Document> userReviewedMovie = collectionUser.find(eq("_id",user_id)).projection(Projections.include("reviews.movie_id"));
+        collectionMovie.aggregate(
+                Arrays.asList(
+                        Aggregates.match(in("_id",userReviewedMovie)),
+                        Aggregates.unwind("$genres"),
+                        Aggregates.group("$genres",
+                                sum("count",1)),
+                        Aggregates.sort(Sorts.descending("count")),
+                        Aggregates.limit(Constants.MAXIMUM_NUMBER_OF_GENRES)
+                )
+        ).forEach(doc -> System.out.println(doc.toJson()));
     }
     public BaseUserDTO getMostReviewUser() throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");

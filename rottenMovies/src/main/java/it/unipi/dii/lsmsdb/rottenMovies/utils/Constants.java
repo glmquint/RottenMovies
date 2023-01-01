@@ -15,4 +15,6 @@ public class Constants {
     public static final String DELETED_USER = "Deleted User";
     public static final String DELETED_REVIEW = "Deleted Review";
 
+    public static final int MAXIMUM_NUMBER_OF_GENRES = 10;
+
 }
