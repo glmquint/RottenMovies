@@ -23,6 +23,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.HallOfFameDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewMovieDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.YearMonthReviewDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.*;
@@ -32,6 +33,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.exceptions.NoSuchRecordException;
 
+import javax.print.Doc;
 import java.util.*;
 
 
@@ -442,6 +444,45 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return resultSet;
     }
+    public ArrayList<YearMonthReviewDTO> getYearAndMonthReviewActivity(ObjectId id) {
+        MongoCollection<Document>  collection = getMovieCollection();
+        Document yearDoc = new Document("year",new Document("$year","$review.review_date"));
+        Document monthDoc = new Document("month",new Document("$month","$review.review_date"));
+        ArrayList<Document> test=new ArrayList<>();
+        test.add(yearDoc);
+        test.add(monthDoc);
+        AggregateIterable<Document> aggregateResult = collection.aggregate(
+                Arrays.asList(
+                        Aggregates.match(eq("_id",id)),
+                        Aggregates.unwind("$review"),
+                        Aggregates.group(test,
+                                sum("count",1)),
+                        Aggregates.sort(Sorts.ascending("_id"))
+                )
+        );
+        ArrayList<YearMonthReviewDTO> resultSet = new ArrayList<>();
+        YearMonthReviewDTO yearMonthReviewDTO;
+        MongoCursor<Document> cursor = aggregateResult.iterator();
+        while (cursor.hasNext()){
+            Document doc = cursor.next();
+            //System.out.print(doc.toJson());
+            Object obj = doc.get("_id");
+            yearDoc.clear();
+            monthDoc.clear();
+            if (obj instanceof ArrayList) {
+                ArrayList<?> dboArrayNested = (ArrayList<?>) obj;
+                yearDoc= (Document) dboArrayNested.get(0);
+                monthDoc= (Document) dboArrayNested.get(1);
+                yearMonthReviewDTO = new YearMonthReviewDTO();
+                yearMonthReviewDTO.setYear(yearDoc.getInteger("year"));
+                yearMonthReviewDTO.setMonth(monthDoc.getInteger("month"));
+                yearMonthReviewDTO.setCount(doc.getInteger("count"));
+                resultSet.add(yearMonthReviewDTO);
+            }
+        }
+        return resultSet;
+    }
+
     public Boolean insertNeo4j(String id, String title) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }

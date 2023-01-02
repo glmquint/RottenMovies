@@ -3,6 +3,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.HallOfFameDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.YearMonthReviewDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.ReviewProjectionOptions;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
@@ -29,6 +30,7 @@ public interface MovieDAO extends AutoCloseable {
     ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies, SortOptions opt) throws DAOException;
     ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies, SortOptions opt) throws DAOException;
     ArrayList<HallOfFameDTO> bestYearsBasedOnRatings (int numberOfMovies, SortOptions opt) throws DAOException;
+    ArrayList<YearMonthReviewDTO> getYearAndMonthReviewActivity(ObjectId id) throws DAOException;
     boolean update(Movie updated) throws DAOException;
     boolean insert(Movie newOne) throws DAOException;
     boolean delete (Movie movie) throws DAOException;

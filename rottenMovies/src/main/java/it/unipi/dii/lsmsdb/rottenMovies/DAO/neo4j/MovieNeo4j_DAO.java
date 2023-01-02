@@ -5,6 +5,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.HallOfFameDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.YearMonthReviewDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.ReviewProjectionOptions;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
@@ -154,6 +155,9 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
+    public ArrayList<YearMonthReviewDTO> getYearAndMonthReviewActivity(ObjectId id) throws DAOException{
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
 
 
 }
