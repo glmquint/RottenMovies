@@ -5,6 +5,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseNeo4jDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.GenresLikeDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
@@ -168,7 +169,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     public void queryBuildSearchByRegistrationDate(int year,int month,int day) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public void getMostReviewedGenres (ObjectId user_id) throws DAOException {
+    public ArrayList<GenresLikeDTO> getMostReviewedGenres (String username) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
     public void queryBuildSearchPasswordEquals(String password) throws DAOException {

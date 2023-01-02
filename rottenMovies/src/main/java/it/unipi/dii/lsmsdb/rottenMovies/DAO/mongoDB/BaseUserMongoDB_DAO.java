@@ -29,7 +29,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static com.mongodb.client.model.Accumulators.avg;
 import static com.mongodb.client.model.Accumulators.sum;
 import static com.mongodb.client.model.Filters.*;
 
@@ -237,20 +236,29 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         return returnvalue;
 
     }
-    public void getMostReviewedGenres (ObjectId user_id){
+    public ArrayList<GenresLikeDTO> getMostReviewedGenres (String username){
         MongoCollection<Document>  collectionMovie = getMovieCollection();
-        MongoCollection<Document>  collectionUser = getUserCollection();
-        FindIterable <Document> userReviewedMovie = collectionUser.find(eq("_id",user_id)).projection(Projections.include("reviews.movie_id"));
-        collectionMovie.aggregate(
+        AggregateIterable<Document> aggregateResult = collectionMovie.aggregate(
                 Arrays.asList(
-                        Aggregates.match(in("_id",userReviewedMovie)),
+                        Aggregates.match(eq("review.critic_name",username)),
                         Aggregates.unwind("$genres"),
                         Aggregates.group("$genres",
                                 sum("count",1)),
                         Aggregates.sort(Sorts.descending("count")),
                         Aggregates.limit(Constants.MAXIMUM_NUMBER_OF_GENRES)
                 )
-        ).forEach(doc -> System.out.println(doc.toJson()));
+        );
+        ArrayList<GenresLikeDTO> resultSet = new ArrayList<>();
+        GenresLikeDTO genresLikeDTO;
+        MongoCursor<Document> cursor = aggregateResult.iterator();
+        while (cursor.hasNext()){
+            Document doc = cursor.next();
+            genresLikeDTO =new GenresLikeDTO();
+            genresLikeDTO.setGenre(doc.getString("_id"));
+            genresLikeDTO.setCount(doc.getInteger("count"));
+            resultSet.add(genresLikeDTO);
+        }
+        return resultSet;
     }
     public BaseUserDTO getMostReviewUser() throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");

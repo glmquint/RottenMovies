@@ -1,11 +1,10 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces;
 
-import com.mongodb.client.MongoCollection;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.GenresLikeDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
-import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public interface BaseUserDAO extends AutoCloseable{
     boolean insert(BaseUser usr) throws DAOException;
     boolean update(BaseUser usr) throws DAOException;
     boolean delete(BaseUser usr) throws DAOException;
-    void getMostReviewedGenres (ObjectId user_id) throws DAOException;
+    ArrayList<GenresLikeDTO> getMostReviewedGenres (String username) throws DAOException;
     ArrayList<BaseUserDTO> executeSearchQuery(int page) throws DAOException;
     boolean executeDeleteQuery() throws DAOException;
     BaseUserDTO getMostReviewUser() throws DAOException;
