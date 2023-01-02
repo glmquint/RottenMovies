@@ -61,26 +61,7 @@
                             <a th:case="'it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO'" th:text="'Top Critic *'">Test</a>
                             <a th:case="*" th:text="'Normal User'">Adventure</a>
                         </div>
-<!--                        <div class="row">-->
-<!--                            <div>with:</div>-->
-<!--                            <ul class="col-md-4 fs-6 mx-3" th:each="w:${movie.personnel}" th:switch="${w.category}">-->
-<!--    &lt;!&ndash;                    <li th:text="|${w.primaryName} | + (${w.category}=='actor' || ${w.category}=='actress')?|as ${w.characters}|:|(${w.job})|">Spielberg (director)</li>&ndash;&gt;-->
-<!--                                <li th:case="'actor'" th:text="${w.primaryName} + (${w.characters}?| as ${#strings.arrayJoin(w.characters,',')}|:'')"></li>-->
-<!--                                <li th:case="'actress'" th:text="${w.primaryName} + (${w.characters}?| as ${#strings.arrayJoin(w.characters,',')}|:'')"></li>-->
-<!--                                <li th:case="writer" th:text="(${w.job}?(${#strings.endsWith(w.job,'by')}?|${w.job} |:|from the ${w.job} by |):|${w.category}: |) + ${w.primaryName}"></li>-->
-<!--                                <li th:case="*" th:text="|${w.category}:| + (${w.job}?(${w.job==w.category}?'':| ${w.job}|):'') + ' ' + ${w.primaryName}"></li>-->
-<!--                            </ul>-->
-<!--                            <div class="d-flex justify-content-between align-items-center pb-3">-->
-<!--                                <div class="col">-->
-<!--                                    <div>User Rating: Rotten</div>-->
-<!--                                    <div th:text="|${movie.user_status} (${movie.user_rating}%) (+${movie.user_fresh_count}/-${movie.user_rotten_count})|">XX%(+X/-X)</div>-->
-<!--                                </div>-->
-<!--                                <div class="col text-end">-->
-<!--                                    <div>Top Critic Rating: Fresh</div>-->
-<!--                                    <div th:text="|${movie.top_critic_status} (${movie.top_critic_rating}%) (+${movie.top_critic_fresh_count}/-${movie.top_critic_rotten_count})|">XX%(+X/-X)</div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
+
                     </div>
                 </div>
             </div>
@@ -91,11 +72,20 @@
                 </div>
                 <div class="p-1 mb-4 rounded-3 shadow-sm bg-opacity-10" th:classappend="${review.reviewType=='Fresh'}?'bg-success':'bg-danger'">
                     <div class="row align-item-between py-2">
-                    <div class="col-6 mx-4" th:text="${review.reviewContent}?|“${review.reviewContent}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
-                    <div class="col mx-4" th:text="${review.reviewScore}?|Review Score: “${review.reviewScore}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
+                        <div class="col-6 mx-4" th:text="${review.reviewContent}?|“${review.reviewContent}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
+                        <div class="col mx-4" th:text="${review.reviewScore}?|Review Score: “${review.reviewScore}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
+                    </div>
+               </div>
+            </div>
+            <div class="he text-center">Other reviews:</div>
+            <div th:each="review:${user.reviews}">
+                <div class="row">
+                    <a class="col mx-2" th:text="|${review.primaryTitle}" th:href="'/movie/'+ ${review.movieID} + '/' + ${review.index}" >autore</a>
                 </div>
             </div>
-<!--            <div class="h3 text-center">Reviews:</div>-->
+
+
+                <!--            <div class="h3 text-center">Reviews:</div>-->
 <!--            <form>-->
 <!--                <div class="row">-->
 <!--                    <ul class="pagination text-align justify-content-center my-3">-->

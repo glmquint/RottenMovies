@@ -288,6 +288,23 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
 
     }
 
+    public boolean checkIfFollows(BaseUser user, BaseUser topCritic) throws DAOException{
+        if(!(user instanceof  User) || !(topCritic instanceof TopCritic) )
+            return false;
+        if(user.getId().toString().isEmpty() ){
+            return false;
+        }
+        Session session = driver.session();
+        boolean check = session.readTransaction(tx -> {
+            String query = "MATCH (u:User{id: $userId}),(t:TopCritic{id:$topCriticId}) " +
+                    "RETURN  EXISTS ((u)-[:FOLLOWS]->(t)) as Check";
+            Result result = tx.run(query, parameters("userId", user.getId().toString(),
+                    "topCriticId", topCritic.getId().toString()));
+            return result.peek().get("Check").asBoolean();
+        });
+        return check;
+    }
+
     @Override
     public ArrayList<BaseUserDTO> executeSearchQuery(int page) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");

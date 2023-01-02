@@ -29,4 +29,5 @@ public interface BaseUserDAO extends AutoCloseable{
 
     public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException;
 
+    public boolean checkIfFollows(BaseUser user, BaseUser topCritic) throws DAOException;
 }
