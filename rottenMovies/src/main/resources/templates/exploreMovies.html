@@ -29,7 +29,7 @@
       <div class="container">
         <a href="/" class="navbar-brand d-flex align-items-center">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="me-2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-          <strong>Explore</strong>
+          <strong>rotten Movies</strong>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -74,7 +74,7 @@
                 <div class="row">
                     <div class="col">
                         <label for="workers">Personnel</label>
-                        <input class="form-control" id="workers" type="text" placeholder="Leonardo DiCaprio, Jonny Depp" name="workers" th:value="${workers}?:''">
+                        <input class="form-control" id="workers" type="text" placeholder="Leonardo DiCaprio, Johnny Depp" name="workers" th:value="${workers}?:''">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" role="switch" id="includeAllWorkers" name="includeAllWorkers" th:checked="${includeAllWorkers}=='on'">
                             <label class="form-check-label" for="includeAllWorkers">Must include all names (separate by comma ',')</label>
@@ -88,6 +88,19 @@
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" role="switch" id="includeAllGenres" name="includeAllGenres" th:checked="${includeAllGenres}=='on'">
                             <label class="form-check-label" for="includeAllGenres">Must include all genres (separate by comma ',')</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label for="sort">Sort By</label>
+                        <select id="sort" name="sort" class="form-select" aria-label="Sort By">
+                            <option value="top_critic_rating" th:selected="${sort}==''">top critic rating</option>
+                            <option value="user_rating" th:selected="${sort}=='user_rating'">user rating</option>
+                            <option value="date" th:selected="${sort}=='date'">date</option>
+                            <option value="alphabet" th:selected="${sort}=='alphabet'">name</option>
+                        </select>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="sortOrder" name="sortOrder" th:checked="${sortOrder}=='on'">
+                            <label class="form-check-label" for="includeAllGenres">Ascending order</label>
                         </div>
                     </div>
                 </div>
@@ -104,13 +117,18 @@
               <div class="card shadow-sm">
                 <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em"></text></svg>
                 <div class="card-body">
-                  <a class="card-title" th:text="${movie.primaryTitle}" th:href="'/movie/'+${movie.id}">sdf</a>
-                  <p class="card-text" th:text="${movie.year}"></p>
+                  <a class="card-title text-decoration-none h5" th:text="${movie.primaryTitle}" th:href="'/movie/'+${movie.id}">sdf</a>
+                  <p class="card-text" th:text="${movie.year} + ' (' + ${movie.productionCompany} + ')'"></p>
                     <div >
-                        <span class="badge rounded-pill text-bg-primary mb-3 mx-1" th:text="${g}"  th:each="g: ${movie.genres}"></span>
+                        <a class="badge rounded-pill text-bg-primary mb-3 mx-1 text-decoration-none" th:href="'/movie?genres='+${g}" th:text="${g}"  th:each="g: ${movie.genres}"></a>
                     </div>
                     <div>
-                        <span class="badge rounded-pill mb-3 mx-1" th:text="${w.primaryName}"  th:classappend="${w.category}=='actor'?'text-bg-success':'text-bg-secondary'" th:each="w: ${movie.personnel}"></span>
+                        <a class="badge rounded-pill mb-1 mx-1 text-decoration-none" th:href="'/movie?workers='+${w.primaryName}" th:text="${w.primaryName}" th:classappend="${w.category}=='actor'?'text-bg-success':'text-bg-secondary'" th:each="w: ${movie.personnel}">
+                        </a>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pb-3">
+                        <div th:text="|${movie.user_status} (${movie.user_rating}%)|"></div>
+                        <div th:text="|${movie.top_critic_status} (${movie.top_critic_rating}%)|"></div>
                     </div>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">

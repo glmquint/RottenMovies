@@ -85,12 +85,15 @@ public class AppController {
 
     @GetMapping("/movie/{mid}")
     public  String select_movie(Model model,
-                                @RequestParam(value = "page", defaultValue = "0") int page, // comment pagination
+                                //HttpServletRequest request,
+                                @RequestParam(value = "page", defaultValue = "0") int page,
                                 @PathVariable(value = "mid") String mid){
-        int comment_index = -1;
-        model.addAttribute("page", String.format("page: %d", page));
-        model.addAttribute("c_idx", String.format("comment_index: %d", comment_index));
-        model.addAttribute("movie", String.format("movie: %s", mid));
+        MovieService movieService = new MovieService();
+        if (page < 0){
+            page = 0;
+        }
+        model.addAttribute("movie", movieService.getMovie(page, mid, -1));
+        model.addAttribute("page", page);
         return "movie";
     }
 
@@ -98,10 +101,8 @@ public class AppController {
     public  String select_movie_comemnt(Model model,
                                         @PathVariable(value = "mid") String mid,
                                         @PathVariable(value = "comment_index") int comment_index){
-        int page = -1;
-        model.addAttribute("page", String.format("page: %d", page));
-        model.addAttribute("c_idx", String.format("comment_index: %d", comment_index));
-        model.addAttribute("movie", String.format("movie: %s", mid));
+        MovieService movieService = new MovieService();
+        model.addAttribute("movie", movieService.getMovie(0, mid, comment_index));
         return "movie";
     }
 
