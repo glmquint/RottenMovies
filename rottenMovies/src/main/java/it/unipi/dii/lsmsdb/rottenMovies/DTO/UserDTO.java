@@ -19,4 +19,6 @@ public class UserDTO extends BaseUserDTO{
         super(user);
         this.birthdayDate=user.getBirthdayDate();
     }
+
+
 }

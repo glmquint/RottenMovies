@@ -10,18 +10,26 @@ import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieReviewBombingDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewFeedDTO;
+
+import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
+
 import it.unipi.dii.lsmsdb.rottenMovies.models.*;
+
 import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-
+import java.util.ArrayList;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.*;
 import static com.mongodb.client.model.Updates.popFirst;
 import static com.mongodb.client.model.Updates.push;
+
 
 public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
     private BasicDBObject buildLast3ReviewField(Review r){
@@ -314,16 +322,8 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         }
         return true;
     }
-    @Override
-    public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException {
-        throw new DAOException("method not implemented for Mongo DB");
-    }
 
-    public boolean reviewMovieNeo4j(String userId, String movieId, String content, Date date, Boolean freshness) throws DAOException{
-        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
-    }
-
-    public boolean deleteReviewNeo4j(String userId, String movieId) throws DAOException{
+    public MovieReviewBombingDTO checkReviewBombing(Movie movie, int month) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 }

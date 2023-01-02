@@ -36,6 +36,11 @@ public abstract class RegisteredUser {
         }
     }
 
+    //USARE SOLO PER TEST, DA RIMUOVERE
+    public void setIdString(String id){
+        this.id = new ObjectId(id);
+    }
+
     public String getUsername() {
         return username;
     }
