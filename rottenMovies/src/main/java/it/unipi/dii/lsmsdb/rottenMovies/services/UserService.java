@@ -7,11 +7,9 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.utils.ReviewProjectionOptions;
-import it.unipi.dii.lsmsdb.rottenMovies.utils.ReviewProjectionOptionsEnum;
-import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
-import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptionsEnum;
 import org.bson.types.ObjectId;
+
+import java.util.ArrayList;
 
 public class UserService {
     public BaseUserDTO getUser(int page, String user_id) {
@@ -20,8 +18,22 @@ public class UserService {
             userdao.queryBuildSearchById(new ObjectId(user_id));
             user = userdao.executeSearchQuery(0).get(0);
         } catch (Exception e) {
-            System.err.println(e.getStackTrace());
+            System.err.println(e);
         }
         return user;
+    }
+
+    public BaseUserDTO authenticate(String username, String password) {
+        ArrayList<BaseUserDTO> baseuserdtos = null;
+        try (BaseUserDAO userdao = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
+            userdao.queryBuildSearchByUsernameExact(username);
+            userdao.queryBuildSearchPasswordEquals(password);
+            baseuserdtos = userdao.executeSearchQuery(0);
+        } catch (Exception e){
+            System.err.println(e);
+        }
+        if (baseuserdtos.isEmpty())
+            return null;
+        return baseuserdtos.get(0);
     }
 }
