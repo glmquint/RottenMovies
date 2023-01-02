@@ -62,6 +62,10 @@ public class AppController {
     @RequestMapping("/login")
     public String login(Model model, HttpSession session, HttpServletRequest request){
         System.out.println("credentials: " + session.getAttribute("credentials"));
+        if (session.getAttribute("credentials")!=null) {
+            model.addAttribute("info", "you're already logged in");
+            return "index"; // TODO: change to feed
+        }
         UserService userService = new UserService();
         HashMap<String, String> hm = extractRequest(request);
         System.out.println(hm);
@@ -76,7 +80,8 @@ public class AppController {
             return "login";
         }
         session.setAttribute("credentials", baseuserdto);
-        return "exploreMovies"; // TODO: change to feed
+        model.addAttribute("success", "login successful");
+        return "index"; // TODO: change to feed
     }
 
     @RequestMapping("/register")
