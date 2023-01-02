@@ -7,6 +7,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.MD5;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -68,14 +69,14 @@ public class AppController {
         if (!hm.containsKey("username") || !hm.containsKey("password")) {
             return "login";
         }
-        baseuserdto = userService.authenticate(hm.get("username"), hm.get("password"));
+        baseuserdto = userService.authenticate(hm.get("username"), MD5.getMd5(hm.get("password")));
         if (baseuserdto == null) {
             //hm.put("error", "invalid username or password");
             model.addAttribute("error", "invalid username or password");
             return "login";
         }
         session.setAttribute("credentials", baseuserdto);
-        return "exploreMovies";
+        return "exploreMovies"; // TODO: change to feed
     }
 
     @RequestMapping("/register")
