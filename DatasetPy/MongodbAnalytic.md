@@ -98,11 +98,11 @@ db.movie.aggregate([
 ```
  ### Return the most reviewd genres by a signle user
 ```js
+db.movie.find({"review.critic_name":{$eq:"Emanuel Levy"}},{_id:1})
+
 db.movie.aggregate([
     {$match:
-        {_id:
-            {$in:db.user.find({ username: "Abbie Bernstein" }, { "reviews.movie_id": 1, "_id": 0 }).toArray()[0]['movie_id'].map(x=>x['primaryTitle'])},
-        }
+        {"review.critic_name":{$eq:"Emanuel Levy"}}  
     },
     {$unwind:"$genres"}, 
     {$group:{_id:"$genres", count:{$sum:1}}}, 
