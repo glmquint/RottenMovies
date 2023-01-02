@@ -384,6 +384,25 @@ db.movie.find().forEach(
 );
 
 ```
+### update review date to use only ISODate
+```js
+total = db.movie.find().count();
+i = 0;
+db.movie.find().forEach(
+    x => {
+        print(x.primaryTitle);
+        x.review.forEach(rev =>{
+            if(typeof (rev.review_date) === "string" ){
+                db.movie.updateOne(
+                    {primaryTitle: x.primaryTitle },
+                    { $set: { "review.$[elem].review_date" : new Date(rev.review_date) } },
+                    { arrayFilters: [ { "elem.critic_name": rev.critic_name } ] }
+                 )    
+            }
+        })
+        print(100*i++/total);           
+});
+```
 #### parse type strings to floats and integers
 ```js
 db.movie.find().forEach(
@@ -736,6 +755,45 @@ db.runCommand(
 )
                 
 ```
+### user date generation
+```js
+total = db.user.find().count();
+i = 0;
+
+db.user.find().forEach(
+    x => {
+        print(x.username);
+        dayOfBirth=Math.floor(Math.random() * (28) + 1); // (max - min +1)+min
+        monthOfBirth=Math.floor(Math.random() * (12) + 1);
+        yearOfBirth=Math.floor(Math.random() * (37) + 1970); // 2006 - 1970 + 1
+        date=new Date(yearOfBirth,monthOfBirth,dayOfBirth);
+        date.setUTCHours(0,0,0,0);
+        
+        db.user.updateOne(
+            {"username": x.username,
+            "date_of_birth" : {$exists:true} },
+            { $set: { "date_of_birth" : date } }
+        )
+        
+        startyear=yearOfBirth+16;
+        yearOfSubScription=Math.floor(Math.random() * (2023 - startyear) + startyear); // 2022 - startyear + 1
+        monthOfSubScription=Math.floor(Math.random() * (12) + 1);
+        dayOfSubScription=Math.floor(Math.random() * (28) + 1);
+        date=new Date(yearOfSubScription,monthOfSubScription,dayOfSubScription);
+        date.setUTCHours(0,0,0,0);
+        
+        db.user.updateOne(
+            {"username": x.username},
+            {$set: 
+                {"registration_date": date}
+            }
+        );
+        
+        print(100*i++/total);
+    }
+);
+```
+
 #### modify users date_of_birth  
 ```js
 db.user.updateMany({"date_of_birth":{$exists:true}}, {$set: {"date_of_birth": new Date("1970-07-20")}} )

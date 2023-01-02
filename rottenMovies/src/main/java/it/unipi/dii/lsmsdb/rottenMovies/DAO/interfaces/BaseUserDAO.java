@@ -12,14 +12,17 @@ import java.util.ArrayList;
 
 public interface BaseUserDAO extends AutoCloseable{
     void queryBuildSearchByUsername(String username) throws DAOException;
+    void queryBuildSearchByUsernameExact(String username) throws DAOException;
     void queryBuildSearchByLastName(String lastname) throws DAOException;
     void queryBuildSearchByFirstName(String lastname) throws DAOException;
     void queryBuildSearchByYearOfBirth(int year) throws DAOException;
+    void queryBuildSearchPasswordEquals(String password) throws DAOException;
     void queryBuildSearchById(ObjectId id) throws DAOException;
     void queryBuildSearchByRegistrationDate(int year,int month,int day) throws DAOException;
     boolean insert(BaseUser usr) throws DAOException;
     boolean update(BaseUser usr) throws DAOException;
     boolean delete(BaseUser usr) throws DAOException;
+    void getMostReviewedGenres (ObjectId user_id) throws DAOException;
     ArrayList<BaseUserDTO> executeSearchQuery(int page) throws DAOException;
     boolean executeDeleteQuery() throws DAOException;
     BaseUserDTO getMostReviewUser() throws DAOException;

@@ -4,14 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoException;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.*;
+
+import static com.mongodb.client.model.Accumulators.avg;
+import static com.mongodb.client.model.Accumulators.sum;
 import static com.mongodb.client.model.Filters.*;
 
-import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
@@ -19,19 +21,18 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.HallOfFameDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewMovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
-import com.mongodb.client.model.UpdateOptions;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.*;
 import org.bson.BsonDocument;
 import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.exceptions.NoSuchRecordException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 
 /**
@@ -59,7 +60,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         } catch (Exception e){
             System.err.println(e);
         }
-        FindIterable found = collection.find(query);
+        FindIterable<Document> found = collection.find(query);
         Bson bson_check = sort_opt.getSort();
         if (bson_check != null){
             found = found.sort(sort_opt.getSort());
@@ -68,6 +69,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         if (bson_check != null) {
             found.projection(proj_opt.getProjection());
         }
+
         if (page >= 0) { // only internally. Never return all movies without pagination on front-end
             query=null;
             found = found.skip(page * Constants.MOVIES_PER_PAGE).limit(Constants.MOVIES_PER_PAGE);
@@ -92,9 +94,36 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         ArrayList<MovieDTO> movies_to_delete = executeSearchQuery(-1,
                 new SortOptions(SortOptionsEnum.NO_SORT, -1),
                 new ReviewProjectionOptions(ReviewProjectionOptionsEnum.ALL, -1));
-        // TODO: delete the user review of the deleted movie before executing deleteMany
         MongoCollection<Document>  collectionMovie = getMovieCollection();
+        MongoCollection<Document>  collectionUser = getUserCollection();
         boolean returnvalue=true;
+        Bson filterUsr;
+        Bson deleteReview, deletelast3;
+        UpdateResult result3reviews,reviewsResult;
+        Document moviefilter;
+        for(MovieDTO movie:movies_to_delete) {
+            ArrayList<ReviewMovieDTO> reviews = movie.getReviews(); // getting all the reviews
+            moviefilter=new Document("primaryTitle",movie.getPrimaryTitle());
+            for (ReviewMovieDTO review : reviews) {
+                deleteReview = Updates.pull("reviews", moviefilter);
+                deletelast3 = Updates.pull("last_3_reviews", moviefilter);
+                filterUsr=eq("username", review.getCriticName());
+                try{
+                    reviewsResult=collectionUser.updateOne(filterUsr, deleteReview);
+                    System.out.println("Modified document count: " + reviewsResult.getModifiedCount());
+                    result3reviews=collectionUser.updateOne(filterUsr,deletelast3);
+                    System.out.println("Modified document count: " + result3reviews.getModifiedCount());
+                    if (result3reviews.getModifiedCount() == 1) {
+                        //TODO: also remember to update the last_3_reviews field after deleting a movie
+                        System.out.println("Last3review modified");
+                    }
+                }
+                catch (MongoException me){
+                    returnvalue=false;
+                }
+            }
+        }
+
         try { // now I delete the movie from collection movie
             DeleteResult result = collectionMovie.deleteMany(query);
             System.out.println("Deleted document count: " + result.getDeletedCount());
@@ -104,25 +133,6 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         query=null;
         return returnvalue;
-        /*
-        ArrayList<Review> reviews = movie.getReviews(); // getting all the reviews
-        Bson filter,deleteReview,deletelast3; // now I delete the movie for the user collection, both in last_3 and reviews
-        UpdateResult result3reviews;
-        for (Review r: reviews) {
-            String username=r.getCriticName();
-            System.out.println(username);
-            filter=eq("username", username);
-            deleteReview = Updates.pull("reviews", new Document("primaryTitle", title));
-            deletelast3 = Updates.pull("last_3_reviews", new Document("primaryTitle", title));
-            collectionUser.updateOne(filter, deleteReview);
-            result3reviews=collectionUser.updateOne(filter,deletelast3);
-            if(result3reviews.getModifiedCount()==1){
-                //TODO: also remember to update the last_3_reviews field after deleting a movie
-                System.out.println("Last3review modified");
-            }
-        }
-
-         */
     }
 
     public void queryBuildSearchByTitleExact(String title){
@@ -212,7 +222,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             new_query = Filters.and(gte("year", year));
         } else {
             new_query = Filters.and(lte("year", year));
-        };
+        }
         if (query == null) {
             query = new_query;
             return;
@@ -249,34 +259,8 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query = Filters.and(query, new_query);
     }
 
-/*
-    funzione per cercare movie in un solo anno, è un sottocaso di searchByYearRange dove
-    startYear == endYear
-   public List<Movie> searchByYear(int year){
-        MongoClient myClient = getClient();
-        MongoCollection<Document>  collection = returnCollection(myClient, collectionStringMovie);
-        Movie movie = null;
-        String json_movie;
-        ObjectMapper mapper = new ObjectMapper();
-        MongoCursor<Document> cursor =  collection.find(Filters.eq("year", year)).iterator();
-        List<Movie> movie_list = new ArrayList<>();
-        while(cursor.hasNext()){
-            json_movie = cursor.next().toJson();
-            //System.out.println(json_movie);
-            try {
-                movie = mapper.readValue(json_movie, Movie.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-            movie_list.add(movie);
-        }
-        return movie_list;
-    }
-    public
- */
-
     private ArrayList<BasicDBObject> buildPersonnelField (Movie movie){
-        ArrayList<BasicDBObject> personnelDBList=new ArrayList<BasicDBObject>();
+        ArrayList<BasicDBObject> personnelDBList= new ArrayList<>();
         ArrayList<Personnel> personnelList=movie.getpersonnel();
         BasicDBObject worker;
         if (personnelList != null){
@@ -318,11 +302,11 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
 
          */
-        UpdateOptions options = new UpdateOptions().upsert(true);
+
         try {
             query = null;
             queryBuildSearchById(updated.getId());
-            UpdateResult result = collection.updateOne(query, updates, options);
+            UpdateResult result = collection.updateOne(query, updates);
             System.out.println("Modified document count: " + result.getModifiedCount());
         } catch (MongoException me) {
             System.err.println("Unable to update due to an error: " + me);
@@ -376,6 +360,61 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return result;
     }
 
+    public ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies){
+        MongoCollection<Document>  collection = getMovieCollection();
+        AggregateIterable<Document> aggregateResult = collection.aggregate(
+                Arrays.asList(
+                        Aggregates.group("$production_company",
+                                avg("top_critic_rating", "$top_critic_rating"),
+                                avg("user_rating", "$user_rating"),
+                                sum("count",1)),
+                        Aggregates.match(gte("count",numberOfMovies)),
+                        Aggregates.sort(Sorts.descending("top_critic_rating","user_rating")),
+                        Aggregates.limit(Constants.MOVIES_PER_PAGE)
+                )
+        );
+        ArrayList<HallOfFameDTO> resultSet = new ArrayList<>();
+        HallOfFameDTO hallOfFameDTO;
+        MongoCursor<Document> cursor = aggregateResult.iterator();
+        while (cursor.hasNext()){
+            Document doc = cursor.next();
+            hallOfFameDTO =new HallOfFameDTO();
+            hallOfFameDTO.setSubject(doc.getString("_id"));
+            hallOfFameDTO.setTop_critic_rating(doc.getDouble("top_critic_rating"));
+            hallOfFameDTO.setUser_rating(doc.getDouble("user_rating"));
+            hallOfFameDTO.setMovie_count(doc.getInteger("count"));
+            resultSet.add(hallOfFameDTO);
+        }
+        return resultSet;
+    }
+    public ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies){
+        MongoCollection<Document>  collection = getMovieCollection();
+        AggregateIterable<Document> aggregateResult = collection.aggregate(
+                Arrays.asList(
+                        Aggregates.unwind("$genres"),
+                        Aggregates.group("$genres",
+                                avg("top_critic_rating", "$top_critic_rating"),
+                                avg("user_rating", "$user_rating"),
+                                sum("count",1)),
+                        Aggregates.match(gte("count",numberOfMovies)),
+                        Aggregates.sort(Sorts.descending("top_critic_rating","user_rating")),
+                        Aggregates.limit(Constants.MAXIMUM_NUMBER_OF_GENRES)
+                )
+        );
+        ArrayList<HallOfFameDTO> resultSet = new ArrayList<>();
+        HallOfFameDTO hallOfFameDTO;
+        MongoCursor<Document> cursor = aggregateResult.iterator();
+        while (cursor.hasNext()){
+            Document doc = cursor.next();
+            hallOfFameDTO =new HallOfFameDTO();
+            hallOfFameDTO.setSubject(doc.getString("_id"));
+            hallOfFameDTO.setTop_critic_rating(doc.getDouble("top_critic_rating"));
+            hallOfFameDTO.setUser_rating(doc.getDouble("user_rating"));
+            hallOfFameDTO.setMovie_count(doc.getInteger("count"));
+            resultSet.add(hallOfFameDTO);
+        }
+        return resultSet;
+    }
     public Boolean insertNeo4j(String id, String title) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
