@@ -388,20 +388,19 @@ db.movie.find().forEach(
 ```js
 total = db.movie.find().count();
 i = 0;
-
 db.movie.find().forEach(
     x => {
         print(x.primaryTitle);
         x.review.forEach(rev =>{
-            //print(rev.review_date);
-            date=new Date(rev.review_date);
-            //print(date);
-            db.movie.updateOne(
-                { "primaryTitle": x.primaryTitle, "review.critic_name": rev.critic_name}, 
-                { "$set": { "review.$.review_date": date } }
-            )
+            if(typeof (rev.review_date) === "string" ){
+                db.movie.updateOne(
+                    {primaryTitle: x.primaryTitle },
+                    { $set: { "review.$[elem].review_date" : new Date(rev.review_date) } },
+                    { arrayFilters: [ { "elem.critic_name": rev.critic_name } ] }
+                 )    
+            }
         })
-        print(100*i++/total);   
+        print(100*i++/total);           
 });
 ```
 #### parse type strings to floats and integers
