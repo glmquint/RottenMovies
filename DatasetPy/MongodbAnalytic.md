@@ -133,8 +133,7 @@ db.movie.aggregate([
     ])
 
 ```
- ### Return the number of reviews made by year and by month. NOT WORKING WITH CURRENT DATABASE (string date)
-
+ ### Return the number of reviews made by year and by month.
 ```js 
 db.movie.aggregate([
     {
