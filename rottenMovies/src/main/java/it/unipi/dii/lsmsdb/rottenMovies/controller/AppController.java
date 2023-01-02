@@ -2,7 +2,10 @@ package it.unipi.dii.lsmsdb.rottenMovies.controller;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
+import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
+import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,12 +55,15 @@ public class AppController {
     }
 
     @GetMapping("/login")
-    public String login(Model model){
+    public String login(Model model, HttpSession session){
+        System.out.println(session);
         return "login";
     }
 
     @GetMapping("/register")
-    public String register(Model model){
+    public String register(Model model, HttpSession session, HttpServletRequest request){
+        session.invalidate();
+        HttpSession newSession = request.getSession(); // create session
         return "register";
     }
 
@@ -104,6 +110,20 @@ public class AppController {
         MovieService movieService = new MovieService();
         model.addAttribute("movie", movieService.getMovie(0, mid, comment_index));
         return "movie";
+    }
+
+    @GetMapping("/user/{uid}")
+    public  String select_user(Model model,
+                                //HttpServletRequest request,
+                                @RequestParam(value = "page", defaultValue = "0") int page,
+                                @PathVariable(value = "uid") String uid){
+        UserService userService = new UserService();
+        if (page < 0){
+            page = 0;
+        }
+        model.addAttribute("user", userService.getUser(page, uid));
+        model.addAttribute("page", page);
+        return "user";
     }
 
     @GetMapping("/feed")
