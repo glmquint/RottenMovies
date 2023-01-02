@@ -260,18 +260,26 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         return resultSet;
     }
-    public BaseUserDTO getMostReviewUser() throws DAOException{
+    public ArrayList<UserDTO> getMostReviewUser() throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
     public TopCriticDTO getMostFollowedCritic() throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 
-    public boolean followTopCritic(String userName, String topCriticName) throws DAOException{
+    public boolean followTopCritic(BaseUser user, BaseUser topCritic) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 
-    public boolean unfollowTopCritic(String userName, String topCriticName) throws DAOException{
+    public boolean unfollowTopCritic(BaseUser user, BaseUser topCritic) throws DAOException{
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
+    }
+
+    public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException{
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
+    }
+
+    public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 }

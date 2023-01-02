@@ -17,17 +17,31 @@ import java.util.ArrayList;
 
 import static org.neo4j.driver.Values.parameters;
 
+/**
+ * @author Fabio
+ * @author Giacomo
+ * @author Guillaume
+ * <class>MovieNeo4j_DAO</class> allow to use methods to interact with the GraphDB specifically for the movie entities
+ */
 public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
-    public boolean insert(Movie movie) throws DAOException{
+    /**
+     * <method>insert</method> add a new entity to the GraphDB
+     *
+     * @param movie is the model from which the new entity is generate
+     * @return true in case of success
+     * @throws DAOException
+     */
+    @Override
+    public boolean insert(Movie movie) throws DAOException {
         String id = movie.getId().toString();
         String title = movie.getPrimaryTitle();
-        if(id.isEmpty() || title.isEmpty()){
+        if (id.isEmpty() || title.isEmpty()) {
             return false;
         }
         Session session = driver.session();
         session.writeTransaction(tx -> {
-            String query = "MERGE (m:Movie{id: $id}) "+
-                    "ON CREATE SET m.id= $id, m.title = $title "+
+            String query = "MERGE (m:Movie{id: $id}) " +
+                    "ON CREATE SET m.id= $id, m.title = $title " +
                     "RETURN m.title as Title";
             Result result = tx.run(query, parameters("id", id, "title", title));
             System.out.println(result.single().get("Title").asString());
@@ -36,9 +50,17 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         return true;
     }
 
-    public boolean delete(Movie movie) throws DAOException, NoSuchRecordException{
+    /**
+     * <method>delete</method> remove an entity to the GraphDB
+     *
+     * @param movie is the model used to get the info to retrieve and delete from the GraphDB
+     * @return true in case of success
+     * @throws DAOException
+     */
+    @Override
+    public boolean delete(Movie movie) throws DAOException, NoSuchRecordException {
         String id = movie.getId().toString();
-        if(id.isEmpty()){
+        if (id.isEmpty()) {
             return false;
         }
         Session session = driver.session();
@@ -51,10 +73,11 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         return true;
     }
 
+    //NEVER USED
     public boolean update(Movie movie) throws DAOException, NoSuchRecordException {
         String id = movie.getId().toString();
         String newTitle = movie.getPrimaryTitle();
-        if(id.isEmpty() || newTitle.isEmpty()){
+        if (id.isEmpty() || newTitle.isEmpty()) {
             return false;
         }
         Session session = driver.session();
@@ -68,39 +91,56 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         return true;
     }
 
+
+    public ArrayList<MovieDTO> executeSearchQuery(int page) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+
     public ArrayList<MovieDTO> executeSearchQuery(int page, SortOptions sort_opt, ReviewProjectionOptions proj_opt) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
+    @Override
     public boolean executeDeleteQuery() throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public void queryBuildSearchByTitleExact(String title) throws DAOException {
+
+
+    public void queryBuildSearchByTitleContains(String title) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public void queryBuildSearchByTitle(String title) throws DAOException {
+    @Override
+    public void queryBuildSearchByTitleExact (String title) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public void queryBuildSearchById(ObjectId id) throws DAOException {
+    @Override
+    public void queryBuildSearchByTitle (String title) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public void queryBuildSearchByTopRatings(int rating, boolean type) throws DAOException {
+    @Override
+    public void queryBuildSearchById (ObjectId id) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public void queryBuildsearchByUserRatings(int rating, boolean type) throws DAOException {
+    @Override
+    public void queryBuildSearchByTopRatings ( int rating, boolean type) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public void queryBuildSearchPersonnel(String[] workers, boolean includeAll) throws DAOException {
+    @Override
+    public void queryBuildsearchByUserRatings ( int rating, boolean type) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+    @Override
+    public void queryBuildSearchPersonnel (String[]workers,boolean includeAll) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
     @Override
-    public void queryBuildSearchGenres(String[] genres, boolean includeAll) throws DAOException {
+    public void queryBuildSearchGenres (String[]genres,boolean includeAll) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
     @Override
-    public void queryBuildSearchByYear(int year, boolean afterYear) throws DAOException{
+    public void queryBuildSearchByYear ( int year, boolean afterYear) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
     public ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies, SortOptions opt) throws DAOException {

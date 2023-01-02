@@ -1,13 +1,20 @@
 package it.unipi.dii.lsmsdb.rottenMovies.controller;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
+import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
+import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Enumeration;
@@ -51,14 +58,37 @@ public class AppController {
         return "index";
     }
 
-    @GetMapping("/login")
-    public String login(Model model){
-        return "login";
+    @RequestMapping("/login")
+    public String login(Model model, HttpSession session, HttpServletRequest request){
+        System.out.println("credentials: " + session.getAttribute("credentials"));
+        UserService userService = new UserService();
+        HashMap<String, String> hm = extractRequest(request);
+        System.out.println(hm);
+        BaseUserDTO baseuserdto = null;
+        if (!hm.containsKey("username") || !hm.containsKey("password")) {
+            return "login";
+        }
+        baseuserdto = userService.authenticate(hm.get("username"), hm.get("password"));
+        if (baseuserdto == null) {
+            //hm.put("error", "invalid username or password");
+            model.addAttribute("error", "invalid username or password");
+            return "login";
+        }
+        session.setAttribute("credentials", baseuserdto);
+        return "exploreMovies";
     }
 
-    @GetMapping("/register")
-    public String register(Model model){
+    @RequestMapping("/register")
+    public String register(Model model, HttpSession session, HttpServletRequest request){
+        HttpSession newSession = request.getSession(); // create session
+        //newSession.setAttribute("test", new UserDTO());
         return "register";
+    }
+
+    @GetMapping("/logout")
+    public String logout(Model model, HttpSession session){
+        session.invalidate();
+        return "index";
     }
 
     @GetMapping("/movie")
@@ -104,6 +134,20 @@ public class AppController {
         MovieService movieService = new MovieService();
         model.addAttribute("movie", movieService.getMovie(0, mid, comment_index));
         return "movie";
+    }
+
+    @GetMapping("/user/{uid}")
+    public  String select_user(Model model,
+                                //HttpServletRequest request,
+                                @RequestParam(value = "page", defaultValue = "0") int page,
+                                @PathVariable(value = "uid") String uid){
+        UserService userService = new UserService();
+        if (page < 0){
+            page = 0;
+        }
+        model.addAttribute("user", userService.getUser(page, uid));
+        model.addAttribute("page", page);
+        return "user";
     }
 
     @GetMapping("/feed")
