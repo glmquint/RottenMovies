@@ -360,7 +360,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return result;
     }
 
-    public ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies){
+    public ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies, SortOptions opt){
         MongoCollection<Document>  collection = getMovieCollection();
         AggregateIterable<Document> aggregateResult = collection.aggregate(
                 Arrays.asList(
@@ -369,7 +369,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                                 avg("user_rating", "$user_rating"),
                                 sum("count",1)),
                         Aggregates.match(gte("count",numberOfMovies)),
-                        Aggregates.sort(Sorts.descending("top_critic_rating","user_rating")),
+                        Aggregates.sort(opt.getBsonAggregationSort()),
                         Aggregates.limit(Constants.MOVIES_PER_PAGE)
                 )
         );
@@ -387,7 +387,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return resultSet;
     }
-    public ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies){
+    public ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies, SortOptions opt){
         MongoCollection<Document>  collection = getMovieCollection();
         AggregateIterable<Document> aggregateResult = collection.aggregate(
                 Arrays.asList(
@@ -397,7 +397,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                                 avg("user_rating", "$user_rating"),
                                 sum("count",1)),
                         Aggregates.match(gte("count",numberOfMovies)),
-                        Aggregates.sort(Sorts.descending("top_critic_rating","user_rating")),
+                        Aggregates.sort(opt.getBsonAggregationSort()),
                         Aggregates.limit(Constants.MAXIMUM_NUMBER_OF_GENRES)
                 )
         );
@@ -408,6 +408,33 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             Document doc = cursor.next();
             hallOfFameDTO =new HallOfFameDTO();
             hallOfFameDTO.setSubject(doc.getString("_id"));
+            hallOfFameDTO.setTop_critic_rating(doc.getDouble("top_critic_rating"));
+            hallOfFameDTO.setUser_rating(doc.getDouble("user_rating"));
+            hallOfFameDTO.setMovie_count(doc.getInteger("count"));
+            resultSet.add(hallOfFameDTO);
+        }
+        return resultSet;
+    }
+    public ArrayList<HallOfFameDTO> bestYearsBasedOnRatings (int numberOfMovies, SortOptions opt){
+        MongoCollection<Document>  collection = getMovieCollection();
+        AggregateIterable<Document> aggregateResult = collection.aggregate(
+                Arrays.asList(
+                        Aggregates.group("$year",
+                                avg("top_critic_rating", "$top_critic_rating"),
+                                avg("user_rating", "$user_rating"),
+                                sum("count",1)),
+                        Aggregates.match(gte("count",numberOfMovies)),
+                        Aggregates.sort(opt.getBsonAggregationSort()),
+                        Aggregates.limit(Constants.MAXIMUM_NUMBER_OF_GENRES)
+                )
+        );
+        ArrayList<HallOfFameDTO> resultSet = new ArrayList<>();
+        HallOfFameDTO hallOfFameDTO;
+        MongoCursor<Document> cursor = aggregateResult.iterator();
+        while (cursor.hasNext()){
+            Document doc = cursor.next();
+            hallOfFameDTO =new HallOfFameDTO();
+            hallOfFameDTO.setSubject(doc.getInteger("_id").toString());
             hallOfFameDTO.setTop_critic_rating(doc.getDouble("top_critic_rating"));
             hallOfFameDTO.setUser_rating(doc.getDouble("user_rating"));
             hallOfFameDTO.setMovie_count(doc.getInteger("count"));

@@ -26,8 +26,9 @@ public interface MovieDAO extends AutoCloseable {
     void queryBuildsearchByUserRatings(int rating, boolean type) throws DAOException;
     void queryBuildSearchPersonnel(String[] workers, boolean includeAll) throws DAOException;
     void queryBuildSearchGenres(String[] genres, boolean includeAll) throws DAOException;
-    ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies) throws DAOException;
-    ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies) throws DAOException;
+    ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies, SortOptions opt) throws DAOException;
+    ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies, SortOptions opt) throws DAOException;
+    ArrayList<HallOfFameDTO> bestYearsBasedOnRatings (int numberOfMovies, SortOptions opt) throws DAOException;
     boolean update(Movie updated) throws DAOException;
     boolean insert(Movie newOne) throws DAOException;
     boolean delete (Movie movie) throws DAOException;

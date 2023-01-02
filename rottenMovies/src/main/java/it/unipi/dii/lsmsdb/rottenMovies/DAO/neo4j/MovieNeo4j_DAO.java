@@ -103,13 +103,17 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
     public void queryBuildSearchByYear(int year, boolean afterYear) throws DAOException{
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies) throws DAOException {
+    public ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies, SortOptions opt) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
 
     }
-    public ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies) throws DAOException {
+    public ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies, SortOptions opt) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
+    public ArrayList<HallOfFameDTO> bestYearsBasedOnRatings (int numberOfMovies, SortOptions opt) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+
 
 
 }
