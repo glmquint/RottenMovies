@@ -119,7 +119,7 @@
                 <div class="card-body">
                   <a class="card-title text-decoration-none h5" th:text="${movie.primaryTitle}" th:href="'/movie/'+${movie.id}">sdf</a>
                   <p class="card-text" th:text="${movie.year} + ' (' + ${movie.productionCompany} + ')'"></p>
-                    <div >
+                    <div>
                         <a class="badge rounded-pill text-bg-primary mb-3 mx-1 text-decoration-none" th:href="'/movie?genres='+${g}" th:text="${g}"  th:each="g: ${movie.genres}"></a>
                     </div>
                     <div>
