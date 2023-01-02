@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * @author Fabio
@@ -26,7 +27,8 @@ public interface MovieDAO extends AutoCloseable {
     void queryBuildsearchByUserRatings(int rating, boolean type) throws DAOException;
     void queryBuildSearchPersonnel(String[] workers, boolean includeAll) throws DAOException;
     void queryBuildSearchGenres(String[] genres, boolean includeAll) throws DAOException;
-    HashMap<String, HashMap<String,Double>> mostSuccesfullProductionHouses(int numberOfMovies) throws DAOException;
+    LinkedHashMap<String, HashMap<String, Double>> mostSuccesfullProductionHouses(int numberOfMovies) throws DAOException;
+    LinkedHashMap<String, HashMap<String, Double>> mostSuccesfullGenres(int numberOfMovies) throws DAOException;
     boolean update(Movie updated) throws DAOException;
     boolean insert(Movie newOne) throws DAOException;
     boolean delete (Movie movie) throws DAOException;

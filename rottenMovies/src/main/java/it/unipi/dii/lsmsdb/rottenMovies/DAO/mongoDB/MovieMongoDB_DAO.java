@@ -3,11 +3,9 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.mongoDB;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.*;
@@ -29,17 +27,11 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.*;
 import org.bson.BsonDocument;
 import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.exceptions.NoSuchRecordException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import java.util.HashMap;
-import java.util.List;
-
+import java.util.*;
 
 
 /**
@@ -367,7 +359,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return result;
     }
 
-    public HashMap<String, HashMap<String,Double>> mostSuccesfullProductionHouses(int numberOfMovies){
+    public LinkedHashMap<String, HashMap<String, Double>> mostSuccesfullProductionHouses(int numberOfMovies){
         MongoCollection<Document>  collection = getMovieCollection();
         AggregateIterable<Document> aggregateResult = collection.aggregate(
                 Arrays.asList(
@@ -380,10 +372,36 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                         Aggregates.limit(Constants.MOVIES_PER_PAGE)
                 )
         );
-        HashMap<String, HashMap<String,Double>> resultSet = new HashMap<>();
+        LinkedHashMap<String, HashMap<String,Double>> resultSet = new LinkedHashMap<>();
         MongoCursor<Document> cursor = aggregateResult.iterator();
         while (cursor.hasNext()){
             Document doc = cursor.next();
+            resultSet.put(doc.getString("_id"),new HashMap<String,Double>());
+            resultSet.get(doc.getString("_id")).put("top_critic",doc.getDouble("top_critic"));
+            resultSet.get(doc.getString("_id")).put("user_rating",doc.getDouble("user_rating"));
+            resultSet.get(doc.getString("_id")).put("count",(double)(doc.getInteger("count")));
+        }
+        return resultSet;
+    }
+    public LinkedHashMap<String, HashMap<String, Double>> mostSuccesfullGenres(int numberOfMovies){
+        MongoCollection<Document>  collection = getMovieCollection();
+        AggregateIterable<Document> aggregateResult = collection.aggregate(
+                Arrays.asList(
+                        Aggregates.unwind("$genres"),
+                        Aggregates.group("$genres",
+                                avg("top_critic", "$top_critic_rating"),
+                                avg("user_rating", "$user_rating"),
+                                sum("count",1)),
+                        Aggregates.match(gte("count",numberOfMovies)),
+                        Aggregates.sort(Sorts.descending("top_critic","user_rating")),
+                        Aggregates.limit(Constants.MAXIMUM_NUMBER_OF_GENRES)
+                )
+        );
+        LinkedHashMap<String, HashMap<String,Double>> resultSet = new LinkedHashMap<>();
+        MongoCursor<Document> cursor = aggregateResult.iterator();
+        while (cursor.hasNext()){
+            Document doc = cursor.next();
+            System.out.println(doc.getString("_id"));
             resultSet.put(doc.getString("_id"),new HashMap<String,Double>());
             resultSet.get(doc.getString("_id")).put("top_critic",doc.getDouble("top_critic"));
             resultSet.get(doc.getString("_id")).put("user_rating",doc.getDouble("user_rating"));
