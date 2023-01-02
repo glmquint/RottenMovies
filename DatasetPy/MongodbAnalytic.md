@@ -100,8 +100,8 @@ db.movie.aggregate([
 ```js
 db.movie.aggregate([
     {$match:
-        {primaryTitle:
-            {$in:db.user.find({ username: "Abbie Bernstein" }, { "reviews.primaryTitle": 1, "_id": 0 }).toArray()[0]['reviews'].map(x=>x['primaryTitle'])},
+        {_id:
+            {$in:db.user.find({ username: "Abbie Bernstein" }, { "reviews.movie_id": 1, "_id": 0 }).toArray()[0]['movie_id'].map(x=>x['primaryTitle'])},
         }
     },
     {$unwind:"$genres"}, 
