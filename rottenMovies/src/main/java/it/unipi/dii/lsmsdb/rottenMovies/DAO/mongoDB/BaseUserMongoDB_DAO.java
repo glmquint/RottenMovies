@@ -186,12 +186,10 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         if (usr instanceof User){
             updates = Updates.combine(updates, Updates.set("date_of_birth", ((User)usr).getBirthdayDate()));
         }
-
-        UpdateOptions options = new UpdateOptions().upsert(true);
         try {
             query=null;
             queryBuildSearchById(usr.getId());
-            UpdateResult result = collection.updateOne(query, updates, options);
+            UpdateResult result = collection.updateOne(query, updates);
             System.out.println("Modified document count: " + result.getModifiedCount());
         }
         catch (MongoException me) {

@@ -21,6 +21,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.HallOfFameDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewMovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
@@ -301,11 +302,11 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
 
          */
-        UpdateOptions options = new UpdateOptions().upsert(true);
+
         try {
             query = null;
             queryBuildSearchById(updated.getId());
-            UpdateResult result = collection.updateOne(query, updates, options);
+            UpdateResult result = collection.updateOne(query, updates);
             System.out.println("Modified document count: " + result.getModifiedCount());
         } catch (MongoException me) {
             System.err.println("Unable to update due to an error: " + me);
@@ -359,53 +360,58 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return result;
     }
 
-    public LinkedHashMap<String, HashMap<String, Double>> mostSuccesfullProductionHouses(int numberOfMovies){
+    public ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies){
         MongoCollection<Document>  collection = getMovieCollection();
         AggregateIterable<Document> aggregateResult = collection.aggregate(
                 Arrays.asList(
                         Aggregates.group("$production_company",
-                                avg("top_critic", "$top_critic_rating"),
+                                avg("top_critic_rating", "$top_critic_rating"),
                                 avg("user_rating", "$user_rating"),
                                 sum("count",1)),
                         Aggregates.match(gte("count",numberOfMovies)),
-                        Aggregates.sort(Sorts.descending("top_critic","user_rating")),
+                        Aggregates.sort(Sorts.descending("top_critic_rating","user_rating")),
                         Aggregates.limit(Constants.MOVIES_PER_PAGE)
                 )
         );
-        LinkedHashMap<String, HashMap<String,Double>> resultSet = new LinkedHashMap<>();
+        ArrayList<HallOfFameDTO> resultSet = new ArrayList<>();
+        HallOfFameDTO hallOfFameDTO;
         MongoCursor<Document> cursor = aggregateResult.iterator();
         while (cursor.hasNext()){
             Document doc = cursor.next();
-            resultSet.put(doc.getString("_id"),new HashMap<String,Double>());
-            resultSet.get(doc.getString("_id")).put("top_critic",doc.getDouble("top_critic"));
-            resultSet.get(doc.getString("_id")).put("user_rating",doc.getDouble("user_rating"));
-            resultSet.get(doc.getString("_id")).put("count",(double)(doc.getInteger("count")));
+            hallOfFameDTO =new HallOfFameDTO();
+            hallOfFameDTO.setSubject(doc.getString("_id"));
+            hallOfFameDTO.setTop_critic_rating(doc.getDouble("top_critic_rating"));
+            hallOfFameDTO.setUser_rating(doc.getDouble("user_rating"));
+            hallOfFameDTO.setMovie_count(doc.getInteger("count"));
+            resultSet.add(hallOfFameDTO);
         }
         return resultSet;
     }
-    public LinkedHashMap<String, HashMap<String, Double>> mostSuccesfullGenres(int numberOfMovies){
+    public ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies){
         MongoCollection<Document>  collection = getMovieCollection();
         AggregateIterable<Document> aggregateResult = collection.aggregate(
                 Arrays.asList(
                         Aggregates.unwind("$genres"),
                         Aggregates.group("$genres",
-                                avg("top_critic", "$top_critic_rating"),
+                                avg("top_critic_rating", "$top_critic_rating"),
                                 avg("user_rating", "$user_rating"),
                                 sum("count",1)),
                         Aggregates.match(gte("count",numberOfMovies)),
-                        Aggregates.sort(Sorts.descending("top_critic","user_rating")),
+                        Aggregates.sort(Sorts.descending("top_critic_rating","user_rating")),
                         Aggregates.limit(Constants.MAXIMUM_NUMBER_OF_GENRES)
                 )
         );
-        LinkedHashMap<String, HashMap<String,Double>> resultSet = new LinkedHashMap<>();
+        ArrayList<HallOfFameDTO> resultSet = new ArrayList<>();
+        HallOfFameDTO hallOfFameDTO;
         MongoCursor<Document> cursor = aggregateResult.iterator();
         while (cursor.hasNext()){
             Document doc = cursor.next();
-            System.out.println(doc.getString("_id"));
-            resultSet.put(doc.getString("_id"),new HashMap<String,Double>());
-            resultSet.get(doc.getString("_id")).put("top_critic",doc.getDouble("top_critic"));
-            resultSet.get(doc.getString("_id")).put("user_rating",doc.getDouble("user_rating"));
-            resultSet.get(doc.getString("_id")).put("count",(double)(doc.getInteger("count")));
+            hallOfFameDTO =new HallOfFameDTO();
+            hallOfFameDTO.setSubject(doc.getString("_id"));
+            hallOfFameDTO.setTop_critic_rating(doc.getDouble("top_critic_rating"));
+            hallOfFameDTO.setUser_rating(doc.getDouble("user_rating"));
+            hallOfFameDTO.setMovie_count(doc.getInteger("count"));
+            resultSet.add(hallOfFameDTO);
         }
         return resultSet;
     }

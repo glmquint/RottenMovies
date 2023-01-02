@@ -4,6 +4,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseNeo4jDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.HallOfFameDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.ReviewProjectionOptions;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
@@ -13,8 +14,6 @@ import org.neo4j.driver.Session;
 import org.neo4j.driver.exceptions.NoSuchRecordException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -104,11 +103,11 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
     public void queryBuildSearchByYear(int year, boolean afterYear) throws DAOException{
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-    public LinkedHashMap<String, HashMap<String, Double>> mostSuccesfullProductionHouses(int numberOfMovies) throws DAOException {
+    public ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
 
     }
-    public LinkedHashMap<String, HashMap<String, Double>> mostSuccesfullGenres(int numberOfMovies) throws DAOException {
+    public ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
