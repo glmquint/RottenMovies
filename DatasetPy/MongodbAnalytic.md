@@ -1,9 +1,7 @@
 
-    ### Return the best year between a certain set in terms of movies produces
+### Return the best year between a certain set in terms of movies produces DEPRECATED
 
-```js
-    
-    
+```js   
     db.movie.aggregate([
         {$match:{year:{$gt:1940, $lt:1950}}},
         {$group:
@@ -98,7 +96,6 @@ db.movie.aggregate([
 ```
  ### Return the most reviewd genres by a signle user
 ```js
-db.movie.find({"review.critic_name":{$eq:"Emanuel Levy"}},{_id:1})
 
 db.movie.aggregate([
     {$match:
@@ -133,7 +130,7 @@ db.movie.aggregate([
     ])
 
 ```
- ### Return the number of reviews made by year and by month.
+ ### Return the number of reviews made by year and by month. USE _ID INSTEAD OF primaryTitle
 ```js 
 db.movie.aggregate([
     {

@@ -3,6 +3,7 @@ package it.unipi.dii.lsmsdb.rottenMovies;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.controller.AppController;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
