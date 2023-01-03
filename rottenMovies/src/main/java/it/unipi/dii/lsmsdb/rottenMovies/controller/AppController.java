@@ -10,10 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -62,7 +59,6 @@ public class AppController {
         System.out.println("credentials: " + session.getAttribute("credentials"));
         if (session.getAttribute("credentials")!=null) {
             model.addAttribute("info", "you're already logged in");
-            model.addAttribute("credentials", session.getAttribute("credentials"));
             return "login"; // TODO: change to feed
         }
         UserService userService = new UserService();
@@ -84,10 +80,27 @@ public class AppController {
         return "login"; // TODO: change to feed
     }
 
-    @RequestMapping("/register")
+    @PostMapping("/register")
     public String register(Model model, HttpSession session, HttpServletRequest request){
-        HttpSession newSession = request.getSession(); // create session
-        //newSession.setAttribute("test", new UserDTO());
+        UserService userService = new UserService();
+        HashMap<String, String> hm = extractRequest(request);
+        System.out.println(hm);
+        RegisteredUserDTO registeredUserDTO = userService.register(hm);
+        if (registeredUserDTO == null){
+            model.addAttribute("error", "something went wrong during registration");
+            return "register";
+        }
+        session.setAttribute("credentials", registeredUserDTO);
+        model.addAttribute("credentials", registeredUserDTO);
+        return "register";
+    }
+
+    @GetMapping("/register")
+    public String registerGet(Model model,
+                              HttpSession session){
+        if (session.getAttribute("credentials")!=null) {
+            model.addAttribute("info", "you're already logged in");
+        }
         return "register";
     }
 

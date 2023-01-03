@@ -32,4 +32,5 @@ public interface BaseUserDAO extends AutoCloseable{
 
     public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException;
 
+    void queryBuildExcludeBanned() throws DAOException;
 }

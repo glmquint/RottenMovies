@@ -5,9 +5,18 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
+import it.unipi.dii.lsmsdb.rottenMovies.models.User;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.MD5;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserService {
     public BaseUserDTO getUser(int page, String user_id) {
@@ -24,6 +33,7 @@ public class UserService {
     public RegisteredUserDTO authenticate(String username, String password) {
         ArrayList<BaseUserDTO> baseuserdtos = null;
         try (BaseUserDAO userdao = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
+            userdao.queryBuildExcludeBanned();
             userdao.queryBuildSearchByUsernameExact(username);
             userdao.queryBuildSearchPasswordEquals(password);
             baseuserdtos = userdao.executeSearchQuery(0);
@@ -33,5 +43,61 @@ public class UserService {
         if (baseuserdtos.isEmpty())
             return null;
         return baseuserdtos.get(0);
+    }
+
+    public RegisteredUserDTO register(HashMap<String, String> hm) {
+        BaseUser user = null;
+        if (hm.containsKey("is_top_critic")) {
+            user = new TopCritic();
+        } else {
+            user = new User();
+        }
+        for (Map.Entry<String, String> entry : hm.entrySet()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            if (v.isEmpty()) {
+                continue;
+            }
+            if (k.equals("username")) {
+                user.setUsername(v);
+            } else if (k.equals("password")) {
+                user.setPassword(MD5.getMd5(v));
+            } else if (k.equals("first_name")) {
+                user.setFirstName(v);
+            } else if (k.equals("last_name")) {
+                user.setLastName(v);
+            } else if (k.equals("birthday") && user instanceof User) {
+                ((User) user).setBirthdayDate(v);
+            }
+        }
+        user.setRegistrationDate(new Date());
+        boolean res;
+        try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
+            res = userDAO.insert(user);
+        } catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
+        if (!res){
+            return null;
+        }
+        res = false;
+        try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
+            res = userDAO.insert(user);
+        } catch (Exception e){
+            System.out.println(e);
+        }
+        if (!res){
+            try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
+                res = userDAO.delete(user);
+            } catch (Exception e){
+                System.err.println(e);
+            }
+            return null;
+        }
+        if (user instanceof TopCritic){
+            return new TopCriticDTO((TopCritic) user);
+        }
+        return new UserDTO((User) user);
     }
 }
