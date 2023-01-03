@@ -3,6 +3,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.services;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.HallOfFameDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.ReviewProjectionOptions;
@@ -11,6 +12,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptionsEnum;
 import org.bson.types.ObjectId;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -96,5 +98,23 @@ public class MovieService {
             System.err.println(e.getStackTrace());
         }
         return movie;
+    }
+    public PageDTO<HallOfFameDTO> getHOFProductionHouses(String sort, int min_movie_count){
+        PageDTO<HallOfFameDTO> hallOfFameDTO= new PageDTO<>();
+        ArrayList<HallOfFameDTO> listHOF = new ArrayList<>();
+        try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
+            switch (sort) {
+                case "user":
+                    listHOF = moviedao.mostSuccesfullProductionHouses(min_movie_count, new SortOptions(SortOptionsEnum.USER_RATING, -1));
+                    break;
+                default:
+                    listHOF = moviedao.mostSuccesfullProductionHouses(min_movie_count, new SortOptions(SortOptionsEnum.TOP_CRITIC_RATING, -1));
+                    break;
+            }
+            hallOfFameDTO.setEntries(listHOF);
+        } catch (Exception e) {
+            System.err.println(e.getStackTrace());
+        }
+        return hallOfFameDTO;
     }
 }
