@@ -163,18 +163,18 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     public boolean followTopCritic(BaseUser user, BaseUser topCritic) throws DAOException{
         if(!(user instanceof  User) || !(topCritic instanceof TopCritic) )
             return false;
-        if(user.getUsername().isEmpty() || topCritic.getUsername().isEmpty()){
+        if(user.getId().toString().isEmpty() || topCritic.getId().toString().isEmpty()){
             return  false;
         }
         Session session = driver.session();
         session.writeTransaction(tx -> {
-            String query = "MATCH (u:User{name: $userName}), " +
-                            "(t:TopCritic{name: $topCriticName}) " +
+            String query = "MATCH (u:User{id: $userId}), " +
+                            "(t:TopCritic{id: $topCriticId}) " +
                             "MERGE (u)-[f:FOLLOWS]->(t)" +
                             "RETURN type(f) as Type";
-            Result result = tx.run(query, parameters("userName", user.getUsername(),
-                    "topCriticName", topCritic.getUsername()));
-            System.out.println(result.peek().get("Type").asString());
+            Result result = tx.run(query, parameters("userId", user.getId().toString(),
+                    "topCriticId", topCritic.getId().toString()));
+            System.out.println(result.single().get("Type").asString());
             return 1;
         });
         return true;
@@ -191,17 +191,17 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     public boolean unfollowTopCritic(BaseUser user, BaseUser topCritic) throws DAOException {
         if(!(user instanceof  User) || !(topCritic instanceof TopCritic) )
             return false;
-        if(user.getUsername().isEmpty() || topCritic.getUsername().isEmpty()){
+        if(user.getId().toString().isEmpty() || topCritic.getId().toString().isEmpty()){
             return  false;
         }
         Session session = driver.session();
         session.writeTransaction(tx -> {
-            String query = "MATCH (u:User{name: $userName})" +
+            String query = "MATCH (u:User{id: $userId})" +
                     "-[f:FOLLOWS]->"+
-                    "(t:TopCritic{name: $topCriticName}) " +
+                    "(t:TopCritic{id: $topCriticId}) " +
                     "DELETE f";
-            Result result = tx.run(query, parameters("userName", user.getUsername(),
-                    "topCriticName", topCritic.getUsername()));
+            Result result = tx.run(query, parameters("userId", user.getId().toString(),
+                    "topCriticId", topCritic.getId().toString()));
             return 1;
         });
         return true;
