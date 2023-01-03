@@ -77,6 +77,7 @@ public class AppController {
             return "login";
         }
         session.setAttribute("credentials", registeredUserDTO);
+        System.out.println(registeredUserDTO.getClass());
         model.addAttribute("success", "login successful");
         return "index"; // TODO: change to feed
     }
@@ -165,6 +166,7 @@ public class AppController {
             }
         }
         model.addAttribute("user", userService.getUser(page, uid));
+
         model.addAttribute("page", page);
         model.addAttribute("credentials", session.getAttribute("credentials"));
         return "user";
