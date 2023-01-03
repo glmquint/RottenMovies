@@ -135,4 +135,22 @@ public class MovieService {
         }
         return hallOfFameDTO;
     }
+    public PageDTO<HallOfFameDTO> getHOFYears(String sort, int min_movie_count){
+        PageDTO<HallOfFameDTO> hallOfFameDTO= new PageDTO<>();
+        ArrayList<HallOfFameDTO> listHOF = new ArrayList<>();
+        try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
+            switch (sort) {
+                case "user":
+                    listHOF = moviedao.bestYearsBasedOnRatings(min_movie_count, new SortOptions(SortOptionsEnum.USER_RATING, -1));
+                    break;
+                default:
+                    listHOF = moviedao.bestYearsBasedOnRatings(min_movie_count, new SortOptions(SortOptionsEnum.TOP_CRITIC_RATING, -1));
+                    break;
+            }
+            hallOfFameDTO.setEntries(listHOF);
+        } catch (Exception e) {
+            System.err.println(e.getStackTrace());
+        }
+        return hallOfFameDTO;
+    }
 }

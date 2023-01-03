@@ -200,6 +200,19 @@ public class AppController {
         model.addAttribute("sort",sort);
         return "HOFGenres";
     }
+    @GetMapping("/HOFYears")
+    public  String HOFYears(Model model,
+                             @RequestParam(value = "sort", defaultValue = "top_critic") String sort,
+                             @RequestParam(value = "min_movie_count", defaultValue = "5") int min_movie_count){
+        MovieService movieService=new MovieService();
+        if(min_movie_count<=0){
+            min_movie_count=5;
+        }
+        model.addAttribute("years",movieService.getHOFYears(sort,min_movie_count).getEntries());
+        model.addAttribute("min_movie_count",min_movie_count);
+        model.addAttribute("sort",sort);
+        return "HOFYears";
+    }
 
 
 }
