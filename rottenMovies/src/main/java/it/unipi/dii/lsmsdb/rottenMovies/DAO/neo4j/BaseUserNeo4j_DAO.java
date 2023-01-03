@@ -321,6 +321,10 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
     @Override
+    public void queryBuildSearchByUsernameExact(String username) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+    @Override
     public void queryBuildSearchByLastName(String lastname) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
@@ -334,6 +338,14 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     }
     @Override
     public void queryBuildSearchByRegistrationDate(int year,int month,int day) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+    @Override
+    public void getMostReviewedGenres (ObjectId user_id) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+    @Override
+    public void queryBuildSearchPasswordEquals(String password) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
     @Override
