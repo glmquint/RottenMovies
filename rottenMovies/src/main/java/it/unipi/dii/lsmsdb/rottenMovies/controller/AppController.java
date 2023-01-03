@@ -1,12 +1,10 @@
 package it.unipi.dii.lsmsdb.rottenMovies.controller;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.MD5;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -60,22 +58,30 @@ public class AppController {
 
     @RequestMapping("/login")
     public String login(Model model, HttpSession session, HttpServletRequest request){
+        //session.setAttribute("credentials", session.getAttribute("credentials"));
         System.out.println("credentials: " + session.getAttribute("credentials"));
+        if (session.getAttribute("credentials")!=null) {
+            model.addAttribute("info", "you're already logged in");
+            model.addAttribute("credentials", session.getAttribute("credentials"));
+            return "login"; // TODO: change to feed
+        }
         UserService userService = new UserService();
         HashMap<String, String> hm = extractRequest(request);
         System.out.println(hm);
-        BaseUserDTO baseuserdto = null;
+        RegisteredUserDTO baseuserdto = null;
         if (!hm.containsKey("username") || !hm.containsKey("password")) {
             return "login";
         }
-        baseuserdto = userService.authenticate(hm.get("username"), hm.get("password"));
+        baseuserdto = userService.authenticate(hm.get("username"), MD5.getMd5(hm.get("password")));
         if (baseuserdto == null) {
             //hm.put("error", "invalid username or password");
             model.addAttribute("error", "invalid username or password");
             return "login";
         }
         session.setAttribute("credentials", baseuserdto);
-        return "exploreMovies";
+        model.addAttribute("credentials", session.getAttribute("credentials"));
+        model.addAttribute("success", "login successful");
+        return "login"; // TODO: change to feed
     }
 
     @RequestMapping("/register")
@@ -88,7 +94,7 @@ public class AppController {
     @GetMapping("/logout")
     public String logout(Model model, HttpSession session){
         session.invalidate();
-        return "index";
+        return "logout";
     }
 
     @GetMapping("/movie")
