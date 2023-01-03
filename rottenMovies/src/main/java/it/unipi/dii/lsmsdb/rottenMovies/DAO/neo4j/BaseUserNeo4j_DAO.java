@@ -341,6 +341,4 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     }
 
 
-
-
 }
