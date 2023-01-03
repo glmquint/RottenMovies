@@ -1,8 +1,5 @@
 package it.unipi.dii.lsmsdb.rottenMovies.controller;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
@@ -61,15 +58,17 @@ public class AppController {
 
     @RequestMapping("/login")
     public String login(Model model, HttpSession session, HttpServletRequest request){
+        //session.setAttribute("credentials", session.getAttribute("credentials"));
         System.out.println("credentials: " + session.getAttribute("credentials"));
         if (session.getAttribute("credentials")!=null) {
             model.addAttribute("info", "you're already logged in");
-            return "index"; // TODO: change to feed
+            model.addAttribute("credentials", session.getAttribute("credentials"));
+            return "login"; // TODO: change to feed
         }
         UserService userService = new UserService();
         HashMap<String, String> hm = extractRequest(request);
         System.out.println(hm);
-        BaseUserDTO baseuserdto = null;
+        RegisteredUserDTO baseuserdto = null;
         if (!hm.containsKey("username") || !hm.containsKey("password")) {
             return "login";
         }
@@ -80,8 +79,9 @@ public class AppController {
             return "login";
         }
         session.setAttribute("credentials", baseuserdto);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         model.addAttribute("success", "login successful");
-        return "index"; // TODO: change to feed
+        return "login"; // TODO: change to feed
     }
 
     @RequestMapping("/register")
@@ -94,7 +94,7 @@ public class AppController {
     @GetMapping("/logout")
     public String logout(Model model, HttpSession session){
         session.invalidate();
-        return "index";
+        return "logout";
     }
 
     @GetMapping("/movie")
