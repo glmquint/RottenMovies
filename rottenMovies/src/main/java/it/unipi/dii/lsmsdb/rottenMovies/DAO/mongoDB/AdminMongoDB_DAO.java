@@ -41,4 +41,7 @@ public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
         }
         return resultSet;
     }
+    public ArrayList<Integer> userPopulationByGeneration(){
+        return userPopulationByGeneration(1970,5,8);
+    }
 }

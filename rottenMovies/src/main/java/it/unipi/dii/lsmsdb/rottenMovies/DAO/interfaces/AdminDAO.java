@@ -6,4 +6,5 @@ import java.util.ArrayList;
 
 public interface AdminDAO extends AutoCloseable{
     ArrayList<Integer> userPopulationByGeneration (int start,int offset,int index);
+    ArrayList<Integer> userPopulationByGeneration ();
 }
