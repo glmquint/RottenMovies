@@ -61,15 +61,17 @@
                             <a th:case="'it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO'" th:text="'Top Critic *'">Test</a>
                             <a th:case="*" th:text="'Normal User'">Adventure</a>
                         </div>
-                        <form method="post" th:if="${credentials}">
-                            <button type="submit" class="button" name="follow" th:value="${credentials.id}">Follow</button>
-                            <button type="submit" class="button" name="unfollow" th:value="${credentials.id}">Unfollow</button>
-                        </form>
-                        <div class="alert alert-info" role="alert" th:if="${info}" th:text="${info}">
-                            A simple info alert—check it out!
-                        </div>
-                        <div class="alert alert-success" role="alert" th:if="${success}" th:text="${success}">
-                            A simple success alert—check it out!
+                        <div th:if="${credentials}">
+                            <form method="post" th:if="${credentials.id!=user.id}">
+                                <button type="submit" class="button" name="follow" th:value="${credentials.id}">Follow</button>
+                                <button type="submit" class="button" name="unfollow" th:value="${credentials.id}">Unfollow</button>
+                            </form>
+                            <div class="alert alert-info" role="alert" th:if="${info}" th:text="${info}">
+                                A simple info alert—check it out!
+                            </div>
+                            <div class="alert alert-success" role="alert" th:if="${success}" th:text="${success}">
+                                A simple success alert—check it out!
+                            </div>
                         </div>
                     </div>
                 </div>
