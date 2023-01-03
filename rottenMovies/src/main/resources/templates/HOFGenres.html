@@ -49,7 +49,7 @@
             </select>
             <button class="btn btn-outline-secondary" id="search-addon" type="submit">Search</button>
         </div>
-        <label for="min_movie_count">Minimum number of produced movies</label>
+        <label for="min_movie_count">Minimum number of movies per genre</label>
         <input type="number" id="min_movie_count" name="min_movie_count" min="5" step="1" th:value="${min_movie_count}?${min_movie_count}:'5'">
 
     </form>
@@ -57,7 +57,7 @@
         <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Name</th>
+            <th scope="col">Genre</th>
             <div th:switch="${sort}">
                 <th scope="col" th:case="top_critic">Top Critic Rating</th>
                 <th scope="col" th:case="user">User Rating</th>
@@ -66,14 +66,14 @@
         </tr>
         </thead>
         <tbody>
-            <tr th:each="ph,iterStat : ${productionhouses}">
+            <tr th:each="gn,iterStat : ${genres}">
                 <th scope="row" th:text="${iterStat.count}">1</th>
-                <td th:text="${ph.subject}">Warner Bros</td>
+                <td th:text="${gn.subject}">Love</td>
                 <div th:switch="${sort}">
-                    <td th:case="top_critic" th:text="${#numbers.formatDecimal(ph.top_critic_rating,1,2)}+'%'">Rating</td>
-                    <td th:case="user" th:text="${#numbers.formatDecimal(ph.user_rating,1,2)}+'%'">Rating</td>
+                    <td th:case="top_critic" th:text="${#numbers.formatDecimal(gn.top_critic_rating,1,2)}+'%'">Rating</td>
+                    <td th:case="user" th:text="${#numbers.formatDecimal(gn.user_rating,1,2)}+'%'">Rating</td>
                 </div>
-                <td th:text="${ph.movie_count}">16</td>
+                <td th:text="${gn.movie_count}">16</td>
             </tr>
         </tbody>
     </table>

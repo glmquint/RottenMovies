@@ -14,6 +14,6 @@ public class Constants {
     public static final int SUGGESTIONS_IN_FEED = 5;
     public static final String DELETED_USER = "Deleted User";
     public static final String DELETED_REVIEW = "Deleted Review";
-    public static final int MAXIMUM_NUMBER_OF_GENRES = 10;
+    public static final int HALL_OF_FAME_ELEMENT_NUMBERS = 10;
 
 }

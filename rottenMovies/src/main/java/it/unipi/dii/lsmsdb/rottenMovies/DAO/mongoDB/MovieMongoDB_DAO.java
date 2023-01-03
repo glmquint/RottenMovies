@@ -371,7 +371,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                                 sum("count",1)),
                         Aggregates.match(gte("count",numberOfMovies)),
                         Aggregates.sort(opt.getBsonAggregationSort()),
-                        Aggregates.limit(Constants.MOVIES_PER_PAGE)
+                        Aggregates.limit(Constants.HALL_OF_FAME_ELEMENT_NUMBERS)
                 )
         );
         ArrayList<HallOfFameDTO> resultSet = new ArrayList<>();
@@ -399,7 +399,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                                 sum("count",1)),
                         Aggregates.match(gte("count",numberOfMovies)),
                         Aggregates.sort(opt.getBsonAggregationSort()),
-                        Aggregates.limit(Constants.MAXIMUM_NUMBER_OF_GENRES)
+                        Aggregates.limit(Constants.HALL_OF_FAME_ELEMENT_NUMBERS)
                 )
         );
         ArrayList<HallOfFameDTO> resultSet = new ArrayList<>();
@@ -426,7 +426,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                                 sum("count",1)),
                         Aggregates.match(gte("count",numberOfMovies)),
                         Aggregates.sort(opt.getBsonAggregationSort()),
-                        Aggregates.limit(Constants.MAXIMUM_NUMBER_OF_GENRES)
+                        Aggregates.limit(Constants.HALL_OF_FAME_ELEMENT_NUMBERS)
                 )
         );
         ArrayList<HallOfFameDTO> resultSet = new ArrayList<>();

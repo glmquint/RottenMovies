@@ -245,7 +245,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
                         Aggregates.group("$genres",
                                 sum("count",1)),
                         Aggregates.sort(Sorts.descending("count")),
-                        Aggregates.limit(Constants.MAXIMUM_NUMBER_OF_GENRES)
+                        Aggregates.limit(Constants.HALL_OF_FAME_ELEMENT_NUMBERS)
                 )
         );
         ArrayList<GenresLikeDTO> resultSet = new ArrayList<>();
