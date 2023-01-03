@@ -89,9 +89,11 @@
                </div>
             </div>
             <div class="he text-center">Other reviews:</div>
-            <div th:each="review:${user.reviews}">
-                <div class="row">
-                    <a class="col mx-2" th:text="|${review.primaryTitle}" th:href="'/movie/'+ ${review.movieID} + '/' + ${review.index}" >autore</a>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                <div class="col" th:each="review:${user.reviews}">
+                    <div class="row">
+                        <a class="col mx-2" th:text="|${review.primaryTitle}" th:href="'/movie/'+ ${review.movieID} + '/' + ${review.index}" >autore</a>
+                    </div>
                 </div>
             </div>
 

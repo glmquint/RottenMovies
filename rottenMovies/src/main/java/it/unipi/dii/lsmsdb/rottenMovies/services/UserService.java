@@ -6,6 +6,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.*;
 import org.bson.types.ObjectId;
@@ -13,8 +14,8 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 
 public class UserService {
-    public BaseUserDTO getUser(int page, String user_id) {
-        BaseUserDTO user = null;
+    public RegisteredUserDTO getUser(int page, String user_id) {
+        RegisteredUserDTO user = null;
         try (BaseUserDAO userdao = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
             userdao.queryBuildSearchById(new ObjectId(user_id));
             user = userdao.executeSearchQuery(page).get(0);
@@ -24,8 +25,8 @@ public class UserService {
         return user;
     }
 
-    public BaseUserDTO authenticate(String username, String password) {
-        ArrayList<BaseUserDTO> baseuserdtos = null;
+    public RegisteredUserDTO authenticate(String username, String password) {
+        ArrayList<RegisteredUserDTO> baseuserdtos = null;
         try (BaseUserDAO userdao = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
             userdao.queryBuildSearchByUsernameExact(username);
             userdao.queryBuildSearchPasswordEquals(password);

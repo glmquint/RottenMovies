@@ -1,8 +1,5 @@
 package it.unipi.dii.lsmsdb.rottenMovies.controller;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
@@ -69,17 +66,17 @@ public class AppController {
         UserService userService = new UserService();
         HashMap<String, String> hm = extractRequest(request);
         System.out.println(hm);
-        BaseUserDTO baseuserdto = null;
+        RegisteredUserDTO registeredUserDTO = null;
         if (!hm.containsKey("username") || !hm.containsKey("password")) {
             return "login";
         }
-        baseuserdto = userService.authenticate(hm.get("username"), MD5.getMd5(hm.get("password")));
-        if (baseuserdto == null) {
+        registeredUserDTO = userService.authenticate(hm.get("username"), MD5.getMd5(hm.get("password")));
+        if (registeredUserDTO == null) {
             //hm.put("error", "invalid username or password");
             model.addAttribute("error", "invalid username or password");
             return "login";
         }
-        session.setAttribute("credentials", baseuserdto);
+        session.setAttribute("credentials", registeredUserDTO);
         model.addAttribute("success", "login successful");
         return "index"; // TODO: change to feed
     }
