@@ -6,20 +6,18 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.*;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.AdminDAO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.GenresLikeDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.PopulationByGenerationDTO;
 import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static com.mongodb.client.model.Accumulators.sum;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
 
 public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
     @Override
-    public ArrayList<Integer> userPopulationByGeneration(int start, int offset,int index) {
+    public ArrayList<PopulationByGenerationDTO> userPopulationByGeneration(int start, int offset, int index) {
         MongoCollection<Document> collectionUser = getUserCollection();
         BucketOptions opt = new BucketOptions();
         ArrayList<Integer> buck=new ArrayList<>();
@@ -33,15 +31,19 @@ public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
                         Aggregates.bucket(new Document("$year","$date_of_birth"),buck,opt)
                 )
         );
-        ArrayList<Integer> resultSet = new ArrayList<>();
+        ArrayList<PopulationByGenerationDTO> resultSet = new ArrayList<>();
+        PopulationByGenerationDTO populationByGenerationDTO;
         MongoCursor<Document> cursor = aggregateResult.iterator();
         while (cursor.hasNext()){
             Document doc = cursor.next();
-            resultSet.add(doc.getInteger("population"));
+            populationByGenerationDTO = new PopulationByGenerationDTO();
+            populationByGenerationDTO.setYear(doc.getInteger("_id"));
+            populationByGenerationDTO.setCount(doc.getInteger("population"));
+            resultSet.add(populationByGenerationDTO);
         }
         return resultSet;
     }
-    public ArrayList<Integer> userPopulationByGeneration(){
+    public ArrayList<PopulationByGenerationDTO> userPopulationByGeneration(){
         return userPopulationByGeneration(1970,5,8);
     }
 }
