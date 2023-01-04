@@ -156,6 +156,16 @@ public class AppController {
         model.addAttribute("page", page);
         return "user";
     }
+    @GetMapping("/preferred_genres/{username}")
+    public  String mostLikedGenresByUser(Model model,
+                               @PathVariable(value = "username") String username){
+        UserService userService = new UserService();
+        if(username==null){
+            username="";
+        }
+        model.addAttribute("genres",userService.getGenresLike(username).getEntries());
+        return "preferred-genres";
+    }
 
     @GetMapping("/feed")
     public String feed(Model model,
