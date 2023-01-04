@@ -1,6 +1,5 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DAO.neo4j;
 
-import com.mongodb.client.MongoCollection;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseNeo4jDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
@@ -10,7 +9,6 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.*;
-import org.bson.Document;
 import org.neo4j.driver.Record;
 
 import java.text.ParseException;
@@ -163,18 +161,18 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     public boolean followTopCritic(BaseUser user, BaseUser topCritic) throws DAOException{
         if(!(user instanceof  User) || !(topCritic instanceof TopCritic) )
             return false;
-        if(user.getUsername().isEmpty() || topCritic.getUsername().isEmpty()){
+        if(user.getId().toString().isEmpty() || topCritic.getId().toString().isEmpty()){
             return  false;
         }
         Session session = driver.session();
         session.writeTransaction(tx -> {
-            String query = "MATCH (u:User{name: $userName}), " +
-                            "(t:TopCritic{name: $topCriticName}) " +
+            String query = "MATCH (u:User{id: $userId}), " +
+                            "(t:TopCritic{id: $topCriticId}) " +
                             "MERGE (u)-[f:FOLLOWS]->(t)" +
                             "RETURN type(f) as Type";
-            Result result = tx.run(query, parameters("userName", user.getUsername(),
-                    "topCriticName", topCritic.getUsername()));
-            System.out.println(result.peek().get("Type").asString());
+            Result result = tx.run(query, parameters("userId", user.getId().toString(),
+                    "topCriticId", topCritic.getId().toString()));
+            System.out.println(result.single().get("Type").asString());
             return 1;
         });
         return true;
@@ -191,17 +189,17 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     public boolean unfollowTopCritic(BaseUser user, BaseUser topCritic) throws DAOException {
         if(!(user instanceof  User) || !(topCritic instanceof TopCritic) )
             return false;
-        if(user.getUsername().isEmpty() || topCritic.getUsername().isEmpty()){
+        if(user.getId().toString().isEmpty() || topCritic.getId().toString().isEmpty()){
             return  false;
         }
         Session session = driver.session();
         session.writeTransaction(tx -> {
-            String query = "MATCH (u:User{name: $userName})" +
+            String query = "MATCH (u:User{id: $userId})" +
                     "-[f:FOLLOWS]->"+
-                    "(t:TopCritic{name: $topCriticName}) " +
+                    "(t:TopCritic{id: $topCriticId}) " +
                     "DELETE f";
-            Result result = tx.run(query, parameters("userName", user.getUsername(),
-                    "topCriticName", topCritic.getUsername()));
+            Result result = tx.run(query, parameters("userId", user.getId().toString(),
+                    "topCriticId", topCritic.getId().toString()));
             return 1;
         });
         return true;
@@ -288,6 +286,23 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
 
     }
 
+    public boolean checkIfFollows(BaseUser user, BaseUser topCritic) throws DAOException{
+        if(!(user instanceof  User) || !(topCritic instanceof TopCritic) )
+            return false;
+        if(user.getId().toString().isEmpty() ){
+            return false;
+        }
+        Session session = driver.session();
+        boolean check = session.readTransaction(tx -> {
+            String query = "MATCH (u:User{id: $userId}),(t:TopCritic{id:$topCriticId}) " +
+                    "RETURN  EXISTS ((u)-[:FOLLOWS]->(t)) as Check";
+            Result result = tx.run(query, parameters("userId", user.getId().toString(),
+                    "topCriticId", topCritic.getId().toString()));
+            return result.peek().get("Check").asBoolean();
+        });
+        return check;
+    }
+
     @Override
     public void queryBuildExcludeBanned() throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
@@ -295,6 +310,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
 
     @Override
     public ArrayList<BaseUserDTO> executeSearchQuery(int page) throws DAOException {
+    public ArrayList<RegisteredUserDTO> executeSearchQuery(int page) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 

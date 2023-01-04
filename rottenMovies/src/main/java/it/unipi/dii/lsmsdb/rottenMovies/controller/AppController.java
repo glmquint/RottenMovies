@@ -64,18 +64,19 @@ public class AppController {
         UserService userService = new UserService();
         HashMap<String, String> hm = extractRequest(request);
         System.out.println(hm);
-        RegisteredUserDTO baseuserdto = null;
+        RegisteredUserDTO registeredUserDTO = null;
         if (!hm.containsKey("username") || !hm.containsKey("password")) {
             return "login";
         }
-        baseuserdto = userService.authenticate(hm.get("username"), MD5.getMd5(hm.get("password")));
-        if (baseuserdto == null) {
+        registeredUserDTO = userService.authenticate(hm.get("username"), MD5.getMd5(hm.get("password")));
+        if (registeredUserDTO == null) {
             //hm.put("error", "invalid username or password");
             model.addAttribute("error", "invalid username or password");
             return "login";
         }
-        session.setAttribute("credentials", baseuserdto);
-        model.addAttribute("credentials", session.getAttribute("credentials"));
+        model.addAttribute("credentials", registeredUserDTO);
+        session.setAttribute("credentials", registeredUserDTO);
+        System.out.println(registeredUserDTO.getClass());
         model.addAttribute("success", "login successful");
         return "login"; // TODO: change to feed
     }
@@ -147,7 +148,7 @@ public class AppController {
     }
 
     @GetMapping("/movie/{mid}/{comment_index}")
-    public  String select_movie_comemnt(Model model,
+    public  String select_movie_comment(Model model,
                                         @PathVariable(value = "mid") String mid,
                                         @PathVariable(value = "comment_index") int comment_index){
         MovieService movieService = new MovieService();
@@ -155,17 +156,35 @@ public class AppController {
         return "movie";
     }
 
-    @GetMapping("/user/{uid}")
+    @RequestMapping("/user/{uid}")
     public  String select_user(Model model,
-                                //HttpServletRequest request,
+                                HttpServletRequest request,
                                 @RequestParam(value = "page", defaultValue = "0") int page,
-                                @PathVariable(value = "uid") String uid){
+                                @PathVariable(value = "uid") String uid,
+                                HttpSession session){
         UserService userService = new UserService();
         if (page < 0){
             page = 0;
         }
+        HashMap<String, String> hm = extractRequest(request);
+        if(hm.containsKey("follow")){
+            if(!userService.follow(hm.get("follow"), uid))
+                model.addAttribute("info", "you already follow this user");
+            else{
+                model.addAttribute("success", "Successfully followed this user");
+            }
+        }
+        else if(hm.containsKey("unfollow")){
+            if(!userService.unfollow(hm.get("unfollow"), uid))
+                model.addAttribute("info", "you already don't follow this user");
+            else{
+                model.addAttribute("success", "Successfully unfollowed this user");
+            }
+        }
         model.addAttribute("user", userService.getUser(page, uid));
+
         model.addAttribute("page", page);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "user";
     }
 

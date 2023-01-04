@@ -4,6 +4,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
+<<<<<<< HEAD
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
@@ -11,6 +12,12 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.MD5;
+=======
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.models.*;
+>>>>>>> application_fabio
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -19,11 +26,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserService {
-    public BaseUserDTO getUser(int page, String user_id) {
-        BaseUserDTO user = null;
+    public RegisteredUserDTO getUser(int page, String user_id) {
+        RegisteredUserDTO user = null;
         try (BaseUserDAO userdao = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
             userdao.queryBuildSearchById(new ObjectId(user_id));
-            user = userdao.executeSearchQuery(0).get(0);
+            user = userdao.executeSearchQuery(page).get(0);
         } catch (Exception e) {
             System.err.println(e);
         }
@@ -31,7 +38,7 @@ public class UserService {
     }
 
     public RegisteredUserDTO authenticate(String username, String password) {
-        ArrayList<BaseUserDTO> baseuserdtos = null;
+        ArrayList<RegisteredUserDTO> baseuserdtos = null;
         try (BaseUserDAO userdao = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
             userdao.queryBuildExcludeBanned();
             userdao.queryBuildSearchByUsernameExact(username);
@@ -44,7 +51,6 @@ public class UserService {
             return null;
         return baseuserdtos.get(0);
     }
-
     public RegisteredUserDTO register(HashMap<String, String> hm) {
         BaseUser user = null;
         if (hm.containsKey("is_top_critic")) {
@@ -72,32 +78,72 @@ public class UserService {
         }
         user.setRegistrationDate(new Date());
         boolean res;
-        try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
+        try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
             res = userDAO.insert(user);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             return null;
         }
-        if (!res){
+        if (!res) {
             return null;
         }
         res = false;
-        try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
+        try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)) {
             res = userDAO.insert(user);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
-        if (!res){
-            try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
+        if (!res) {
+            try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
                 res = userDAO.delete(user);
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.err.println(e);
             }
             return null;
         }
-        if (user instanceof TopCritic){
+        if (user instanceof TopCritic) {
             return new TopCriticDTO((TopCritic) user);
         }
         return new UserDTO((User) user);
+    }
+
+    public boolean follow (String uid, String tid){
+        try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
+            BaseUser user = new User();
+            user.setId(new ObjectId(uid));
+            BaseUser topCritic = new TopCritic();
+            topCritic.setId(new ObjectId(tid));
+            System.out.println(user.getId());
+            System.out.println(topCritic.getId());
+            if(!userDAO.checkIfFollows(user,topCritic)) {
+                System.out.println(userDAO.followTopCritic(user, topCritic));
+            }
+            else{
+                return false;
+            }
+        }catch (Exception e){
+            System.err.println(e);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean unfollow (String uid, String tid){
+        try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
+            BaseUser user = new User();
+            user.setId(new ObjectId(uid));
+            BaseUser topCritic = new TopCritic();
+            topCritic.setId(new ObjectId(tid));
+            if(userDAO.checkIfFollows(user,topCritic)) {
+                System.out.println(userDAO.unfollowTopCritic(user, topCritic));
+            }
+            else{
+                return false;
+            }
+        }catch (Exception e){
+            System.err.println(e);
+            return false;
+        }
+        return true;
     }
 }
