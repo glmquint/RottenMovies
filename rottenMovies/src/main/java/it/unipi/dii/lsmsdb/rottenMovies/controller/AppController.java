@@ -198,12 +198,14 @@ public class AppController {
                               HttpServletRequest request){
         HashMap<String, String> hm = extractRequest(request);
         if(hm.containsKey("searchUser")){
+            model.addAttribute("searchUser", hm.get("searchUser"));
             if(!hm.get("searchUser").isEmpty()) {
                 AdminService adminService = new AdminService();
-                RegisteredUserDTO user = adminService.getUserByUsername(hm.get("searchUser"));
-                if(user != null) {
-                    model.addAttribute("searchUser", user);
-                    System.out.println(user.getUsername());
+                PageDTO<RegisteredUserDTO> userList = adminService.listUserPage(0, hm);
+                System.out.println(userList.getTotalCount());
+                if(userList.getTotalCount()>0) {
+                    System.out.println(userList.getEntries());
+                    model.addAttribute("userList", userList.getEntries());
                 }
                 else{
                     model.addAttribute("info", "no result for " + hm.get("searchUser"));

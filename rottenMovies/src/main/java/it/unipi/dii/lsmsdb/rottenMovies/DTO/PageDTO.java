@@ -5,7 +5,7 @@ import java.util.List;
 public class PageDTO <T>{
 
     private List<T> entries;
-    private int totalCount;
+    private int totalCount = 0;
 
     public List<T> getEntries() {
         return entries;
@@ -13,6 +13,7 @@ public class PageDTO <T>{
 
     public void setEntries(List<T> entries) {
         this.entries = entries;
+        this.totalCount = entries.size();
     }
 
     public int getTotalCount() {
