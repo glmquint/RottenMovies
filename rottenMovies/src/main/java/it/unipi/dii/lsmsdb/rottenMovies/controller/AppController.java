@@ -1,6 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.controller;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.services.AdminService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
@@ -173,6 +174,15 @@ public class AppController {
     @GetMapping("/admin-panel")
     public  String adminPanel(Model model){
         return "admin-panel";
+    }
+    @GetMapping("/admin-panel/populationByGeneration")
+    public  String adminPanelPopulation(Model model,
+                                        @RequestParam(value = "offset", defaultValue = "5") int offset
+                                        ){
+        AdminService adminService = new AdminService();
+        model.addAttribute("generation",adminService.getPopulationByGeneration(offset).getEntries());
+        model.addAttribute("offset",offset);
+        return "populationByGeneration";
     }
     @GetMapping("/HOFProductionHouses")
     public  String HOFProductionHouses(Model model,

@@ -17,13 +17,19 @@ import static com.mongodb.client.model.Filters.exists;
 
 public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
     @Override
-    public ArrayList<PopulationByGenerationDTO> userPopulationByGeneration(int start, int offset, int index) {
+    public ArrayList<PopulationByGenerationDTO> userPopulationByGeneration(int offset) {
         MongoCollection<Document> collectionUser = getUserCollection();
         BucketOptions opt = new BucketOptions();
         ArrayList<Integer> buck=new ArrayList<>();
         opt.output(new BsonField("population",new Document("$sum",1)));
-        for(int i=0; i<=index; i++){
-            buck.add(start+(offset*i));
+        // parti dal 1970
+        // aggiungi offset
+        // ripeti fino al 2010
+        int bucketYear=1970;
+        buck.add(bucketYear);
+        while(bucketYear<=2010){
+            bucketYear=(bucketYear+offset);
+            buck.add(bucketYear);
         }
         AggregateIterable<Document> aggregateResult = collectionUser.aggregate(
                 Arrays.asList(
@@ -44,6 +50,6 @@ public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
         return resultSet;
     }
     public ArrayList<PopulationByGenerationDTO> userPopulationByGeneration(){
-        return userPopulationByGeneration(1970,5,8);
+        return userPopulationByGeneration(5);
     }
 }
