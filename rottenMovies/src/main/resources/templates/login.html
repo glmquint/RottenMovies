@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="css/signin.css">
 </head>
 <body class="text-center">
+    <script>
+        if(window.location.pathname != "/login"){
+            window.location.assign("/login");
+        }
+    </script>
     <main class="form-signin w-100 m-auto">
         <form method="post">
         <img class="mb-4" src="/docs/5.2/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">

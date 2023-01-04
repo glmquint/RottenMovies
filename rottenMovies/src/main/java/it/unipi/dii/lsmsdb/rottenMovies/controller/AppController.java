@@ -193,9 +193,13 @@ public class AppController {
         return "recommendations";
     }
 
-    @RequestMapping("/admin-panel")
+    @RequestMapping("/admin-panelModel")
     public  String adminPanel(Model model,
-                              HttpServletRequest request){
+                              HttpServletRequest request,
+                              HttpSession session){
+        if(!(session.getAttribute("credentials") instanceof AdminDTO)){
+            return "login";
+        }
         HashMap<String, String> hm = extractRequest(request);
         if(hm.containsKey("searchUser")){
             model.addAttribute("searchUser", hm.get("searchUser"));
@@ -214,7 +218,7 @@ public class AppController {
         }
 
 
-        return "admin-panel";
+        return "admin-panelModel";
     }
 
 }
