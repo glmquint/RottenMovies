@@ -41,6 +41,7 @@ public class MovieDTO {
 
         //private String criticConsensus;
 
+        private String posterUrl;
     public MovieDTO() {
     }
 
@@ -59,6 +60,7 @@ public class MovieDTO {
         this.user_rotten_count=movie.getUser_rotten_count();
         this.top_critic_fresh_count=movie.getTop_critic_fresh_count();
         this.top_critic_rotten_count= movie.getTop_critic_rotten_count();
+        this.posterUrl=movie.getPosterUrl();
         //this.criticConsensus=movie.getCriticConsensus();
         ArrayList<Review> reviews=movie.getReviews();
         ArrayList<ReviewMovieDTO> reviewsdto = null;
@@ -209,6 +211,14 @@ public class MovieDTO {
 
     public void setReviews(ArrayList<ReviewMovieDTO> reviews) {
         this.reviews = reviews;
+    }
+
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
     }
     /*
     public String getCriticConsensus() {

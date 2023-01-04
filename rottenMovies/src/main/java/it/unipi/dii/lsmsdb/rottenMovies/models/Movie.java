@@ -46,6 +46,9 @@ public class Movie {
     private ArrayList<Review> reviews;
     //@JsonProperty("critic_consensus")
     //private String criticConsensus;
+    @JsonProperty("poster_url")
+    private String posterUrl;
+
 
     public Movie() {
     }
@@ -63,6 +66,7 @@ public class Movie {
         this.user_fresh_count = moviedto.getUser_fresh_count();
         this.top_critic_fresh_count = moviedto.getTop_critic_fresh_count();
         this.top_critic_rotten_count = moviedto.getTop_critic_rotten_count();
+        this.posterUrl= moviedto.getPosterUrl();
         //this.criticConsensus = moviedto.getCriticConsensus();
         ArrayList<ReviewMovieDTO> reviewsDTO = moviedto.getReviews();
         ArrayList<Review> reviews = null;
@@ -266,6 +270,14 @@ public class Movie {
         this.reviews = reviews;
     }
 
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
+    }
+
     @Override
     public String toString() {
         if (id==null){
@@ -288,6 +300,7 @@ public class Movie {
                 ", top_critic_rotten_count=" + top_critic_rotten_count +
                 ", personnel=" + personnel +
                 ", reviews=" + reviews +
+                ", posterUrl=" + posterUrl +
                 '}';
     }
 }

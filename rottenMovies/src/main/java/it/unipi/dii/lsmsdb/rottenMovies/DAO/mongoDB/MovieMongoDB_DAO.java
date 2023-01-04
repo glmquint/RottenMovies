@@ -296,6 +296,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                 Updates.set("user_rotten_count", updated.getUser_rotten_count()),
                 Updates.set("top_critic_fresh_count", updated.getTop_critic_fresh_count()),
                 Updates.set("top_critic_rotten_count", updated.getTop_critic_rotten_count()),
+                Updates.set("poster_url",updated.getPosterUrl()),
                 Updates.set("personnel",personnelDBList));
         /*
         if(updated.getCriticConsensus()!=null){ // not all movies have critic_consensus
@@ -336,6 +337,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                     .append("user_rotten_count", 0)
                     .append("top_critic_fresh_count", 0)
                     .append("top_critic_rotten_count", 0)
+                    .append("poster_url",newOne.getPosterUrl())
                     .append("personnel", personnelDBList)
                     .append("review", new ArrayList<BasicDBObject>()));
 
