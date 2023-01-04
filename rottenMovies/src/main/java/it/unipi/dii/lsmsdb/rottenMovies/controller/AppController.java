@@ -2,6 +2,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.controller;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
+import it.unipi.dii.lsmsdb.rottenMovies.services.AdminService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
@@ -11,10 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -195,8 +193,25 @@ public class AppController {
         return "recommendations";
     }
 
-    @GetMapping("/admin-panel")
-    public  String adminPanel(Model model){
+    @RequestMapping("/admin-panel")
+    public  String adminPanel(Model model,
+                              HttpServletRequest request){
+        HashMap<String, String> hm = extractRequest(request);
+        if(hm.containsKey("searchUser")){
+            if(!hm.get("searchUser").isEmpty()) {
+                AdminService adminService = new AdminService();
+                RegisteredUserDTO user = adminService.getUserByUsername(hm.get("searchUser"));
+                if(user != null) {
+                    model.addAttribute("searchUser", user);
+                    System.out.println(user.getUsername());
+                }
+                else{
+                    model.addAttribute("info", "no result for " + hm.get("searchUser"));
+                }
+            }
+        }
+
+
         return "admin-panel";
     }
 
