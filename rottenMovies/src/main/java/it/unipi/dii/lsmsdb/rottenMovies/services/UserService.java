@@ -39,6 +39,17 @@ public class UserService {
         return baseuserdtos.get(0);
     }
 
+    public RegisteredUserDTO getUserByUsername(String username) {
+        RegisteredUserDTO user = null;
+        try (BaseUserDAO userdao = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
+            userdao.queryBuildSearchByUsername(username);
+            user = userdao.executeSearchQuery(0).get(0);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return user;
+    }
+
     public boolean follow (String uid, String tid){
         try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
             BaseUser user = new User();

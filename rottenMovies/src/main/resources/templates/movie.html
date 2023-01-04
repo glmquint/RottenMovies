@@ -8,6 +8,18 @@
 </head>
 
 <body>
+<script th:inline="javascript">
+/*<![CDATA[*/
+   
+    if([[${go_to_user}]]){
+        var userId = [[${go_to_user}]];
+        window.location.assign("/user/"+userId);
+    }
+
+
+
+/*]]>*/
+</script>
 <header>
     <div class="collapse bg-dark" id="navbarHeader">
         <div class="container">
@@ -88,6 +100,11 @@
           <div th:each="review:${movie.reviews}">
               <div class="row">
                   <b class="col mx-2" th:text="|${review.criticName} (| + ${#dates.format(review.reviewDate, 'yyyy-MM-dd')} + ')'">autore</b>
+                  <div class="col-2" th:if="${review.topCritic}">
+                      <form method="post">
+                          <button type="submit" class="button" name="view" th:value="${review.criticName}">View Profile</button>
+                      </form>
+                  </div>
                   <div class="col-3 text-danger" th:text="${review.topCritic}?'Top Critic ★':''">Top Critic ★</div>
               </div>
               <div class="p-1 mb-4 rounded-3 shadow-sm bg-opacity-10" th:classappend="${review.reviewType=='Fresh'}?'bg-success':'bg-danger'">

@@ -1,6 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.controller;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
@@ -117,15 +118,23 @@ public class AppController {
         return "exploreMovies";
     }
 
-    @GetMapping("/movie/{mid}")
+    @RequestMapping("/movie/{mid}")
     public  String select_movie(Model model,
-                                //HttpServletRequest request,
+                                HttpServletRequest request,
                                 @RequestParam(value = "page", defaultValue = "0") int page,
                                 @PathVariable(value = "mid") String mid){
         MovieService movieService = new MovieService();
         if (page < 0){
             page = 0;
         }
+
+        HashMap<String, String> hm = extractRequest(request);
+        if(hm.containsKey("view")){
+            UserService userService = new UserService();
+            RegisteredUserDTO topCritic = userService.getUserByUsername(hm.get("view"));
+            model.addAttribute("go_to_user", topCritic.getId().toString());
+        }
+
         model.addAttribute("movie", movieService.getMovie(page, mid, -1));
         model.addAttribute("page", page);
         return "movie";
