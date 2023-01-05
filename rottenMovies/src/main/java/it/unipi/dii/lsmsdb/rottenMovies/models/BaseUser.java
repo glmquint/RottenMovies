@@ -1,5 +1,6 @@
 package it.unipi.dii.lsmsdb.rottenMovies.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewUserDTO;
@@ -10,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class BaseUser extends RegisteredUser {
     @JsonProperty("first_name")
     protected String firstName;
@@ -22,6 +23,8 @@ public abstract class BaseUser extends RegisteredUser {
     protected ArrayList<Review> last3Reviews;
     @JsonProperty("reviews")
     protected ArrayList<SimplyfiedReview> reviews;
+    @JsonProperty("isBanned")
+    protected boolean isBanned;
 
     protected BaseUser (){super();}
     protected BaseUser(BaseUserDTO b){
@@ -51,6 +54,7 @@ public abstract class BaseUser extends RegisteredUser {
             }
         }
         this.reviews=allreviews;
+        this.isBanned=b.isBanned();
 
     }
     public String getFirstName() {
@@ -119,5 +123,13 @@ public abstract class BaseUser extends RegisteredUser {
 
     public void setReviews(ArrayList<SimplyfiedReview> reviews) {
         this.reviews = reviews;
+    }
+
+    public boolean isBanned() {
+        return isBanned;
+    }
+
+    public void setBanned(boolean banned) {
+        isBanned = banned;
     }
 }

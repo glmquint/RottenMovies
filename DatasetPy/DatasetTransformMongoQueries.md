@@ -290,7 +290,119 @@ db.movie.find().forEach(
     }
 );
 ```
+### create rating movie fields 
 
+```js
+total = db.movie.find().count();
+i = 0;
+
+db.movie.find().forEach(
+    x => {
+        print(x.primaryTitle);
+        y=x.review;
+        top_critic_fresh_count=0;
+        top_critic_rotten_count=0;
+        user_fresh_count=0;
+        user_rotten_count=0;
+        y.forEach(rev => {
+            if(rev.top_critic){
+                if(rev.review_type=="Fresh"){
+                    top_critic_fresh_count++;
+                }
+                else{ 
+                    top_critic_rotten_count++;
+                }
+            }
+            else {
+                if(rev.review_type=="Fresh"){
+                    user_fresh_count++;
+                }
+                else {
+                    user_rotten_count++;
+                }
+            }
+            top_critic_status="";
+            top_critic_rating=0;
+            if(top_critic_fresh_count!=0 || top_critic_rotten_count!=0){
+                top_critic_rating=~~(((top_critic_fresh_count/(top_critic_rotten_count+top_critic_fresh_count))*100)+0.5);
+                if(top_critic_rating>=60){
+                    top_critic_status="Fresh";
+                    if(top_critic_rating>=75 && 
+                        (top_critic_fresh_count+top_critic_rotten_count+user_fresh_count+user_rotten_count>=80)&&
+                        (top_critic_fresh_count+top_critic_rotten_count>=5)){
+                            top_critic_status="Certified Fresh";
+                    }
+                }
+                else{
+                    top_critic_status="Rotten";
+                }
+            }
+            user_status="";
+            user_rating=0;
+            if(user_fresh_count!=0 || user_rotten_count!=0){
+                user_rating=~~(((user_fresh_count/(user_fresh_count+user_rotten_count))*100)+0.5);
+                if(user_rating>=60){
+                    user_status="Upright";
+                }
+                else{
+                    user_status="Spilled";
+                }
+            }
+            
+        })
+               
+        db.movie.updateOne(
+            {"primaryTitle": x.primaryTitle},
+            {$set: 
+                {"top_critic_fresh_count": top_critic_fresh_count,
+                "top_critic_rotten_count": top_critic_rotten_count,
+                "user_fresh_count": user_fresh_count,
+                "user_rotten_count": user_rotten_count,
+                "tomatometer_rating": top_critic_rating,
+                "tomatometer_status": top_critic_status,
+                "audience_status": user_status,
+                "audience_rating": user_rating
+                }
+            }
+        )
+        db.movie.updateOne(
+            {"primaryTitle": x.primaryTitle},
+            {$rename:{'tomatometer_status':'top_critic_status',
+                    'tomatometer_rating':'top_critic_rating',
+                    'audience_status':'user_status',
+                    'audience_rating':'user_rating'}
+            }
+        )
+        db.movie.updateOne(
+            {"primaryTitle": x.primaryTitle},
+            {$unset: {audience_count:"",tomatometer_fresh_critics_count:"",tomatometer_rotten_critics_count:""}}
+
+        )
+        print(100*i++/total);
+    }
+
+);
+
+```
+### update review date to use only ISODate
+```js
+total = db.movie.find().count();
+i = 0;
+db.movie.find().forEach(
+    x => {
+        print(x.primaryTitle);
+        x.review.forEach(rev =>{
+            if(typeof (rev.review_date) === "string" ){
+                db.movie.updateOne(
+                    {primaryTitle: x.primaryTitle },
+                    { $set: { "review.$[elem].review_date" : new Date(rev.review_date) } },
+                    { arrayFilters: [ { "elem.critic_name": rev.critic_name } ] }
+                 )    
+            }
+        })
+        print(100*i++/total);           
+});
+```
 #### parse type strings to floats and integers
 ```js
 db.movie.find().forEach(
@@ -348,6 +460,33 @@ db.movie.find().forEach(
         );
     }
 )
+```
+### Movies URL poster generation 
+```js
+total = db.movie.find().count();
+i = 0;
+db.movie.find().forEach(
+    x => {
+        print(x.primaryTitle);
+        reg=new RegExp("^"+x.primaryTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')+"$", "i");
+        //print(reg);
+        h=db.testPoster.find({title: {$regex:  reg} }).toArray();
+        if(h[0]!=null){
+            //print(h[0].poster);
+            url=h[0].poster;
+        }
+        else {
+            url="images/poster_not_found.jpg";
+        }
+        //print(url);
+        
+        db.movie.updateOne(
+            {primaryTitle:x.primaryTitle},
+            {$set:{"poster_url": url}}
+        )
+        
+        print(100*i++/total);   
+});
 ```
 
 `r.review_date = new Date(r.review_date + "T00:00:00Z");`
@@ -643,6 +782,45 @@ db.runCommand(
 )
                 
 ```
+### user date generation
+```js
+total = db.user.find().count();
+i = 0;
+
+db.user.find().forEach(
+    x => {
+        print(x.username);
+        dayOfBirth=Math.floor(Math.random() * (28) + 1); // (max - min +1)+min
+        monthOfBirth=Math.floor(Math.random() * (12) + 1);
+        yearOfBirth=Math.floor(Math.random() * (37) + 1970); // 2006 - 1970 + 1
+        date=new Date(yearOfBirth,monthOfBirth,dayOfBirth);
+        date.setUTCHours(0,0,0,0);
+        
+        db.user.updateOne(
+            {"username": x.username,
+            "date_of_birth" : {$exists:true} },
+            { $set: { "date_of_birth" : date } }
+        )
+        
+        startyear=yearOfBirth+16;
+        yearOfSubScription=Math.floor(Math.random() * (2023 - startyear) + startyear); // 2022 - startyear + 1
+        monthOfSubScription=Math.floor(Math.random() * (12) + 1);
+        dayOfSubScription=Math.floor(Math.random() * (28) + 1);
+        date=new Date(yearOfSubScription,monthOfSubScription,dayOfSubScription);
+        date.setUTCHours(0,0,0,0);
+        
+        db.user.updateOne(
+            {"username": x.username},
+            {$set: 
+                {"registration_date": date}
+            }
+        );
+        
+        print(100*i++/total);
+    }
+);
+```
+
 #### modify users date_of_birth  
 ```js
 db.user.updateMany({"date_of_birth":{$exists:true}}, {$set: {"date_of_birth": new Date("1970-07-20")}} )

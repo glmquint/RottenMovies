@@ -32,6 +32,7 @@ public class TopCritic extends BaseUser {
                 "follower_count " + getFollower_count() + '\n' +
                 "last_3_review " + getLast3Reviews() + '\n' +
                 "reviews " + getReviews() + '\n' +
+                "isBanned " + isBanned() + '\n' +
                 "}";
     }
 }

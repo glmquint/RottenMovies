@@ -1,6 +1,5 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DAO;
 
-import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseNeo4jDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.AdminDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
@@ -25,7 +24,7 @@ public class DAOLocator {
     }
     public static BaseUserDAO getBaseUserDAO(DataRepositoryEnum dataRepositoryEnum){
         if (DataRepositoryEnum.MONGO.equals(dataRepositoryEnum)) {
-            return new it.unipi.dii.lsmsdb.rottenMovies.DAO.mongoDB.BaseUserMongoDB_DAO();
+            return new BaseUserMongoDB_DAO();
         } else if (DataRepositoryEnum.NEO4j.equals(dataRepositoryEnum)) {
             return new BaseUserNeo4j_DAO();
         }

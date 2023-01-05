@@ -1,22 +1,34 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
+import org.bson.types.ObjectId;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ReviewFeedDTO {
-    String movieTitle;
-    String criticName;
-    String content;
-    boolean freshness;
-    Date reviewDate;
+    public String criticId;
+    private String movieTitle;
+    private String criticName;
+    private String content;
+    private boolean freshness;
+    private Date reviewDate;
 
-    public ReviewFeedDTO(String movieTitle, String criticName, String content, boolean freshness, Date reviewDate) {
+    public ReviewFeedDTO(String criticId, String movieTitle, String criticName, String content, boolean freshness, Date reviewDate) {
+        this.criticId = criticId;
         this.movieTitle = movieTitle;
         this.criticName = criticName;
         this.content = content;
         this.freshness = freshness;
         this.reviewDate = reviewDate;
+    }
+
+    public String getId() {
+        return criticId;
+    }
+
+    public void setId(String criticId) {
+        this.criticId = criticId;
     }
 
     public String getMovieTitle() {
@@ -63,6 +75,7 @@ public class ReviewFeedDTO {
     public String toString() {
         DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return "ReviewFeedDTO{" +
+                "id= " + criticId + '\'' +
                 "movieTitle='" + movieTitle + '\'' +
                 ", criticName='" + criticName + '\'' +
                 ", content='" + content + '\'' +
