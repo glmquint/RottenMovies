@@ -252,6 +252,18 @@ public class AppController {
     public  String mostLikedGenresByUser(Model model,
                                          @PathVariable(value = "username") String username,
                                          HttpSession session){
+        if(session.getAttribute("credentials")==null){
+            return "login";
+        }
+        if((session.getAttribute("credentials") instanceof AdminDTO)){
+            model.addAttribute("redirect", "/admin-panel");
+            return "movie";
+        }
+        BaseUserDTO userDTO = (BaseUserDTO) session.getAttribute("credentials");
+        if(!userDTO.getUsername().equals(username)){
+            model.addAttribute("go_to_user", userDTO.getId().toString());
+            return "movie";
+        }
         UserService userService = new UserService();
         if(username==null){
             username="";
