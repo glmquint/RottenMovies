@@ -187,22 +187,36 @@ public class MovieService {
         for (Map.Entry<String, String> entry : hm.entrySet()) {
             String k = entry.getKey();
             String v = entry.getValue();
-            if (v.isEmpty()) {
+            if (v==null || v.isEmpty()) {
                 continue;
             }
-            if (k.equals("productionCompany")){
+            if (k.equals("title")){
+                newMovie.setPrimaryTitle(v);
+            } else if (k.equals("productionCompany")){
                 newMovie.setProductionCompany(v);
             } else if (k.equals("year")){
                 newMovie.setYear(Integer.parseInt(v));
             } else if (k.equals("runtimeMinutes")){
-                newMovie.setRuntimeMinutes("");
+                newMovie.setRuntimeMinutes(Integer.parseInt(v));
             } else if (k.equals("genres")){
-                newMovie.setGenres(Arrays.stream(v.split(",")).map(x -> {return x.trim();}).collect(Collectors.toCollection(ArrayList<String>::new))); // "Action, Adventure" -> ["Action", "Adventure"]
+                newMovie.setGenres(
+                        Arrays.stream(
+                                v.split(","))
+                                .map(
+                                        x -> {
+                                            return x.trim();
+                                        })
+                                .collect(
+                                        Collectors.toCollection(
+                                                ArrayList<String>::new
+                                        )
+                                )
+                ); // "Action, Adventure" -> ["Action", "Adventure"]
             }
         }
-        String key, category, job_characters;
-        ArrayList<Personnel> workers;
-        for (int i = 0; i < MAXIMUM_NUMBER_OF_PERSONNEL; i++) {
+        String key, category;
+        ArrayList<Personnel> workers = new ArrayList<Personnel>();
+        for (int i = 1; i < MAXIMUM_NUMBER_OF_PERSONNEL; i++) {
             key = String.format("primaryName_%d", i);
             if (!hm.containsKey(key)){
                 break;
@@ -213,24 +227,33 @@ public class MovieService {
             category = hm.getOrDefault(key, "");
             worker.setCategory(category);
             if (category.equals("actor") || category.equals("actress")) {
-                //worker.setPrimaryName(hm.getOrDefault(key, ""));
-                job_characters = hm.getOrDefault(String.format("job_characters_%d", i), ""); //characters
+                worker.setCharacters(Arrays.stream(
+                                hm.getOrDefault(
+                                        String.format("job_characters_%d", i),
+                                        "")
+                                        .split(","))
+                                .map(
+                                        x -> {
+                                            return x.trim();
+                                        })
+                                .collect(
+                                        Collectors.toCollection(
+                                                ArrayList<String>::new
+                                        )));
             } else {
-                job_characters = hm.getOrDefault(String.format("job_characters_%d", i), ""); //job
+                worker.setJob(hm.getOrDefault(String.format("job_characters_%d", i), ""));
             }
-            worker.setJob(job_characters);
 
-
+            workers.add(worker);
         }
-        //newMovie.setpersonnel();
+        newMovie.setpersonnel(workers);
         return newMovie;
     }
 
     public boolean modifyMovie(String mid, HashMap<String, String> hm) {
         String op = hm.get("admin_operation");
         Movie movie = buildMovieFromForm(mid, hm);
-        return false;
-        /*boolean result = false;
+        boolean result = false;
         try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)){
             if (op.equals("update")){
                 result = moviedao.update(movie);
@@ -262,6 +285,6 @@ public class MovieService {
             }
             return true;
         }
-        return false;*/
+        return false;
     }
 }

@@ -2,6 +2,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.controller;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
+import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import it.unipi.dii.lsmsdb.rottenMovies.services.AdminService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
@@ -149,26 +150,10 @@ public class AppController {
         if (hm.containsKey("admin_operation")){
             result = movieService.modifyMovie(mid, hm);
             if (result){
-                model.addAttribute("success", "movie successfully update");
+                model.addAttribute("success", "movie successfully updated");
             } else {
                 model.addAttribute("error", "error while updating movie");
             }
-//            if (hm.get("admin_operation").equals("update")){
-//                boolean result = movieService.updateMovie(hm);
-//                if (result){
-//                    model.addAttribute("success", "movie successfully update");
-//                } else {
-//                    model.addAttribute("error", "error while updating movie");
-//                }
-//            } else if (hm.get("admin_operation").equals("delete")){
-//                boolean result = movieService.deleteMovie(mid);
-//                if (result){
-//                    model.addAttribute("success", "movie successfully removed");
-//                } else {
-//                    model.addAttribute("error", "error while removing movie");
-//                }
-//                return "movie";
-//            }
         }
         if (page < 0){
             page = 0;
@@ -184,6 +169,9 @@ public class AppController {
         model.addAttribute("movie", movieService.getMovie(page, mid, -1));
         model.addAttribute("page", page);
         model.addAttribute("credentials", session.getAttribute("credentials"));
+        if (hm.getOrDefault("admin_operation", "").equals("delete")){
+            model.addAttribute("redirect", "/movie");
+        }
         return "movie";
     }
 
@@ -254,13 +242,6 @@ public class AppController {
         }
         model.addAttribute("genres",userService.getGenresLike(username).getEntries());
         return "preferred-genres";
-    }
-
-    @GetMapping("/feed")
-    public String feed(Model model,
-                       @RequestParam(value = "page", defaultValue = "0") int page){
-        model.addAttribute("page", String.format("page: %d", page));
-        return "feed";
     }
 
     @GetMapping("/recommendations")
@@ -345,6 +326,23 @@ public class AppController {
         model.addAttribute("sort",sort);
         return "HOFYears";
     }
-
+    @RequestMapping("/feed")
+    public String userFeed (Model model,
+                            @RequestParam(value = "page", defaultValue = "0") int page,
+                            HttpSession session){
+        System.out.println("credentials: " + session.getAttribute("credentials"));
+        if(!(session.getAttribute("credentials") instanceof UserDTO)){
+            return "login";
+        }
+        if (page < 0){
+            page = 0;
+        }
+        UserService userService = new UserService();
+        BaseUser user = new User((UserDTO) session.getAttribute("credentials"));
+        model.addAttribute("feed",userService.createUserFeed(user,page).getEntries());
+        model.addAttribute("page",page);
+        model.addAttribute("username",user.getUsername());
+        return "feed";
+    }
 
 }

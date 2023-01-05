@@ -12,10 +12,12 @@ import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
+import org.neo4j.driver.SessionConfig;
 import org.neo4j.driver.exceptions.NoSuchRecordException;
 
 import java.util.ArrayList;
 
+import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.NEO4J_DATABASE_STRING;
 import static org.neo4j.driver.Values.parameters;
 
 /**
@@ -39,7 +41,7 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         if (id.isEmpty() || title.isEmpty()) {
             return false;
         }
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         session.writeTransaction(tx -> {
             String query = "MERGE (m:Movie{id: $id}) " +
                     "ON CREATE SET m.id= $id, m.title = $title " +
@@ -64,7 +66,7 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         if (id.isEmpty()) {
             return false;
         }
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         session.writeTransaction(tx -> {
             String query = "MATCH (m:Movie{id: $id}) " +
                     "DETACH DELETE m";
@@ -81,7 +83,7 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
         if (id.isEmpty() || newTitle.isEmpty()) {
             return false;
         }
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         session.writeTransaction(tx -> {
             String query = "MATCH (m:Movie{id: $id}) " +
                     "SET m.title = $newTitle RETURN m.title AS Title";
