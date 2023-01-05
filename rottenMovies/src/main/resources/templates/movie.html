@@ -59,7 +59,7 @@
 
                               <form method="post">
                                   <label for="title">title</label>
-                                  <input class="form-control" id="title" type="text" placeholder="Title" name="title" th:value="${movie.primaryTitle}?:''" disabled>
+                                  <input class="form-control" id="title" type="text" placeholder="Title" name="title" th:value="${movie.primaryTitle}?:''" readonly>
 
                                   <label for="year">year</label>
                                   <input class="form-control" id="year" type="number" placeholder="year" name="year" th:value="${movie.year}?:0">
@@ -70,7 +70,7 @@
                                   <label for="productionCompany">productionCompany</label>
                                   <input class="form-control" id="productionCompany" type="text" placeholder="productionCompany" name="productionCompany" th:value="${movie.productionCompany}?:''">
 
-                                  <label for="genres">genres</label>
+                                  <label for="genres">genres (use a comma ',' separated list of genres)</label>
                                   <input class="form-control" id="genres" type="text" placeholder="genres" name="genres" th:value="${movie.genres}?${#strings.listJoin(movie.genres,', ')}:''">
 
                               <label>Personnel</label>
@@ -79,7 +79,7 @@
                                   <input class="form-control" id="primaryName" type="text" placeholder="primaryName" th:name="|primaryName_${iterStat.count}|" th:value="${w.primaryName}?:''">
                                   <label th:for="|category_${iterStat.count}|">category</label>
                                   <input class="form-control" id="category" type="text" placeholder="category" th:name="|category_${iterStat.count}|" th:value="${w.category}?:''">
-                                  <label th:for="|job_characters_${iterStat.count}|">job_characters</label>
+                                  <label th:for="|job_characters_${iterStat.count}|">job_characters (if 'category' is 'actor' or 'actress', use a comma ',' separated list of interpreted characters)</label>
                                   <input class="form-control" id="job_characters" type="text" placeholder="job_characters" th:name="|job_characters_${iterStat.count}|" th:value="${w.job}?:(${w.characters}?${#strings.listJoin(w.characters,', ')}:'')">
                               </ul>
 
