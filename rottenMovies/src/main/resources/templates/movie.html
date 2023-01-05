@@ -79,7 +79,7 @@
                                   <input class="form-control" id="primaryName" type="text" placeholder="primaryName" th:name="|primaryName_${iterStat.count}|" th:value="${w.primaryName}?:''">
                                   <label th:for="|category_${iterStat.count}|">category</label>
                                   <input class="form-control" id="category" type="text" placeholder="category" th:name="|category_${iterStat.count}|" th:value="${w.category}?:''">
-                                  <label th:for="|job_characters_${iterStat.count}|">job_characters (if 'category' is 'actor' or 'actress', use a comma ',' separated list of interpreted characters)</label>
+                                  <label th:for="|job_characters_${iterStat.count}|">job or characters</label>
                                   <input class="form-control" id="job_characters" type="text" placeholder="job_characters" th:name="|job_characters_${iterStat.count}|" th:value="${w.job}?:(${w.characters}?${#strings.listJoin(w.characters,', ')}:'')">
                               </ul>
 

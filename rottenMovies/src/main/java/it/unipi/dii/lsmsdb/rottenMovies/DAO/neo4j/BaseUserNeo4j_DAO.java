@@ -39,7 +39,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
             return  false;
         }
 
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         String newUserName = session.writeTransaction((TransactionWork<String>)  tx ->{
             String query;
             if(usr instanceof TopCritic){
@@ -71,7 +71,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         if(usr.getId().toString().isEmpty()){
             return  false;
         }
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         session.writeTransaction(tx ->{
             String query = "MATCH (b{id: $id}) " +
                     "DETACH DELETE b";
@@ -89,7 +89,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         if(id.isEmpty() || newName.isEmpty()){
             return  false;
         }
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         session.writeTransaction(tx -> {
             String query = "MATCH (b{id: $id}) " +
                     "SET b.name=$newName RETURN b.name AS Name";
@@ -108,7 +108,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
      */
     @Override
     public ArrayList<UserDTO> getMostReviewUser() throws DAOException {
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         ArrayList<UserDTO> userList = session.readTransaction((TransactionWork<ArrayList<UserDTO>>) tx ->{
             String query = "MATCH (u:User)-[:REVIEWED]->(m:Movie) " +
                     "RETURN u.name AS Name, count(*) as NumMovies " +
@@ -134,7 +134,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
      */
     @Override
     public TopCriticDTO getMostFollowedCritic() throws DAOException{
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         TopCritic topCritic = new TopCritic();
         String mostFollowedCritic = session.readTransaction((TransactionWork<String>) tx ->{
             String query = "MATCH (t:TopCritic)<-[:FOLLOWS]-(u:User) " +
@@ -164,7 +164,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         if(user.getId().toString().isEmpty() || topCritic.getId().toString().isEmpty()){
             return  false;
         }
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         session.writeTransaction(tx -> {
             String query = "MATCH (u:User{id: $userId}), " +
                             "(t:TopCritic{id: $topCriticId}) " +
@@ -192,7 +192,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         if(user.getId().toString().isEmpty() || topCritic.getId().toString().isEmpty()){
             return  false;
         }
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         session.writeTransaction(tx -> {
             String query = "MATCH (u:User{id: $userId})" +
                     "-[f:FOLLOWS]->"+
@@ -219,7 +219,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         }
         int skip = page*REVIEWS_IN_FEED;
 
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         ArrayList<ReviewFeedDTO> reviewFeed = session.readTransaction((TransactionWork<ArrayList<ReviewFeedDTO>>)(tx -> {
             String query = "MATCH(u:User{id:$userId})-[f:FOLLOWS]->(t:TopCritic)-[r:REVIEWED]->(m:Movie) "+
                     "RETURN m.title AS movieTitle,t.name AS criticName, r.date AS reviewDate, "+
@@ -262,7 +262,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
             return null;
         }
         int skip = page*SUGGESTIONS_IN_FEED;
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         ArrayList<TopCriticSuggestionDTO> suggestionFeed = session.readTransaction((TransactionWork<ArrayList<TopCriticSuggestionDTO>>)(tx -> {
             String query = "MATCH(u:User{name:$name})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic) "+
                     "WHERE NOT (u)-[:FOLLOWS]->(t) " +
@@ -292,7 +292,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         if(user.getId().toString().isEmpty() ){
             return false;
         }
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         boolean check = session.readTransaction(tx -> {
             String query = "MATCH (u:User{id: $userId}),(t:TopCritic{id:$topCriticId}) " +
                     "RETURN  EXISTS ((u)-[:FOLLOWS]->(t)) as Check";
