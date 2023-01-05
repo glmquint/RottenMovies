@@ -13,6 +13,7 @@ public abstract class BaseUserDTO extends RegisteredUserDTO{
     protected Date registrationDate;
     protected ArrayList<ReviewUserDTO> last3Reviews;
     protected ArrayList<SimplyfiedReviewDTO> reviews;
+    protected boolean isBanned;
 
     protected BaseUserDTO(){super();}
     protected BaseUserDTO(BaseUser b){
@@ -42,6 +43,7 @@ public abstract class BaseUserDTO extends RegisteredUserDTO{
             }
         }
         this.reviews=reviewsdto;
+        this.isBanned=b.isBanned();
     }
 
     public String getFirstName() {
@@ -82,5 +84,13 @@ public abstract class BaseUserDTO extends RegisteredUserDTO{
 
     public void setReviews(ArrayList<SimplyfiedReviewDTO> reviews) {
         this.reviews = reviews;
+    }
+
+    public boolean isBanned() {
+        return isBanned;
+    }
+
+    public void setBanned(boolean banned) {
+        isBanned = banned;
     }
 }
