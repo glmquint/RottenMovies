@@ -158,6 +158,12 @@ public class AppController {
             page = 0;
         }
         HashMap<String, String> hm = extractRequest(request);
+        if(hm.containsKey("ban")){
+            System.out.println("BAN " + uid);
+        }
+        if(hm.containsKey("unban")){
+            System.out.println("UNBAN " + uid);
+        }
         if(hm.containsKey("follow")){
             if(!userService.follow(hm.get("follow"), uid))
                 model.addAttribute("info", "you already follow this user");
@@ -193,7 +199,7 @@ public class AppController {
         return "recommendations";
     }
 
-    @RequestMapping("/admin-panelModel")
+    @RequestMapping("/admin-panel")
     public  String adminPanel(Model model,
                               HttpServletRequest request,
                               HttpSession session){
@@ -218,7 +224,7 @@ public class AppController {
         }
 
 
-        return "admin-panelModel";
+        return "admin-panel";
     }
 
 }
