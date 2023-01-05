@@ -30,9 +30,13 @@
                     <div class="col-sm-4 offset-md-1 py-4">
                         <h4 class="text-white">Links</h4>
                         <ul class="list-unstyled">
-                            <li><a href="#" class="text-white">Login</a></li>
-                            <li><a href="#" class="text-white">Home</a></li>
-                            <li><a href="#" class="text-white">About</a></li>
+                            <li><a href="/login" class="text-white">Login</a></li>
+                            <li><a href="/" class="text-white">Home</a></li>
+                            <li th:if="${!(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
+                                <a th:href="|/user/${credentials.id}|">Your profile</a>
+                            </li>
+                            <li th:if="${credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO'}"><a th:href="'/admin-panel'">Admin panel</a></li>
+                            <li><a href="/logout" class="text-white">Logout</a></li>
                         </ul>
                     </div>
                 </div>
@@ -109,6 +113,13 @@
             </div>
         </div>
       </main>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+            integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+            integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
+    </script>
 </body>
 
 </html>

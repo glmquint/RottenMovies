@@ -116,10 +116,12 @@ public class AppController {
 
     @GetMapping("/movie")
     public  String explore_movie(Model model,
-                                 HttpServletRequest request){
+                                 HttpServletRequest request,
+                                 HttpSession session){
         //System.out.println("requested page");
         //System.out.println(page);
         //model.addAttribute("page", page);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         MovieService movieService = new MovieService();
         HashMap<String, String> hm = extractRequest(request);
         int page = 0;
@@ -178,8 +180,10 @@ public class AppController {
     @GetMapping("/movie/{mid}/{comment_index}")
     public  String select_movie_comment(Model model,
                                         @PathVariable(value = "mid") String mid,
-                                        @PathVariable(value = "comment_index") int comment_index){
+                                        @PathVariable(value = "comment_index") int comment_index,
+                                        HttpSession session){
         MovieService movieService = new MovieService();
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         model.addAttribute("movie", movieService.getMovie(0, mid, comment_index));
         return "movie";
     }
@@ -235,18 +239,22 @@ public class AppController {
     }
     @GetMapping("/preferred_genres/{username}")
     public  String mostLikedGenresByUser(Model model,
-                               @PathVariable(value = "username") String username){
+                                         @PathVariable(value = "username") String username,
+                                         HttpSession session){
         UserService userService = new UserService();
         if(username==null){
             username="";
         }
         model.addAttribute("genres",userService.getGenresLike(username).getEntries());
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "preferred-genres";
     }
 
     @GetMapping("/recommendations")
     public String recommendations(Model model,
-                                  @RequestParam(value = "page", defaultValue = "0") int page){
+                                  @RequestParam(value = "page", defaultValue = "0") int page,
+                                  HttpSession session){
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         model.addAttribute("page", String.format("page: %d", page));
         return "recommendations";
     }
@@ -280,17 +288,19 @@ public class AppController {
     }
     @GetMapping("/admin-panel/populationByGeneration")
     public  String adminPanelPopulation(Model model,
-                                        @RequestParam(value = "offset", defaultValue = "5") int offset
-                                        ){
+                                        @RequestParam(value = "offset", defaultValue = "5") int offset,
+                                        HttpSession session){
         AdminService adminService = new AdminService();
         model.addAttribute("generation",adminService.getPopulationByGeneration(offset).getEntries());
         model.addAttribute("offset",offset);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "populationByGeneration";
     }
     @GetMapping("/HOFProductionHouses")
     public  String HOFProductionHouses(Model model,
                                        @RequestParam(value = "sort", defaultValue = "top_critic") String sort,
-                                       @RequestParam(value = "min_movie_count", defaultValue = "5") int min_movie_count){
+                                       @RequestParam(value = "min_movie_count", defaultValue = "5") int min_movie_count,
+                                       HttpSession session){
         MovieService movieService=new MovieService();
         if(min_movie_count<=0){
             min_movie_count=5;
@@ -298,12 +308,14 @@ public class AppController {
         model.addAttribute("productionhouses",movieService.getHOFProductionHouses(sort,min_movie_count).getEntries());
         model.addAttribute("min_movie_count",min_movie_count);
         model.addAttribute("sort",sort);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "HOFProductionHouses";
     }
     @GetMapping("/HOFGenres")
     public  String HOFGenres(Model model,
                                        @RequestParam(value = "sort", defaultValue = "top_critic") String sort,
-                                       @RequestParam(value = "min_movie_count", defaultValue = "5") int min_movie_count){
+                                       @RequestParam(value = "min_movie_count", defaultValue = "5") int min_movie_count,
+                                         HttpSession session){
         MovieService movieService=new MovieService();
         if(min_movie_count<=0){
             min_movie_count=5;
@@ -311,12 +323,14 @@ public class AppController {
         model.addAttribute("genres",movieService.getHOFGenres(sort,min_movie_count).getEntries());
         model.addAttribute("min_movie_count",min_movie_count);
         model.addAttribute("sort",sort);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "HOFGenres";
     }
     @GetMapping("/HOFYears")
     public  String HOFYears(Model model,
                              @RequestParam(value = "sort", defaultValue = "top_critic") String sort,
-                             @RequestParam(value = "min_movie_count", defaultValue = "5") int min_movie_count){
+                             @RequestParam(value = "min_movie_count", defaultValue = "5") int min_movie_count,
+                            HttpSession session){
         MovieService movieService=new MovieService();
         if(min_movie_count<=0){
             min_movie_count=5;
@@ -324,6 +338,7 @@ public class AppController {
         model.addAttribute("years",movieService.getHOFYears(sort,min_movie_count).getEntries());
         model.addAttribute("min_movie_count",min_movie_count);
         model.addAttribute("sort",sort);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "HOFYears";
     }
     @RequestMapping("/feed")
