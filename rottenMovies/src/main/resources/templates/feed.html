@@ -40,12 +40,12 @@
     </div>
 </header>
 <div class="container">
-    <h3 th:text="Here is your review feed, ${username}}"></h3>
+    <h3 th:text="'Here is your review feed, '+${username}"></h3>
     <div th:each="review:${feed}">
         <div class="row">
             <b class="col mx-2" th:text="${review.movieTitle}">Movie</b>
-            <b class="col mx-2" th:text="${review.criticName}">Top Critic Name</b>
-            <div class="p-1 mb-4 rounded-3 shadow-sm bg-opacity-10" th:classappend="${review.freshness=='true'}?'bg-success':'bg-danger'">
+            <a th:text="${review.criticName}" th:href="'/user/'+ ${review.id}">username</a>
+            <div class="p-1 mb-4 rounded-3 shadow-sm bg-opacity-10" th:classappend="${review.freshness}?'bg-success':'bg-danger'">
                 <div class="row align-item-between py-2">
                     <div class="col-6 mx-4" th:text="${review.content}?|“${review.content}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
                     <div class="col mx-4" th:text="${review.reviewDate}?|Date: “${review.reviewDate}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
