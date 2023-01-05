@@ -1,6 +1,5 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DAO;
 
-import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseNeo4jDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.AdminDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;

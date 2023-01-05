@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoException;
-import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -17,9 +16,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
-import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
-import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
-import it.unipi.dii.lsmsdb.rottenMovies.models.User;
+import it.unipi.dii.lsmsdb.rottenMovies.models.*;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -48,7 +45,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     public BaseUserMongoDB_DAO() {
         super();
     }
-    public ArrayList<BaseUserDTO> executeSearchQuery(int page){
+    public ArrayList<RegisteredUserDTO> executeSearchQuery(int page){
         MongoCollection<Document>  collection = getUserCollection();
         ObjectMapper mapper = new ObjectMapper();
         FindIterable<Document> found = collection.find(query);
@@ -57,20 +54,24 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
             found = found.skip(page * Constants.USERS_PER_PAGE).limit(Constants.USERS_PER_PAGE);
         }
         MongoCursor<Document> cursor = found.iterator();
-        ArrayList<BaseUserDTO> user_list = new ArrayList<>();
-        BaseUser simpleUser;
+        ArrayList<RegisteredUserDTO> user_list = new ArrayList<>();
+        RegisteredUser registeredUser;
         String json_user;
         Document doc;
         while(cursor.hasNext()){
             doc = cursor.next();
             json_user = doc.toJson();
             try {
-                if (doc.containsKey("date_of_birth")) {
-                    simpleUser = mapper.readValue(json_user, User.class);
-                    user_list.add(new UserDTO((User) simpleUser));
+                if(doc.containsKey("isAdmin")){
+                    registeredUser = mapper.readValue(json_user, Admin.class);
+                    user_list.add(new AdminDTO((Admin) registeredUser));
+                }
+                else if (doc.containsKey("date_of_birth")) {
+                    registeredUser = mapper.readValue(json_user, User.class);
+                    user_list.add(new UserDTO((User) registeredUser));
                 } else {
-                    simpleUser = mapper.readValue(json_user, TopCritic.class);
-                    user_list.add(new TopCriticDTO((TopCritic) simpleUser));
+                    registeredUser = mapper.readValue(json_user, TopCritic.class);
+                    user_list.add(new TopCriticDTO((TopCritic) registeredUser));
                 }
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
@@ -149,6 +150,16 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         query = Filters.and(query, new_query);
     }
+
+    @Override
+    public void queryBuildExcludeBanned() throws DAOException {
+        Bson new_query = Filters.exists("isBanned", false);
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
     public boolean insert(BaseUser usr){
         MongoCollection<Document>  collection = getUserCollection();
         try {
@@ -212,17 +223,19 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     }
 
     public boolean executeDeleteQuery() {
-        ArrayList<BaseUserDTO> users_to_delete = executeSearchQuery(-1);
+        ArrayList<RegisteredUserDTO> users_to_delete = executeSearchQuery(-1);
         MongoCollection<Document>  collectionUser = getUserCollection();
         MongoCollection<Document>  collectionMovie = getMovieCollection();
         boolean returnvalue=true;
         ArrayList<SimplyfiedReviewDTO> listrev;
         Document set;
-        for(BaseUserDTO b:users_to_delete){ // now I set the critic_name in the review field of movie as DELETED_USER
-            listrev=b.getReviews();
-            for(SimplyfiedReviewDTO s:listrev){
-                set=new Document("$set", new Document("review."+s.getIndex()+".critic_name",Constants.DELETED_USER));
-                collectionMovie.updateOne(new Document("_id",s.getMovieID()), set);
+        for(RegisteredUserDTO b:users_to_delete){ // now I set the critic_name in the review field of movie as DELETED_USER
+            if(b instanceof BaseUserDTO) {
+                listrev = ((BaseUserDTO) b).getReviews();
+                for (SimplyfiedReviewDTO s : listrev) {
+                    set = new Document("$set", new Document("review." + s.getIndex() + ".critic_name", Constants.DELETED_USER));
+                    collectionMovie.updateOne(new Document("_id", s.getMovieID()), set);
+                }
             }
         }
         try { // now I delete the users from collection user
@@ -280,6 +293,9 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     }
 
     public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException{
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
+    }
+    public boolean checkIfFollows(BaseUser user, BaseUser topCritic) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 }

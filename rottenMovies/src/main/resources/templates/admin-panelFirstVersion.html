@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+</head>
+<body>
+    <form class="row">
+        <div class="col input-group">
+            <input class="form-control" id="search" type="text" placeholder="Search" name="searchUser" th:value="${searchUser}?${searchUser}:''" aria-describedby="search-addon">
+            <button class="btn btn-outline-secondary" id="search-addon" type="submit">Search</button>
+        </div>
+    </form>
+
+    <div th:if="${userList}">
+        <table>
+            <tr th:each="user: ${userList}">
+                <td>
+                    <a th:text="${user.username}" th:href="'/user/'+ ${user.id}">username</a>
+                </td>
+                <td th:text="${user.registrationDate}">registration</td>
+                <td th:if="${(user.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO')}">
+                    <div th:text="${user.birthdayDate}">birthday</div>
+                </td>
+                <td th:if="${(user.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO')}">
+                    <div class="text-danger" th:text="'Top Critic ★'">Top Critic ★</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="alert alert-info" role="alert" th:if="${info}" th:text="${info}">
+        A simple info alert—check it out!
+    </div>
+</body>
+</html>

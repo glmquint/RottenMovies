@@ -288,15 +288,15 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                 Updates.set("year", updated.getYear()),
                 Updates.set("runtimeMinutes", updated.getRuntimeMinutes()),
                 Updates.set("production_company", updated.getProductionCompany()),
-                Updates.set("top_critic_status", updated.getTop_critic_status()),
-                Updates.set("top_critic_rating", updated.getTop_critic_rating()),
-                Updates.set("user_status", updated.getUser_status()),
-                Updates.set("user_rating", updated.getUser_rating()),
-                Updates.set("user_fresh_count", updated.getUser_fresh_count()),
-                Updates.set("user_rotten_count", updated.getUser_rotten_count()),
-                Updates.set("top_critic_fresh_count", updated.getTop_critic_fresh_count()),
-                Updates.set("top_critic_rotten_count", updated.getTop_critic_rotten_count()),
-                Updates.set("poster_url",updated.getPosterUrl()),
+                Updates.set("genres", updated.getGenres()),
+//                Updates.set("top_critic_status", updated.getTop_critic_status()),
+//                Updates.set("top_critic_rating", updated.getTop_critic_rating()),
+//                Updates.set("user_status", updated.getUser_status()),
+//                Updates.set("user_rating", updated.getUser_rating()),
+//                Updates.set("user_fresh_count", updated.getUser_fresh_count()),
+//                Updates.set("user_rotten_count", updated.getUser_rotten_count()),
+//                Updates.set("top_critic_fresh_count", updated.getTop_critic_fresh_count()),
+//                Updates.set("top_critic_rotten_count", updated.getTop_critic_rotten_count()),
                 Updates.set("personnel",personnelDBList));
         /*
         if(updated.getCriticConsensus()!=null){ // not all movies have critic_consensus
@@ -328,6 +328,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                     .append("year", newOne.getYear())
                     .append("runtimeMinutes", newOne.getRuntimeMinutes())
                     .append("production_company", newOne.getProductionCompany())
+                    .append("genres", newOne.getGenres())
                     //.append("critics_consensus", "")
                     .append("top_critic_status", "")
                     .append("top_critic_rating", 0)

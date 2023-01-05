@@ -1,6 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.controller;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.services.AdminService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
@@ -11,10 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -63,32 +61,49 @@ public class AppController {
         System.out.println("credentials: " + session.getAttribute("credentials"));
         if (session.getAttribute("credentials")!=null) {
             model.addAttribute("info", "you're already logged in");
-            model.addAttribute("credentials", session.getAttribute("credentials"));
             return "login"; // TODO: change to feed
         }
         UserService userService = new UserService();
         HashMap<String, String> hm = extractRequest(request);
         System.out.println(hm);
-        RegisteredUserDTO baseuserdto = null;
+        RegisteredUserDTO registeredUserDTO = null;
         if (!hm.containsKey("username") || !hm.containsKey("password")) {
             return "login";
         }
-        baseuserdto = userService.authenticate(hm.get("username"), MD5.getMd5(hm.get("password")));
-        if (baseuserdto == null) {
+        registeredUserDTO = userService.authenticate(hm.get("username"), MD5.getMd5(hm.get("password")));
+        if (registeredUserDTO == null) {
             //hm.put("error", "invalid username or password");
             model.addAttribute("error", "invalid username or password");
             return "login";
         }
-        session.setAttribute("credentials", baseuserdto);
-        model.addAttribute("credentials", session.getAttribute("credentials"));
+        model.addAttribute("credentials", registeredUserDTO);
+        session.setAttribute("credentials", registeredUserDTO);
+        System.out.println(registeredUserDTO.getClass());
         model.addAttribute("success", "login successful");
         return "login"; // TODO: change to feed
     }
 
-    @RequestMapping("/register")
+    @PostMapping("/register")
     public String register(Model model, HttpSession session, HttpServletRequest request){
-        HttpSession newSession = request.getSession(); // create session
-        //newSession.setAttribute("test", new UserDTO());
+        UserService userService = new UserService();
+        HashMap<String, String> hm = extractRequest(request);
+        System.out.println(hm);
+        RegisteredUserDTO registeredUserDTO = userService.register(hm);
+        if (registeredUserDTO == null){
+            model.addAttribute("error", "something went wrong during registration");
+            return "register";
+        }
+        session.setAttribute("credentials", registeredUserDTO);
+        model.addAttribute("credentials", registeredUserDTO);
+        return "register";
+    }
+
+    @GetMapping("/register")
+    public String registerGet(Model model,
+                              HttpSession session){
+        if (session.getAttribute("credentials")!=null) {
+            model.addAttribute("info", "you're already logged in");
+        }
         return "register";
     }
 
@@ -120,22 +135,60 @@ public class AppController {
         return "exploreMovies";
     }
 
-    @GetMapping("/movie/{mid}")
+    @RequestMapping("/movie/{mid}")
     public  String select_movie(Model model,
-                                //HttpServletRequest request,
+                                HttpServletRequest request,
                                 @RequestParam(value = "page", defaultValue = "0") int page,
-                                @PathVariable(value = "mid") String mid){
+                                @PathVariable(value = "mid") String mid,
+                                HttpSession session){
+        System.out.println("credentials: " + session.getAttribute("credentials"));
+        HashMap<String, String> hm = extractRequest(request);
+        System.out.println(hm);
         MovieService movieService = new MovieService();
+        boolean result = false;
+        if (hm.containsKey("admin_operation")){
+            result = movieService.modifyMovie(mid, hm);
+            if (result){
+                model.addAttribute("success", "movie successfully update");
+            } else {
+                model.addAttribute("error", "error while updating movie");
+            }
+//            if (hm.get("admin_operation").equals("update")){
+//                boolean result = movieService.updateMovie(hm);
+//                if (result){
+//                    model.addAttribute("success", "movie successfully update");
+//                } else {
+//                    model.addAttribute("error", "error while updating movie");
+//                }
+//            } else if (hm.get("admin_operation").equals("delete")){
+//                boolean result = movieService.deleteMovie(mid);
+//                if (result){
+//                    model.addAttribute("success", "movie successfully removed");
+//                } else {
+//                    model.addAttribute("error", "error while removing movie");
+//                }
+//                return "movie";
+//            }
+        }
         if (page < 0){
             page = 0;
         }
+
+        hm = extractRequest(request);
+        if(hm.containsKey("view")){
+            UserService userService = new UserService();
+            RegisteredUserDTO topCritic = userService.getUserByUsername(hm.get("view"));
+            model.addAttribute("go_to_user", topCritic.getId().toString());
+        }
+
         model.addAttribute("movie", movieService.getMovie(page, mid, -1));
         model.addAttribute("page", page);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "movie";
     }
 
     @GetMapping("/movie/{mid}/{comment_index}")
-    public  String select_movie_comemnt(Model model,
+    public  String select_movie_comment(Model model,
                                         @PathVariable(value = "mid") String mid,
                                         @PathVariable(value = "comment_index") int comment_index){
         MovieService movieService = new MovieService();
@@ -143,17 +196,41 @@ public class AppController {
         return "movie";
     }
 
-    @GetMapping("/user/{uid}")
+    @RequestMapping("/user/{uid}")
     public  String select_user(Model model,
-                                //HttpServletRequest request,
+                                HttpServletRequest request,
                                 @RequestParam(value = "page", defaultValue = "0") int page,
-                                @PathVariable(value = "uid") String uid){
+                                @PathVariable(value = "uid") String uid,
+                                HttpSession session){
         UserService userService = new UserService();
         if (page < 0){
             page = 0;
         }
+        HashMap<String, String> hm = extractRequest(request);
+        if(hm.containsKey("ban")){
+            System.out.println("BAN " + uid);
+        }
+        if(hm.containsKey("unban")){
+            System.out.println("UNBAN " + uid);
+        }
+        if(hm.containsKey("follow")){
+            if(!userService.follow(hm.get("follow"), uid))
+                model.addAttribute("info", "you already follow this user");
+            else{
+                model.addAttribute("success", "Successfully followed this user");
+            }
+        }
+        else if(hm.containsKey("unfollow")){
+            if(!userService.unfollow(hm.get("unfollow"), uid))
+                model.addAttribute("info", "you already don't follow this user");
+            else{
+                model.addAttribute("success", "Successfully unfollowed this user");
+            }
+        }
         model.addAttribute("user", userService.getUser(page, uid));
+
         model.addAttribute("page", page);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "user";
     }
     @GetMapping("/preferred_genres/{username}")
@@ -181,8 +258,31 @@ public class AppController {
         return "recommendations";
     }
 
-    @GetMapping("/admin-panel")
-    public  String adminPanel(Model model){
+    @RequestMapping("/admin-panel")
+    public  String adminPanel(Model model,
+                              HttpServletRequest request,
+                              HttpSession session){
+        if(!(session.getAttribute("credentials") instanceof AdminDTO)){
+            return "login";
+        }
+        HashMap<String, String> hm = extractRequest(request);
+        if(hm.containsKey("searchUser")){
+            model.addAttribute("searchUser", hm.get("searchUser"));
+            if(!hm.get("searchUser").isEmpty()) {
+                AdminService adminService = new AdminService();
+                PageDTO<RegisteredUserDTO> userList = adminService.listUserPage(0, hm);
+                System.out.println(userList.getTotalCount());
+                if(userList.getTotalCount()>0) {
+                    System.out.println(userList.getEntries());
+                    model.addAttribute("userList", userList.getEntries());
+                }
+                else{
+                    model.addAttribute("info", "no result for " + hm.get("searchUser"));
+                }
+            }
+        }
+
+
         return "admin-panel";
     }
     @GetMapping("/admin-panel/populationByGeneration")

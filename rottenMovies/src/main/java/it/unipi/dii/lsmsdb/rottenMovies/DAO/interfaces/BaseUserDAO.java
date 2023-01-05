@@ -19,8 +19,11 @@ public interface BaseUserDAO extends AutoCloseable{
     boolean insert(BaseUser usr) throws DAOException;
     boolean update(BaseUser usr) throws DAOException;
     boolean delete(BaseUser usr) throws DAOException;
+
     ArrayList<GenresLikeDTO> getMostReviewedGenres (String username) throws DAOException;
-    ArrayList<BaseUserDTO> executeSearchQuery(int page) throws DAOException;
+
+    ArrayList<RegisteredUserDTO> executeSearchQuery(int page) throws DAOException;
+
     boolean executeDeleteQuery() throws DAOException;
     ArrayList<UserDTO> getMostReviewUser() throws DAOException;
     TopCriticDTO getMostFollowedCritic() throws DAOException;
@@ -29,5 +32,6 @@ public interface BaseUserDAO extends AutoCloseable{
     public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException;
 
     public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException;
-
+    void queryBuildExcludeBanned() throws DAOException;
+    public boolean checkIfFollows(BaseUser user, BaseUser topCritic) throws DAOException;
 }
