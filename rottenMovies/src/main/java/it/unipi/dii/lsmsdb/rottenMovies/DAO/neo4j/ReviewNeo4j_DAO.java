@@ -8,10 +8,8 @@ import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewFeedDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
+import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
-import org.neo4j.driver.Result;
-import org.neo4j.driver.Session;
-import org.neo4j.driver.TransactionWork;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -22,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.NEO4J_DATABASE_STRING;
 import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.REVIEWS_IN_FEED;
 import static org.neo4j.driver.Values.parameters;
 /**
@@ -48,7 +47,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         }
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String strDate = dateFormat.format(review.getReviewDate());
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         boolean freshness = (review.getReviewType().equals("Fresh")) ? true : false;
         session.writeTransaction(tx -> {
             String query = "MATCH (b{id: $userId}), " +
@@ -77,7 +76,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         if(review.getCriticName().isEmpty() || review.getMovie().isEmpty()){
             return false;
         }
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         session.writeTransaction(tx -> {
             String query = "MATCH (b{name: $user}) -[r:REVIEWED] -> (m:Movie{title: $movie})" +
                     "DELETE r";
@@ -105,7 +104,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         String strDate = LocalDate.now().minusMonths(month).format(formatter);
         LocalDate today = LocalDate.now();
         String todayString = today.format(formatter);
-        Session session = driver.session();
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         reviewBombingList = session.readTransaction((TransactionWork<MovieReviewBombingDTO>)(tx -> {
             String query = "MATCH (m:Movie{title:$movieTitle})<-[r:REVIEWED]-() " +
                     "WITH SUM(CASE WHEN r.date<date(\""+strDate+"\") THEN 1 ELSE 0 END) as StoricCount, " +
