@@ -2,6 +2,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.controller;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
+import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import it.unipi.dii.lsmsdb.rottenMovies.services.AdminService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
@@ -244,13 +245,6 @@ public class AppController {
         return "preferred-genres";
     }
 
-    @GetMapping("/feed")
-    public String feed(Model model,
-                       @RequestParam(value = "page", defaultValue = "0") int page){
-        model.addAttribute("page", String.format("page: %d", page));
-        return "feed";
-    }
-
     @GetMapping("/recommendations")
     public String recommendations(Model model,
                                   @RequestParam(value = "page", defaultValue = "0") int page){
@@ -333,6 +327,23 @@ public class AppController {
         model.addAttribute("sort",sort);
         return "HOFYears";
     }
-
+    @RequestMapping("/feed")
+    public String userFeed (Model model,
+                            @RequestParam(value = "page", defaultValue = "0") int page,
+                            HttpSession session){
+        System.out.println("credentials: " + session.getAttribute("credentials"));
+        if(!(session.getAttribute("credentials") instanceof UserDTO)){
+            return "login";
+        }
+        if (page < 0){
+            page = 0;
+        }
+        UserService userService = new UserService();
+        BaseUser user = new User((UserDTO) session.getAttribute("credentials"));
+        model.addAttribute("feed",userService.createUserFeed(user,page).getEntries());
+        model.addAttribute("page",page);
+        model.addAttribute("username",user.getUsername());
+        return "feed";
+    }
 
 }

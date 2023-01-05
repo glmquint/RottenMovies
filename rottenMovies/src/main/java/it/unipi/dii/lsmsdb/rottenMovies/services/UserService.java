@@ -172,4 +172,16 @@ public class UserService {
         return true;
 
     }
+    public PageDTO<ReviewFeedDTO> createUserFeed (BaseUser usr,int page){
+        PageDTO<ReviewFeedDTO> reviewFeedDTO = new PageDTO<>();
+        ArrayList<ReviewFeedDTO> reviewFeedDTOpages = new ArrayList<>();
+        try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
+            reviewFeedDTOpages=userDAO.getFeed(usr,page);
+            reviewFeedDTO.setEntries(reviewFeedDTOpages);
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+        return reviewFeedDTO;
+    }
 }
