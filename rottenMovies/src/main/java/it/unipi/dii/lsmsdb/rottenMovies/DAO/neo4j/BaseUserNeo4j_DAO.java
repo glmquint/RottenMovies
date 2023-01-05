@@ -304,6 +304,11 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     }
 
     @Override
+    public void queryBuildExcludeBanned() throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+
+    @Override
     public ArrayList<RegisteredUserDTO> executeSearchQuery(int page) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }

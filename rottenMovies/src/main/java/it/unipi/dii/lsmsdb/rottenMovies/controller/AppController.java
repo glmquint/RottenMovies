@@ -57,10 +57,11 @@ public class AppController {
 
     @RequestMapping("/login")
     public String login(Model model, HttpSession session, HttpServletRequest request){
+        //session.setAttribute("credentials", session.getAttribute("credentials"));
         System.out.println("credentials: " + session.getAttribute("credentials"));
         if (session.getAttribute("credentials")!=null) {
             model.addAttribute("info", "you're already logged in");
-            return "index"; // TODO: change to feed
+            return "login"; // TODO: change to feed
         }
         UserService userService = new UserService();
         HashMap<String, String> hm = extractRequest(request);
@@ -75,23 +76,41 @@ public class AppController {
             model.addAttribute("error", "invalid username or password");
             return "login";
         }
+        model.addAttribute("credentials", registeredUserDTO);
         session.setAttribute("credentials", registeredUserDTO);
         System.out.println(registeredUserDTO.getClass());
         model.addAttribute("success", "login successful");
-        return "index"; // TODO: change to feed
+        return "login"; // TODO: change to feed
     }
 
-    @RequestMapping("/register")
+    @PostMapping("/register")
     public String register(Model model, HttpSession session, HttpServletRequest request){
-        HttpSession newSession = request.getSession(); // create session
-        //newSession.setAttribute("test", new UserDTO());
+        UserService userService = new UserService();
+        HashMap<String, String> hm = extractRequest(request);
+        System.out.println(hm);
+        RegisteredUserDTO registeredUserDTO = userService.register(hm);
+        if (registeredUserDTO == null){
+            model.addAttribute("error", "something went wrong during registration");
+            return "register";
+        }
+        session.setAttribute("credentials", registeredUserDTO);
+        model.addAttribute("credentials", registeredUserDTO);
+        return "register";
+    }
+
+    @GetMapping("/register")
+    public String registerGet(Model model,
+                              HttpSession session){
+        if (session.getAttribute("credentials")!=null) {
+            model.addAttribute("info", "you're already logged in");
+        }
         return "register";
     }
 
     @GetMapping("/logout")
     public String logout(Model model, HttpSession session){
         session.invalidate();
-        return "index";
+        return "logout";
     }
 
     @GetMapping("/movie")
@@ -120,13 +139,42 @@ public class AppController {
     public  String select_movie(Model model,
                                 HttpServletRequest request,
                                 @RequestParam(value = "page", defaultValue = "0") int page,
-                                @PathVariable(value = "mid") String mid){
+                                @PathVariable(value = "mid") String mid,
+                                HttpSession session){
+        System.out.println("credentials: " + session.getAttribute("credentials"));
+        HashMap<String, String> hm = extractRequest(request);
+        System.out.println(hm);
         MovieService movieService = new MovieService();
+        boolean result = false;
+        if (hm.containsKey("admin_operation")){
+            result = movieService.modifyMovie(mid, hm);
+            if (result){
+                model.addAttribute("success", "movie successfully update");
+            } else {
+                model.addAttribute("error", "error while updating movie");
+            }
+//            if (hm.get("admin_operation").equals("update")){
+//                boolean result = movieService.updateMovie(hm);
+//                if (result){
+//                    model.addAttribute("success", "movie successfully update");
+//                } else {
+//                    model.addAttribute("error", "error while updating movie");
+//                }
+//            } else if (hm.get("admin_operation").equals("delete")){
+//                boolean result = movieService.deleteMovie(mid);
+//                if (result){
+//                    model.addAttribute("success", "movie successfully removed");
+//                } else {
+//                    model.addAttribute("error", "error while removing movie");
+//                }
+//                return "movie";
+//            }
+        }
         if (page < 0){
             page = 0;
         }
 
-        HashMap<String, String> hm = extractRequest(request);
+        hm = extractRequest(request);
         if(hm.containsKey("view")){
             UserService userService = new UserService();
             RegisteredUserDTO topCritic = userService.getUserByUsername(hm.get("view"));
@@ -135,6 +183,7 @@ public class AppController {
 
         model.addAttribute("movie", movieService.getMovie(page, mid, -1));
         model.addAttribute("page", page);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "movie";
     }
 

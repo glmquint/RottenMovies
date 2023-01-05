@@ -150,6 +150,16 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         query = Filters.and(query, new_query);
     }
+
+    @Override
+    public void queryBuildExcludeBanned() throws DAOException {
+        Bson new_query = Filters.exists("isBanned", false);
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
     public boolean insert(BaseUser usr){
         MongoCollection<Document>  collection = getUserCollection();
         try {
@@ -276,7 +286,6 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
-
     public boolean checkIfFollows(BaseUser user, BaseUser topCritic) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
