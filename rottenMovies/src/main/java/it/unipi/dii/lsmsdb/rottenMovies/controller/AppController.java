@@ -150,26 +150,10 @@ public class AppController {
         if (hm.containsKey("admin_operation")){
             result = movieService.modifyMovie(mid, hm);
             if (result){
-                model.addAttribute("success", "movie successfully update");
+                model.addAttribute("success", "movie successfully updated");
             } else {
                 model.addAttribute("error", "error while updating movie");
             }
-//            if (hm.get("admin_operation").equals("update")){
-//                boolean result = movieService.updateMovie(hm);
-//                if (result){
-//                    model.addAttribute("success", "movie successfully update");
-//                } else {
-//                    model.addAttribute("error", "error while updating movie");
-//                }
-//            } else if (hm.get("admin_operation").equals("delete")){
-//                boolean result = movieService.deleteMovie(mid);
-//                if (result){
-//                    model.addAttribute("success", "movie successfully removed");
-//                } else {
-//                    model.addAttribute("error", "error while removing movie");
-//                }
-//                return "movie";
-//            }
         }
         if (page < 0){
             page = 0;
@@ -185,6 +169,9 @@ public class AppController {
         model.addAttribute("movie", movieService.getMovie(page, mid, -1));
         model.addAttribute("page", page);
         model.addAttribute("credentials", session.getAttribute("credentials"));
+        if (hm.getOrDefault("admin_operation", "").equals("delete")){
+            model.addAttribute("redirect", "/movie");
+        }
         return "movie";
     }
 
