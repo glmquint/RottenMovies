@@ -3,6 +3,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.services;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.HallOfFameDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
@@ -23,13 +24,6 @@ import java.util.stream.Collectors;
 import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.MAXIMUM_NUMBER_OF_PERSONNEL;
 
 public class MovieService {
-    private MovieDAO movieMongoDAO;
-    private MovieDAO movieNeo4jDAO;
-    public MovieService(){
-        this.movieMongoDAO = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO);
-        this.movieNeo4jDAO = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j);
-    }
-
     public PageDTO<MovieDTO> listMoviePage(int page, HashMap<String, String> request){
         PageDTO<MovieDTO> movie_page = new PageDTO<>();
         try(MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
@@ -106,6 +100,60 @@ public class MovieService {
         return movie;
     }
 
+    public PageDTO<HallOfFameDTO> getHOFProductionHouses(String sort, int min_movie_count){
+        PageDTO<HallOfFameDTO> hallOfFameDTO= new PageDTO<>();
+        ArrayList<HallOfFameDTO> listHOF = new ArrayList<>();
+        try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
+            switch (sort) {
+                case "user":
+                    listHOF = moviedao.mostSuccesfullProductionHouses(min_movie_count, new SortOptions(SortOptionsEnum.USER_RATING, -1));
+                    break;
+                default:
+                    listHOF = moviedao.mostSuccesfullProductionHouses(min_movie_count, new SortOptions(SortOptionsEnum.TOP_CRITIC_RATING, -1));
+                    break;
+            }
+            hallOfFameDTO.setEntries(listHOF);
+        } catch (Exception e) {
+            System.err.println(e.getStackTrace());
+        }
+        return hallOfFameDTO;
+    }
+    public PageDTO<HallOfFameDTO> getHOFGenres(String sort, int min_movie_count){
+        PageDTO<HallOfFameDTO> hallOfFameDTO= new PageDTO<>();
+        ArrayList<HallOfFameDTO> listHOF = new ArrayList<>();
+        try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
+            switch (sort) {
+                case "user":
+                    listHOF = moviedao.mostSuccesfullGenres(min_movie_count, new SortOptions(SortOptionsEnum.USER_RATING, -1));
+                    break;
+                default:
+                    listHOF = moviedao.mostSuccesfullGenres(min_movie_count, new SortOptions(SortOptionsEnum.TOP_CRITIC_RATING, -1));
+                    break;
+            }
+            hallOfFameDTO.setEntries(listHOF);
+        } catch (Exception e) {
+            System.err.println(e.getStackTrace());
+        }
+        return hallOfFameDTO;
+    }
+    public PageDTO<HallOfFameDTO> getHOFYears(String sort, int min_movie_count) {
+        PageDTO<HallOfFameDTO> hallOfFameDTO = new PageDTO<>();
+        ArrayList<HallOfFameDTO> listHOF = new ArrayList<>();
+        try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
+            switch (sort) {
+                case "user":
+                    listHOF = moviedao.bestYearsBasedOnRatings(min_movie_count, new SortOptions(SortOptionsEnum.USER_RATING, -1));
+                    break;
+                default:
+                    listHOF = moviedao.bestYearsBasedOnRatings(min_movie_count, new SortOptions(SortOptionsEnum.TOP_CRITIC_RATING, -1));
+                    break;
+            }
+            hallOfFameDTO.setEntries(listHOF);
+        } catch (Exception e) {
+            System.err.println(e.getStackTrace());
+        }
+        return hallOfFameDTO;
+    }
 //    <label for="title">title</label>
 //  <input class="form-control" id="title" type="text" placeholder="Title" name="title" th:value="${movie.primaryTitle}?:''">
 //

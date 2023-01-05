@@ -68,6 +68,7 @@ public class User extends BaseUser {
                 "birthday_date " + getBirthdayDate() + '\n' +
                 "last_3_review " + getLast3Reviews() + '\n' +
                 "reviews " + getReviews() + '\n' +
+                "isBanned " + isBanned() + '\n' +
                 "}";
     }
 }

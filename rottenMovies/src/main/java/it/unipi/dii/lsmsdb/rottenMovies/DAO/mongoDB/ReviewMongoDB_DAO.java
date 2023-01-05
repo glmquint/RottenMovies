@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoException;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.UpdateResult;
@@ -25,6 +26,7 @@ import org.bson.conversions.Bson;
 import java.util.ArrayList;
 import java.util.*;
 
+import static com.mongodb.client.model.Accumulators.sum;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.*;
 import static com.mongodb.client.model.Updates.popFirst;
@@ -80,7 +82,12 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         Bson updateMovie = push("review", reviewMovie);
         Bson filterUsr = eq("_id", usr.getId());
         BasicDBObject simplyfiedReview = buildSimplyfiedReview(review,newReviewIndex);
-
+        Document numberOfElementLast3 = userCollection.aggregate(
+                Arrays.asList(
+                        Aggregates.match(eq("_id",usr.getId())),
+                        Aggregates.project(new Document("count",new Document("$size","$last_3_reviews")))
+                )
+        ).first();
         try{
             UpdateResult result=movieCollection.updateOne(movieFilter,updateMovie);
             System.out.println("Modified document count: " + result.getModifiedCount());
@@ -92,9 +99,13 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             Bson updateUsr = push("last_3_reviews", reviewLast3);
             result=userCollection.updateOne(filterUsr,updateUsr);
             System.out.println("Modified document count: " + result.getModifiedCount());
-
-            result=userCollection.updateOne(filterUsr,popFirst("last_3_reviews"));
-            System.out.println("Modified document count: " + result.getModifiedCount());
+            for(int count=numberOfElementLast3.getInteger("count"); count>=3; count--) {
+                result = userCollection.updateOne(filterUsr, popFirst("last_3_reviews"));
+                if(result.getModifiedCount()!=1) {
+                    System.out.println("Last3ReviewPopERROR!");
+                    break;
+                }
+            }
         }
         catch (MongoException me) {
             System.err.println("Unable to update due to an error: " + me);

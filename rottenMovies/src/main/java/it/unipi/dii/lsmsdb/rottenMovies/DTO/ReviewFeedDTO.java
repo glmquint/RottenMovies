@@ -5,11 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ReviewFeedDTO {
-    String movieTitle;
-    String criticName;
-    String content;
-    boolean freshness;
-    Date reviewDate;
+    private String movieTitle;
+    private String criticName;
+    private String content;
+    private boolean freshness;
+    private Date reviewDate;
 
     public ReviewFeedDTO(String movieTitle, String criticName, String content, boolean freshness, Date reviewDate) {
         this.movieTitle = movieTitle;

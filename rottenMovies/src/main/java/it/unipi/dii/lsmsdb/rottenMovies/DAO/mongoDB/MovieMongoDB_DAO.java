@@ -23,6 +23,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.HallOfFameDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewMovieDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.YearMonthReviewDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.*;
@@ -32,6 +33,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.exceptions.NoSuchRecordException;
 
+import javax.print.Doc;
 import java.util.*;
 
 
@@ -114,7 +116,6 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                     result3reviews=collectionUser.updateOne(filterUsr,deletelast3);
                     System.out.println("Modified document count: " + result3reviews.getModifiedCount());
                     if (result3reviews.getModifiedCount() == 1) {
-                        //TODO: also remember to update the last_3_reviews field after deleting a movie
                         System.out.println("Last3review modified");
                     }
                 }
@@ -337,6 +338,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                     .append("user_rotten_count", 0)
                     .append("top_critic_fresh_count", 0)
                     .append("top_critic_rotten_count", 0)
+                    .append("poster_url",newOne.getPosterUrl())
                     .append("personnel", personnelDBList)
                     .append("review", new ArrayList<BasicDBObject>()));
 
@@ -362,7 +364,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return result;
     }
 
-    public ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies){
+    public ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies, SortOptions opt){
         MongoCollection<Document>  collection = getMovieCollection();
         AggregateIterable<Document> aggregateResult = collection.aggregate(
                 Arrays.asList(
@@ -371,8 +373,8 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                                 avg("user_rating", "$user_rating"),
                                 sum("count",1)),
                         Aggregates.match(gte("count",numberOfMovies)),
-                        Aggregates.sort(Sorts.descending("top_critic_rating","user_rating")),
-                        Aggregates.limit(Constants.MOVIES_PER_PAGE)
+                        Aggregates.sort(opt.getBsonAggregationSort()),
+                        Aggregates.limit(Constants.HALL_OF_FAME_ELEMENT_NUMBERS)
                 )
         );
         ArrayList<HallOfFameDTO> resultSet = new ArrayList<>();
@@ -389,7 +391,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return resultSet;
     }
-    public ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies){
+    public ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies, SortOptions opt){
         MongoCollection<Document>  collection = getMovieCollection();
         AggregateIterable<Document> aggregateResult = collection.aggregate(
                 Arrays.asList(
@@ -399,8 +401,8 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                                 avg("user_rating", "$user_rating"),
                                 sum("count",1)),
                         Aggregates.match(gte("count",numberOfMovies)),
-                        Aggregates.sort(Sorts.descending("top_critic_rating","user_rating")),
-                        Aggregates.limit(Constants.MAXIMUM_NUMBER_OF_GENRES)
+                        Aggregates.sort(opt.getBsonAggregationSort()),
+                        Aggregates.limit(Constants.HALL_OF_FAME_ELEMENT_NUMBERS)
                 )
         );
         ArrayList<HallOfFameDTO> resultSet = new ArrayList<>();
@@ -417,6 +419,72 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return resultSet;
     }
+    public ArrayList<HallOfFameDTO> bestYearsBasedOnRatings (int numberOfMovies, SortOptions opt){
+        MongoCollection<Document>  collection = getMovieCollection();
+        AggregateIterable<Document> aggregateResult = collection.aggregate(
+                Arrays.asList(
+                        Aggregates.group("$year",
+                                avg("top_critic_rating", "$top_critic_rating"),
+                                avg("user_rating", "$user_rating"),
+                                sum("count",1)),
+                        Aggregates.match(gte("count",numberOfMovies)),
+                        Aggregates.sort(opt.getBsonAggregationSort()),
+                        Aggregates.limit(Constants.HALL_OF_FAME_ELEMENT_NUMBERS)
+                )
+        );
+        ArrayList<HallOfFameDTO> resultSet = new ArrayList<>();
+        HallOfFameDTO hallOfFameDTO;
+        MongoCursor<Document> cursor = aggregateResult.iterator();
+        while (cursor.hasNext()){
+            Document doc = cursor.next();
+            hallOfFameDTO =new HallOfFameDTO();
+            hallOfFameDTO.setSubject(doc.getInteger("_id").toString());
+            hallOfFameDTO.setTop_critic_rating(doc.getDouble("top_critic_rating"));
+            hallOfFameDTO.setUser_rating(doc.getDouble("user_rating"));
+            hallOfFameDTO.setMovie_count(doc.getInteger("count"));
+            resultSet.add(hallOfFameDTO);
+        }
+        return resultSet;
+    }
+    public ArrayList<YearMonthReviewDTO> getYearAndMonthReviewActivity(ObjectId id) {
+        MongoCollection<Document>  collection = getMovieCollection();
+        Document yearDoc = new Document("year",new Document("$year","$review.review_date"));
+        Document monthDoc = new Document("month",new Document("$month","$review.review_date"));
+        ArrayList<Document> test=new ArrayList<>();
+        test.add(yearDoc);
+        test.add(monthDoc);
+        AggregateIterable<Document> aggregateResult = collection.aggregate(
+                Arrays.asList(
+                        Aggregates.match(eq("_id",id)),
+                        Aggregates.unwind("$review"),
+                        Aggregates.group(test,
+                                sum("count",1)),
+                        Aggregates.sort(Sorts.ascending("_id"))
+                )
+        );
+        ArrayList<YearMonthReviewDTO> resultSet = new ArrayList<>();
+        YearMonthReviewDTO yearMonthReviewDTO;
+        MongoCursor<Document> cursor = aggregateResult.iterator();
+        while (cursor.hasNext()){
+            Document doc = cursor.next();
+            //System.out.print(doc.toJson());
+            Object obj = doc.get("_id");
+            yearDoc.clear();
+            monthDoc.clear();
+            if (obj instanceof ArrayList) {
+                ArrayList<?> dboArrayNested = (ArrayList<?>) obj;
+                yearDoc= (Document) dboArrayNested.get(0);
+                monthDoc= (Document) dboArrayNested.get(1);
+                yearMonthReviewDTO = new YearMonthReviewDTO();
+                yearMonthReviewDTO.setYear(yearDoc.getInteger("year"));
+                yearMonthReviewDTO.setMonth(monthDoc.getInteger("month"));
+                yearMonthReviewDTO.setCount(doc.getInteger("count"));
+                resultSet.add(yearMonthReviewDTO);
+            }
+        }
+        return resultSet;
+    }
+
     public Boolean insertNeo4j(String id, String title) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }

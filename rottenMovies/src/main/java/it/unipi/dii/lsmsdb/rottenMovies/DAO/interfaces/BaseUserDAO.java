@@ -19,8 +19,11 @@ public interface BaseUserDAO extends AutoCloseable{
     boolean insert(BaseUser usr) throws DAOException;
     boolean update(BaseUser usr) throws DAOException;
     boolean delete(BaseUser usr) throws DAOException;
-    void getMostReviewedGenres (ObjectId user_id) throws DAOException;
+
+    ArrayList<GenresLikeDTO> getMostReviewedGenres (String username) throws DAOException;
+
     ArrayList<RegisteredUserDTO> executeSearchQuery(int page) throws DAOException;
+
     boolean executeDeleteQuery() throws DAOException;
     ArrayList<UserDTO> getMostReviewUser() throws DAOException;
     TopCriticDTO getMostFollowedCritic() throws DAOException;

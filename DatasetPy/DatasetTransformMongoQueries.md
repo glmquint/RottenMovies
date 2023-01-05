@@ -461,6 +461,33 @@ db.movie.find().forEach(
     }
 )
 ```
+### Movies URL poster generation 
+```js
+total = db.movie.find().count();
+i = 0;
+db.movie.find().forEach(
+    x => {
+        print(x.primaryTitle);
+        reg=new RegExp("^"+x.primaryTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')+"$", "i");
+        //print(reg);
+        h=db.testPoster.find({title: {$regex:  reg} }).toArray();
+        if(h[0]!=null){
+            //print(h[0].poster);
+            url=h[0].poster;
+        }
+        else {
+            url="images/poster_not_found.jpg";
+        }
+        //print(url);
+        
+        db.movie.updateOne(
+            {primaryTitle:x.primaryTitle},
+            {$set:{"poster_url": url}}
+        )
+        
+        print(100*i++/total);   
+});
+```
 
 `r.review_date = new Date(r.review_date + "T00:00:00Z");`
 

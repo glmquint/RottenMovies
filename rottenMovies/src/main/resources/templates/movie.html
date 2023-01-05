@@ -12,7 +12,17 @@
     <script th:inline="javascript">
             window.location.assign([[${redirect}]]);
     </script>
+
 </div>
+<div th:if="${go_to_user}">
+    <script th:inline="javascript">
+    if([[${go_to_user}]]){
+        var userId = [[${go_to_user}]];
+        window.location.assign("/user/"+userId);
+    }
+    </script>
+</div>
+
 <header>
     <div class="collapse bg-dark" id="navbarHeader">
         <div class="container">
@@ -84,7 +94,7 @@
                                   <input class="form-control" id="primaryName" type="text" placeholder="primaryName" th:name="|primaryName_${iterStat.count}|" th:value="${w.primaryName}?:''">
                                   <label th:for="|category_${iterStat.count}|">category</label>
                                   <input class="form-control" id="category" type="text" placeholder="category" th:name="|category_${iterStat.count}|" th:value="${w.category}?:''">
-                                  <label th:for="|job_characters_${iterStat.count}|">job or characters</label>
+                                  <label th:for="|job_characters_${iterStat.count}|">job or interpreted characters</label>
                                   <input class="form-control" id="job_characters" type="text" placeholder="job_characters" th:name="|job_characters_${iterStat.count}|" th:value="${w.job}?:(${w.characters}?${#strings.listJoin(w.characters,', ')}:'')">
                               </ul>
 
@@ -168,6 +178,11 @@
           <div th:each="review:${movie.reviews}">
               <div class="row">
                   <b class="col mx-2" th:text="|${review.criticName} (| + ${#dates.format(review.reviewDate, 'yyyy-MM-dd')} + ')'">autore</b>
+                  <div class="col-2" th:if="${review.topCritic}">
+                      <form method="post">
+                          <button type="submit" class="button" name="view" th:value="${review.criticName}">View Profile</button>
+                      </form>
+                  </div>
                   <div class="col-3 text-danger" th:text="${review.topCritic}?'Top Critic ★':''">Top Critic ★</div>
               </div>
               <div class="p-1 mb-4 rounded-3 shadow-sm bg-opacity-10" th:classappend="${review.reviewType=='Fresh'}?'bg-success':'bg-danger'">

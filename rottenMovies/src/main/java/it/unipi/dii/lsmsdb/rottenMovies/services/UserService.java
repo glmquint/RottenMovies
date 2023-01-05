@@ -3,6 +3,10 @@ package it.unipi.dii.lsmsdb.rottenMovies.services;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
+import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptionsEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
@@ -48,6 +52,19 @@ public class UserService {
             return null;
         return baseuserdtos.get(0);
     }
+
+    public PageDTO<GenresLikeDTO> getGenresLike (String username) {
+        PageDTO<GenresLikeDTO> genresLikeDTO = new PageDTO<>();
+        ArrayList<GenresLikeDTO> genresLikeDTOSpages = new ArrayList<>();
+        try (BaseUserDAO userdao = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
+            genresLikeDTOSpages = userdao.getMostReviewedGenres(username);
+            genresLikeDTO.setEntries(genresLikeDTOSpages);
+        } catch (Exception e) {
+            System.err.println(e.getStackTrace());
+        }
+        return genresLikeDTO;
+    }
+
     public RegisteredUserDTO register(HashMap<String, String> hm) {
         BaseUser user = null;
         if (hm.containsKey("is_top_critic")) {
@@ -104,6 +121,17 @@ public class UserService {
         return new UserDTO((User) user);
     }
 
+    public RegisteredUserDTO getUserByUsername(String username) {
+        RegisteredUserDTO user = null;
+        try (BaseUserDAO userdao = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
+            userdao.queryBuildSearchByUsername(username);
+            user = userdao.executeSearchQuery(0).get(0);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return user;
+    }
+
     public boolean follow (String uid, String tid){
         try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
             BaseUser user = new User();
@@ -142,5 +170,18 @@ public class UserService {
             return false;
         }
         return true;
+
+    }
+    public PageDTO<ReviewFeedDTO> createUserFeed (BaseUser usr,int page){
+        PageDTO<ReviewFeedDTO> reviewFeedDTO = new PageDTO<>();
+        ArrayList<ReviewFeedDTO> reviewFeedDTOpages = new ArrayList<>();
+        try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
+            reviewFeedDTOpages=userDAO.getFeed(usr,page);
+            reviewFeedDTO.setEntries(reviewFeedDTOpages);
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+        return reviewFeedDTO;
     }
 }

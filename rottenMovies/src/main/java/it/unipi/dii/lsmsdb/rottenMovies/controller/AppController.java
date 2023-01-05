@@ -1,6 +1,9 @@
 package it.unipi.dii.lsmsdb.rottenMovies.controller;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
+import it.unipi.dii.lsmsdb.rottenMovies.models.User;
+import it.unipi.dii.lsmsdb.rottenMovies.services.AdminService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.MovieService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
 import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
@@ -155,6 +158,14 @@ public class AppController {
         if (page < 0){
             page = 0;
         }
+
+        hm = extractRequest(request);
+        if(hm.containsKey("view")){
+            UserService userService = new UserService();
+            RegisteredUserDTO topCritic = userService.getUserByUsername(hm.get("view"));
+            model.addAttribute("go_to_user", topCritic.getId().toString());
+        }
+
         model.addAttribute("movie", movieService.getMovie(page, mid, -1));
         model.addAttribute("page", page);
         model.addAttribute("credentials", session.getAttribute("credentials"));
@@ -184,6 +195,12 @@ public class AppController {
             page = 0;
         }
         HashMap<String, String> hm = extractRequest(request);
+        if(hm.containsKey("ban")){
+            System.out.println("BAN " + uid);
+        }
+        if(hm.containsKey("unban")){
+            System.out.println("UNBAN " + uid);
+        }
         if(hm.containsKey("follow")){
             if(!userService.follow(hm.get("follow"), uid))
                 model.addAttribute("info", "you already follow this user");
@@ -204,12 +221,15 @@ public class AppController {
         model.addAttribute("credentials", session.getAttribute("credentials"));
         return "user";
     }
-
-    @GetMapping("/feed")
-    public String feed(Model model,
-                       @RequestParam(value = "page", defaultValue = "0") int page){
-        model.addAttribute("page", String.format("page: %d", page));
-        return "feed";
+    @GetMapping("/preferred_genres/{username}")
+    public  String mostLikedGenresByUser(Model model,
+                               @PathVariable(value = "username") String username){
+        UserService userService = new UserService();
+        if(username==null){
+            username="";
+        }
+        model.addAttribute("genres",userService.getGenresLike(username).getEntries());
+        return "preferred-genres";
     }
 
     @GetMapping("/recommendations")
@@ -219,9 +239,98 @@ public class AppController {
         return "recommendations";
     }
 
-    @GetMapping("/admin-panel")
-    public  String adminPanel(Model model){
+    @RequestMapping("/admin-panel")
+    public  String adminPanel(Model model,
+                              HttpServletRequest request,
+                              HttpSession session){
+        if(!(session.getAttribute("credentials") instanceof AdminDTO)){
+            return "login";
+        }
+        HashMap<String, String> hm = extractRequest(request);
+        if(hm.containsKey("searchUser")){
+            model.addAttribute("searchUser", hm.get("searchUser"));
+            if(!hm.get("searchUser").isEmpty()) {
+                AdminService adminService = new AdminService();
+                PageDTO<RegisteredUserDTO> userList = adminService.listUserPage(0, hm);
+                System.out.println(userList.getTotalCount());
+                if(userList.getTotalCount()>0) {
+                    System.out.println(userList.getEntries());
+                    model.addAttribute("userList", userList.getEntries());
+                }
+                else{
+                    model.addAttribute("info", "no result for " + hm.get("searchUser"));
+                }
+            }
+        }
+
+
         return "admin-panel";
+    }
+    @GetMapping("/admin-panel/populationByGeneration")
+    public  String adminPanelPopulation(Model model,
+                                        @RequestParam(value = "offset", defaultValue = "5") int offset
+                                        ){
+        AdminService adminService = new AdminService();
+        model.addAttribute("generation",adminService.getPopulationByGeneration(offset).getEntries());
+        model.addAttribute("offset",offset);
+        return "populationByGeneration";
+    }
+    @GetMapping("/HOFProductionHouses")
+    public  String HOFProductionHouses(Model model,
+                                       @RequestParam(value = "sort", defaultValue = "top_critic") String sort,
+                                       @RequestParam(value = "min_movie_count", defaultValue = "5") int min_movie_count){
+        MovieService movieService=new MovieService();
+        if(min_movie_count<=0){
+            min_movie_count=5;
+        }
+        model.addAttribute("productionhouses",movieService.getHOFProductionHouses(sort,min_movie_count).getEntries());
+        model.addAttribute("min_movie_count",min_movie_count);
+        model.addAttribute("sort",sort);
+        return "HOFProductionHouses";
+    }
+    @GetMapping("/HOFGenres")
+    public  String HOFGenres(Model model,
+                                       @RequestParam(value = "sort", defaultValue = "top_critic") String sort,
+                                       @RequestParam(value = "min_movie_count", defaultValue = "5") int min_movie_count){
+        MovieService movieService=new MovieService();
+        if(min_movie_count<=0){
+            min_movie_count=5;
+        }
+        model.addAttribute("genres",movieService.getHOFGenres(sort,min_movie_count).getEntries());
+        model.addAttribute("min_movie_count",min_movie_count);
+        model.addAttribute("sort",sort);
+        return "HOFGenres";
+    }
+    @GetMapping("/HOFYears")
+    public  String HOFYears(Model model,
+                             @RequestParam(value = "sort", defaultValue = "top_critic") String sort,
+                             @RequestParam(value = "min_movie_count", defaultValue = "5") int min_movie_count){
+        MovieService movieService=new MovieService();
+        if(min_movie_count<=0){
+            min_movie_count=5;
+        }
+        model.addAttribute("years",movieService.getHOFYears(sort,min_movie_count).getEntries());
+        model.addAttribute("min_movie_count",min_movie_count);
+        model.addAttribute("sort",sort);
+        return "HOFYears";
+    }
+    @RequestMapping("/feed")
+    public String userFeed (Model model,
+                            @RequestParam(value = "page", defaultValue = "0") int page,
+                            HttpSession session){
+        System.out.println("credentials: " + session.getAttribute("credentials"));
+        if(!(session.getAttribute("credentials") instanceof UserDTO)){
+            return "login";
+        }
+        if (page < 0){
+            page = 0;
+        }
+        UserService userService = new UserService();
+        BaseUser user = new User((UserDTO) session.getAttribute("credentials"));
+        model.addAttribute("feed",userService.createUserFeed(user,page).getEntries());
+        model.addAttribute("page",page);
+        model.addAttribute("username",user.getUsername());
+        return "feed";
     }
 
 }
