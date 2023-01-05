@@ -21,7 +21,9 @@
                     <ul class="list-unstyled">
                         <li><a href="/login" class="text-white">Login</a></li>
                         <li><a href="/" class="text-white">Home</a></li>
-                        <li th:if="${!(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}" th:text="|Hi ${credentials.username}|"></li>
+                        <li th:if="${!(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}" >
+                            <a th:href="|/user/${credentials.id}|">Your profile</a>
+                        </li>
                         <li th:if="${credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO'}"><a th:href="'/admin-panel'">Admin panel</a></li>
                         <li><a href="/logout" class="text-white">Logout</a></li>
                     </ul>
