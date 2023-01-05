@@ -35,11 +35,11 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
      * @throws DAOException
      */
     @Override
-    public boolean insert(Movie movie) throws DAOException {
+    public ObjectId insert(Movie movie) throws DAOException {
         String id = movie.getId().toString();
         String title = movie.getPrimaryTitle();
         if (id.isEmpty() || title.isEmpty()) {
-            return false;
+            return null;
         }
         Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         session.writeTransaction(tx -> {
@@ -50,7 +50,7 @@ public class MovieNeo4j_DAO extends BaseNeo4jDAO implements MovieDAO {
             System.out.println(result.single().get("Title").asString());
             return 1;
         });
-        return true;
+        return movie.getId();
     }
 
     /**

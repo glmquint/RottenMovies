@@ -32,7 +32,7 @@ public interface MovieDAO extends AutoCloseable {
     ArrayList<HallOfFameDTO> bestYearsBasedOnRatings (int numberOfMovies, SortOptions opt) throws DAOException;
     ArrayList<YearMonthReviewDTO> getYearAndMonthReviewActivity(ObjectId id) throws DAOException;
     boolean update(Movie updated) throws DAOException;
-    boolean insert(Movie newOne) throws DAOException;
+    ObjectId insert(Movie newOne) throws DAOException;
     boolean delete (Movie movie) throws DAOException;
 
     //public Boolean insertNeo4j(String id, String title) throws DAOException;
