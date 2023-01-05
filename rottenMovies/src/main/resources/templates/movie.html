@@ -8,6 +8,11 @@
 </head>
 
 <body>
+<div th:if="${redirect}">
+    <script th:inline="javascript">
+            window.location.assign([[${redirect}]]);
+    </script>
+</div>
 <header>
     <div class="collapse bg-dark" id="navbarHeader">
         <div class="container">
