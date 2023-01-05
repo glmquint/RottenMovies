@@ -7,6 +7,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PopulationByGenerationDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
+import org.bson.types.ObjectId;
 
 
 import java.util.ArrayList;
@@ -33,6 +34,16 @@ public class AdminService {
             System.err.println(e.getStackTrace());
         }
         return user_page;
+    }
+
+    public boolean setBannedStatus(String userId, boolean toBan){
+        try(AdminDAO adminDAO = DAOLocator.getAdminDAO(DataRepositoryEnum.MONGO)){
+            return adminDAO.changeUserStatus(new ObjectId(userId), toBan);
+        }
+        catch (Exception e){
+            System.err.println(e.getStackTrace());
+            return false;
+        }
     }
 
 }
