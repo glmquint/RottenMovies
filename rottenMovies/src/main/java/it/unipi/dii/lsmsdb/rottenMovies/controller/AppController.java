@@ -133,17 +133,47 @@ public class AppController {
         return "exploreMovies";
     }
 
-    @GetMapping("/movie/{mid}")
+    @RequestMapping("/movie/{mid}")
     public  String select_movie(Model model,
-                                //HttpServletRequest request,
+                                HttpServletRequest request,
                                 @RequestParam(value = "page", defaultValue = "0") int page,
-                                @PathVariable(value = "mid") String mid){
+                                @PathVariable(value = "mid") String mid,
+                                HttpSession session){
+        System.out.println("credentials: " + session.getAttribute("credentials"));
+        HashMap<String, String> hm = extractRequest(request);
+        System.out.println(hm);
         MovieService movieService = new MovieService();
+        boolean result = false;
+        if (hm.containsKey("admin_operation")){
+            result = movieService.modifyMovie(mid, hm);
+            if (result){
+                model.addAttribute("success", "movie successfully update");
+            } else {
+                model.addAttribute("error", "error while updating movie");
+            }
+//            if (hm.get("admin_operation").equals("update")){
+//                boolean result = movieService.updateMovie(hm);
+//                if (result){
+//                    model.addAttribute("success", "movie successfully update");
+//                } else {
+//                    model.addAttribute("error", "error while updating movie");
+//                }
+//            } else if (hm.get("admin_operation").equals("delete")){
+//                boolean result = movieService.deleteMovie(mid);
+//                if (result){
+//                    model.addAttribute("success", "movie successfully removed");
+//                } else {
+//                    model.addAttribute("error", "error while removing movie");
+//                }
+//                return "movie";
+//            }
+        }
         if (page < 0){
             page = 0;
         }
         model.addAttribute("movie", movieService.getMovie(page, mid, -1));
         model.addAttribute("page", page);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "movie";
     }
 
