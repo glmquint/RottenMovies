@@ -208,10 +208,22 @@ public class AppController {
         }
         HashMap<String, String> hm = extractRequest(request);
         if(hm.containsKey("ban")){
-            System.out.println("BAN " + uid);
+           AdminService adminService = new AdminService();
+           if(adminService.setBannedStatus(uid, true)){
+               model.addAttribute("success", "This User is been banned\n check this out: https://www.youtube.com/watch?v=1-EiYgCubmM");
+           }
+           else{
+               model.addAttribute("error", "This User is already banned");
+           }
         }
         if(hm.containsKey("unban")){
-            System.out.println("UNBAN " + uid);
+            AdminService adminService = new AdminService();
+            if(adminService.setBannedStatus(uid, false)){
+                model.addAttribute("success", "This User is been unbanned");
+            }
+            else{
+                model.addAttribute("error", "This User is not banned, YET");
+            }
         }
         if(hm.containsKey("follow")){
             if(!userService.follow(hm.get("follow"), uid))

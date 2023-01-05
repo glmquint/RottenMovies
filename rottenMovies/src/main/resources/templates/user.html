@@ -67,12 +67,6 @@
                                     <button type="submit" class="button" name="follow" th:value="${credentials.id}">Follow</button>
                                     <button type="submit" class="button" name="unfollow" th:value="${credentials.id}">Unfollow</button>
                                 </form>
-                                <div class="alert alert-info" role="alert" th:if="${info}" th:text="${info}">
-                                    A simple info alert—check it out!
-                                </div>
-                                <div class="alert alert-success" role="alert" th:if="${success}" th:text="${success}">
-                                    A simple success alert—check it out!
-                                </div>
                             </div>
                             <div th:if="${(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
                                 <form method="post">
@@ -80,6 +74,15 @@
                                     <button type="submit" class="btn btn-danger" name="unban" >UNBAN</button>
                                 </form>
                             </div>
+                        </div>
+                        <div class="alert alert-info" role="alert" th:if="${info}" th:text="${info}">
+                            A simple info alert—check it out!
+                        </div>
+                        <div class="alert alert-success" role="alert" th:if="${success}" th:text="${success}">
+                            A simple success alert—check it out!
+                        </div>
+                        <div class="alert alert-danger" role="alert" th:if="${error}" th:text="${error}">
+                            A simple danger alert—check it out!
                         </div>
                     </div>
                 </div>
