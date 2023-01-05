@@ -7,14 +7,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ReviewFeedDTO {
-    private ObjectId criticId;
+    public String criticId;
     private String movieTitle;
     private String criticName;
     private String content;
     private boolean freshness;
     private Date reviewDate;
 
-    public ReviewFeedDTO(ObjectId criticId, String movieTitle, String criticName, String content, boolean freshness, Date reviewDate) {
+    public ReviewFeedDTO(String criticId, String movieTitle, String criticName, String content, boolean freshness, Date reviewDate) {
         this.criticId = criticId;
         this.movieTitle = movieTitle;
         this.criticName = criticName;
@@ -23,11 +23,11 @@ public class ReviewFeedDTO {
         this.reviewDate = reviewDate;
     }
 
-    public ObjectId getId() {
+    public String getId() {
         return criticId;
     }
 
-    public void setId(ObjectId criticId) {
+    public void setId(String criticId) {
         this.criticId = criticId;
     }
 

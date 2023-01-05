@@ -237,7 +237,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
                     throw new RuntimeException(e);
                 }
                 feed.add(new ReviewFeedDTO(
-                        new ObjectId(r.get("Id").asString()),
+                        r.get("Id").asString(),
                         r.get("movieTitle").asString(),
                         r.get("criticName").asString(),
                         r.get("content").asString(),
