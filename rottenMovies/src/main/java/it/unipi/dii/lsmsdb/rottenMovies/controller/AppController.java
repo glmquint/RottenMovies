@@ -10,6 +10,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.services.UserService;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.MD5;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.bson.types.ObjectId;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -116,12 +117,24 @@ public class AppController {
 
     @GetMapping("/movie")
     public  String explore_movie(Model model,
-                                 HttpServletRequest request){
+                                 HttpServletRequest request,
+                                 HttpSession session){
         //System.out.println("requested page");
         //System.out.println(page);
         //model.addAttribute("page", page);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         MovieService movieService = new MovieService();
         HashMap<String, String> hm = extractRequest(request);
+        ObjectId id = null;
+        if (hm.getOrDefault("addMovie", "").equals("addMovie")){
+            id = movieService.addMovie(hm.getOrDefault("title", ""));
+            if (id == null){
+                model.addAttribute("error", "error while creating a new Movie");
+            } else {
+                model.addAttribute("redirect", "/movie/" + id);
+                return "exploreMovies";
+            }
+        }
         int page = 0;
         if (hm.containsKey("page")){
             page = Integer.parseInt(hm.get("page"));

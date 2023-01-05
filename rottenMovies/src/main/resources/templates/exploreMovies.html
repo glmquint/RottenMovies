@@ -39,6 +39,11 @@
     </div>
 </header>
 <body>
+<div th:if="${redirect}">
+    <script th:inline="javascript">
+            window.location.assign([[${redirect}]]);
+    </script>
+</div>
     <div class="album py-5 bg-light">
         <div class="container">
             <form>
@@ -60,6 +65,7 @@
                     <div class="col input-group">
                         <input class="form-control" id="title" type="text" placeholder="Title" name="title" th:value="${title}?:''" aria-describedby="search-addon">
                         <button class="btn btn-outline-secondary" id="search-addon" type="submit">Search</button>
+                        <button th:if="${credentials}?${(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}:false" class="btn btn-outline-success" id="add-addon" type="submit" name="addMovie" value="addMovie">Add Movie</button>
                     </div>
                 </div>
                 <div class="row">

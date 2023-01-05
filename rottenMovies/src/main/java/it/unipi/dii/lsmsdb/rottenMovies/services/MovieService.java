@@ -277,7 +277,7 @@ public class MovieService {
             }
             if (!result) { // mongo roll-back (insert)
                 try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
-                    result = moviedao.insert(movie);
+                    moviedao.insert(movie);
                 } catch (Exception e) {
                     System.err.println(e);
                 }
@@ -286,5 +286,37 @@ public class MovieService {
             return true;
         }
         return false;
+    }
+
+    public ObjectId addMovie(String title) {
+        if (title == null || title.isEmpty()) {
+            return null;
+        }
+        Movie newMovie = new Movie();
+        newMovie.setPrimaryTitle(title);
+        ObjectId id = null;
+        try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
+            id = moviedao.insert(newMovie);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        if (id == null) {
+            return null;
+        }
+        newMovie.setId(id);
+        try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j)) {
+            id = moviedao.insert(newMovie);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        if (id == null){ // roll back di mongo
+            try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
+                moviedao.delete(newMovie);
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+            return null;
+        }
+        return id;
     }
 }

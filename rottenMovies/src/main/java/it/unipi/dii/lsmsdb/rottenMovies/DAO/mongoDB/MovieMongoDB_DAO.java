@@ -33,7 +33,6 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.neo4j.driver.exceptions.NoSuchRecordException;
 
-import javax.print.Doc;
 import java.util.*;
 
 
@@ -277,6 +276,14 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                 }
                 personnelDBList.add(worker);
             }
+        } else {
+            for (int i = 0; i < 10; i++) {
+                worker = new BasicDBObject();
+                worker.put("primaryName","");
+                worker.put("category","");
+                worker.put("job","");
+                personnelDBList.add(worker);
+            }
         }
         return personnelDBList;
     }
@@ -317,13 +324,13 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query=null;
         return returnvalue;
     }
-    public boolean insert(Movie newOne){
+    public ObjectId insert(Movie newOne){
         MongoCollection<Document>  collection = getMovieCollection();
         ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(newOne);
-        boolean returnvalue=true;
+        ObjectId returnvalue=new ObjectId();
         try {
             InsertOneResult result = collection.insertOne(new Document()
-                    .append("_id", new ObjectId())
+                    .append("_id", returnvalue)
                     .append("primaryTitle", newOne.getPrimaryTitle())
                     .append("year", newOne.getYear())
                     .append("runtimeMinutes", newOne.getRuntimeMinutes())
@@ -345,7 +352,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
             System.out.println("Success! Inserted document id: " + result.getInsertedId());
         } catch (MongoException me) {
             System.err.println("Unable to insert due to an error: " + me);
-            returnvalue = false;
+            returnvalue = null;
         }
         query=null;
         return returnvalue;
