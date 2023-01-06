@@ -161,6 +161,16 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         query = Filters.and(query, new_query);
     }
+
+    @Override
+    public void queryBuildExcludeAdmin() throws DAOException {
+        Bson new_query = Filters.ne("username", "admin");
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
     public boolean insert(BaseUser usr){
         MongoCollection<Document>  collection = getUserCollection();
         try {
@@ -274,12 +284,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         return resultSet;
     }
-    public ArrayList<UserDTO> getMostReviewUser() throws DAOException{
-        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
-    }
-    public TopCriticDTO getMostFollowedCritic() throws DAOException{
-        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
-    }
+
 
     public boolean followTopCritic(BaseUser user, BaseUser topCritic) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
@@ -297,6 +302,10 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
     public boolean checkIfFollows(BaseUser user, BaseUser topCritic) throws DAOException{
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
+    }
+
+    public int getNumberOfFollowers(TopCritic topCritic) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 }

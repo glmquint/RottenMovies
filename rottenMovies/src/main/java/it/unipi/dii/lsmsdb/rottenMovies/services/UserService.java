@@ -176,16 +176,27 @@ public class UserService {
         }
         return reviewFeedDTO;
     }
-    public PageDTO<TopCriticSuggestionDTO> getTopCriticSuggestions (User usr, int page){
+
+    public PageDTO<TopCriticSuggestionDTO> getTopCriticSuggestions (User usr, int page) {
         PageDTO<TopCriticSuggestionDTO> topCriticSuggestionDTO = new PageDTO<>();
         ArrayList<TopCriticSuggestionDTO> topCriticSuggestionPages = new ArrayList<>();
-        try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
-            topCriticSuggestionPages=userDAO.getSuggestion(usr,page);
+        try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)) {
+            topCriticSuggestionPages = userDAO.getSuggestion(usr, page);
             topCriticSuggestionDTO.setEntries(topCriticSuggestionPages);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
         return topCriticSuggestionDTO;
+    }
+
+    public int getFollowers(String id){
+        TopCritic topCritic = new TopCritic();
+        topCritic.setId(new ObjectId(id));
+        try(BaseUserDAO baseUserDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
+            return baseUserDAO.getNumberOfFollowers(topCritic);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return -1;
     }
 }

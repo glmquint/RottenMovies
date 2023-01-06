@@ -4,6 +4,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
+import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -26,13 +27,14 @@ public interface BaseUserDAO extends AutoCloseable{
     ArrayList<RegisteredUserDTO> executeSearchQuery(int page) throws DAOException;
 
     boolean executeDeleteQuery() throws DAOException;
-    ArrayList<UserDTO> getMostReviewUser() throws DAOException;
-    TopCriticDTO getMostFollowedCritic() throws DAOException;
     boolean followTopCritic(BaseUser user, BaseUser topCritic) throws DAOException;
     boolean unfollowTopCritic(BaseUser user, BaseUser topCritic) throws DAOException;
     public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException;
 
     public ArrayList<TopCriticSuggestionDTO> getSuggestion(User usr, int page) throws DAOException;
     void queryBuildExcludeBanned() throws DAOException;
+    public void queryBuildExcludeAdmin() throws DAOException;
     public boolean checkIfFollows(BaseUser user, BaseUser topCritic) throws DAOException;
+
+    public int getNumberOfFollowers(TopCritic topCritic) throws DAOException;
 }

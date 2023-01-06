@@ -249,7 +249,11 @@ public class AppController {
                 model.addAttribute("success", "Successfully unfollowed this user");
             }
         }
-        model.addAttribute("user", userService.getUser(page, uid));
+        BaseUserDTO baseUser = (BaseUserDTO) userService.getUser(page, uid);
+        model.addAttribute("user", baseUser);
+        if(baseUser instanceof TopCriticDTO){
+            model.addAttribute("numberOfFollowers", userService.getFollowers(baseUser.getId().toString()));
+        }
 
         model.addAttribute("page", page);
         model.addAttribute("credentials", session.getAttribute("credentials"));
@@ -435,6 +439,7 @@ public class AppController {
         model.addAttribute("username",user.getUsername());
         return "feed";
     }
+
     @GetMapping("/review-bombing/{primaryTitle}")
     public String checkReviewBombing (Model model,
                                       HttpServletRequest request,
@@ -452,11 +457,38 @@ public class AppController {
         Movie movie = new Movie();
         movie.setPrimaryTitle(primaryTitle);
         MovieReviewBombingDTO movieReviewBombingDTO = adminService.checkReviewBombing(movie, month_count);
-        if (movieReviewBombingDTO == null){
+        if (movieReviewBombingDTO == null) {
             model.addAttribute("error", "Please try with higher month number");
         }
-        model.addAttribute("reviewBombing",adminService.checkReviewBombing(movie,month_count));
-        model.addAttribute("month_count",month_count);
+        model.addAttribute("reviewBombing", adminService.checkReviewBombing(movie, month_count));
+        model.addAttribute("month_count", month_count);
         return "review-bombing";
+    }
+
+    @GetMapping("/admin-panel/mostReviewUser")
+    public String  mostReviewUser(Model model,
+                                  HttpSession session){
+        if(!(session.getAttribute("credentials") instanceof AdminDTO)){
+            return "login";
+        }
+        AdminService adminService = new AdminService();
+        model.addAttribute("credentials", session.getAttribute("credentials"));
+        model.addAttribute("userList", adminService.getMostReviewUser());
+
+        return "mostReviewUser";
+    }
+
+    @GetMapping("/admin-panel/mostFollowTopCritic")
+    public String  mostFollowTopCritic(Model model,
+                                  HttpSession session){
+        if(!(session.getAttribute("credentials") instanceof AdminDTO)){
+            return "login";
+        }
+        AdminService adminService = new AdminService();
+        model.addAttribute("credentials", session.getAttribute("credentials"));
+        model.addAttribute("userList", adminService.getFollowTopCritic());
+
+        return "mostReviewUser";
+
     }
 }
