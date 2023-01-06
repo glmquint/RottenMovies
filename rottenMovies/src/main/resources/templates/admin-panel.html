@@ -132,9 +132,7 @@
                 </tbody>
               </table>
             </div>
-            <div class="alert alert-info" role="alert" th:if="${info}" th:text="${info}">
-              A simple info alert—check it out!
-            </div>
+            <div th:replace="infoBox :: html_infoBox">
           </main>
         </div>
       </div>

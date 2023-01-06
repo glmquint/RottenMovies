@@ -27,6 +27,7 @@ public class AdminService {
         PageDTO<RegisteredUserDTO> user_page = new PageDTO<>();
         try(BaseUserDAO baseUserDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
             baseUserDAO.queryBuildSearchByUsername(request.getOrDefault("searchUser", ""));
+            baseUserDAO.queryBuildExcludeAdmin();
             user_page.setEntries(baseUserDAO.executeSearchQuery(page));
         } catch (Exception e){
             System.err.println(e.getStackTrace());

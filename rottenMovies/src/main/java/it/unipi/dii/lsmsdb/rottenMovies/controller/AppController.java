@@ -378,9 +378,12 @@ public class AppController {
     @GetMapping("/admin-panel/mostReviewUser")
     public String  mostReviewUser(Model model,
                                   HttpSession session){
-    AdminService adminService = new AdminService();
-    model.addAttribute("credentials", session.getAttribute("credentials"));
-    model.addAttribute("userList", adminService.getMostReviewUser());
+        if(!(session.getAttribute("credentials") instanceof AdminDTO)){
+            return "login";
+        }
+        AdminService adminService = new AdminService();
+        model.addAttribute("credentials", session.getAttribute("credentials"));
+        model.addAttribute("userList", adminService.getMostReviewUser());
 
         return "mostReviewUser";
     }
@@ -388,6 +391,9 @@ public class AppController {
     @GetMapping("/admin-panel/mostFollowTopCritic")
     public String  mostFollowTopCritic(Model model,
                                   HttpSession session){
+        if(!(session.getAttribute("credentials") instanceof AdminDTO)){
+            return "login";
+        }
         AdminService adminService = new AdminService();
         model.addAttribute("credentials", session.getAttribute("credentials"));
         model.addAttribute("userList", adminService.getFollowTopCritic());

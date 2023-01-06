@@ -327,5 +327,8 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
+    public void queryBuildExcludeAdmin() throws DAOException{
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
 
 }

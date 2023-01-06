@@ -161,6 +161,16 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         query = Filters.and(query, new_query);
     }
+
+    @Override
+    public void queryBuildExcludeAdmin() throws DAOException {
+        Bson new_query = Filters.ne("username", "admin");
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
     public boolean insert(BaseUser usr){
         MongoCollection<Document>  collection = getUserCollection();
         try {
