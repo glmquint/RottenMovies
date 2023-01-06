@@ -150,6 +150,20 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         return new TopCriticDTO(topCritic);
     }
 
+    public int getNumberOfFollowers(TopCritic topCritic) throws DAOException{
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
+        int numberOfFollowers = session.readTransaction((TransactionWork<Integer>) tx ->{
+            String query = "MATCH (t:TopCritic{id:$id})<-[:FOLLOWS]-() " +
+                    "RETURN count(*) as NumFollowers";
+            Result result = tx.run(query, parameters("id", topCritic.getId().toString()));
+            System.out.println(result.peek().get("NumMovies"));
+            return result.single().get("NumFollowers").asInt();
+
+        });
+
+        return numberOfFollowers;
+    }
+
     /**
      * <method>followTopCritic</method> create a relationship of type FOLLOWS between a user and a top critic
      * @param user is the non-top critic user that wants to follow a top critic

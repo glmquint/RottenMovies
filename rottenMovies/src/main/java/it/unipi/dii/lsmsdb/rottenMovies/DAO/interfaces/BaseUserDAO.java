@@ -3,6 +3,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -34,4 +35,6 @@ public interface BaseUserDAO extends AutoCloseable{
     public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException;
     void queryBuildExcludeBanned() throws DAOException;
     public boolean checkIfFollows(BaseUser user, BaseUser topCritic) throws DAOException;
+
+    public int getNumberOfFollowers(TopCritic topCritic) throws DAOException;
 }

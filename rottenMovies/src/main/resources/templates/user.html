@@ -67,6 +67,9 @@
                             <a th:case="'it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO'" th:text="'Top Critic *'">Test</a>
                             <a th:case="*" th:text="'Normal User'">Adventure</a>
                         </div>
+                        <div th:if="${user.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO'}">
+                            <div th:text="${numberOfFollowers}">Followers 100</div>
+                        </div>
                         <div th:if="${credentials}">
                             <div th:if="${!(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
                                 <form method="post" th:if="${credentials.id!=user.id}">

@@ -184,4 +184,15 @@ public class UserService {
         }
         return reviewFeedDTO;
     }
+
+    public int getFollowers(String id){
+        TopCritic topCritic = new TopCritic();
+        topCritic.setId(new ObjectId(id));
+        try(BaseUserDAO baseUserDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
+            return baseUserDAO.getNumberOfFollowers(topCritic);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return -1;
+    }
 }

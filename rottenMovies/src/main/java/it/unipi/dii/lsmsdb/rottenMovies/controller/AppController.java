@@ -242,7 +242,11 @@ public class AppController {
                 model.addAttribute("success", "Successfully unfollowed this user");
             }
         }
-        model.addAttribute("user", userService.getUser(page, uid));
+        BaseUserDTO baseUser = (BaseUserDTO) userService.getUser(page, uid);
+        model.addAttribute("user", baseUser);
+        if(baseUser instanceof TopCriticDTO){
+            model.addAttribute("numberOfFollowers", userService.getFollowers(baseUser.getId().toString()));
+        }
 
         model.addAttribute("page", page);
         model.addAttribute("credentials", session.getAttribute("credentials"));
