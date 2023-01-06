@@ -272,20 +272,25 @@ public class AppController {
         model.addAttribute("credentials", session.getAttribute("credentials"));
         return "preferred-genres";
     }
-    @GetMapping("/suggested-top-critic/{username}")
+    @RequestMapping("/suggested-top-critic/{username}")
     public  String suggestedTopCritic(Model model,
+                                      HttpServletRequest request,
                                       @PathVariable(value = "username") String username,
                                       @RequestParam(value = "page", defaultValue = "0") int page,
                                       HttpSession session){
         if(session.getAttribute("credentials")==null){
             return "login";
         }
+        HashMap<String, String> hm = extractRequest(request);
+        UserService userService = new UserService();
+
         if((session.getAttribute("credentials") instanceof AdminDTO)){
             model.addAttribute("redirect", "/admin-panel");
             return "movie";
         }
         if((session.getAttribute("credentials") instanceof TopCriticDTO)){
-            model.addAttribute("redirect", "/user");
+            TopCriticDTO topCriticDTO = (TopCriticDTO) session.getAttribute("credentials");
+            model.addAttribute("go_to_user", topCriticDTO.getId().toString());
             return "movie";
         }
         UserDTO userDTO = (UserDTO) session.getAttribute("credentials");
@@ -293,12 +298,20 @@ public class AppController {
             model.addAttribute("go_to_user", userDTO.getId().toString());
             return "movie";
         }
-        UserService userService = new UserService();
+
         if(username==null){
             username="";
         }
         if (page<=0){
             page=0;
+        }
+        if(hm.containsKey("follow")){
+            if(!userService.follow(userDTO.getId().toString(), hm.get("follow"))) {
+                model.addAttribute("error", "Failed to follow this Top Critic!");
+            }
+            else{
+                model.addAttribute("success", "Successfully followed this Top Critic");
+            }
         }
         model.addAttribute("suggestions",userService.getTopCriticSuggestions(new User(userDTO),page).getEntries());
         model.addAttribute("page",page);

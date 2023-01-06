@@ -47,7 +47,9 @@
 </header>
 <div class="container">
     <h3 th:text="'Here you can find your top critic suggestions, '+${username}"></h3>
-    </form>
+    <div class="alert alert-success" role="alert" th:if="${success}" th:text="${success}">
+        A simple success alert—check it out!
+    </div>
     <table class="table">
         <thead>
         <tr>
@@ -64,7 +66,11 @@
                 <a class="col mx-2" th:text="${sg.username}" th:href="'/user/'+ ${sg.id}">username</a>
             </td>
             <td th:text="${sg.rate}">16</td>
-            <td><button type="button" class="btn btn-primary" value="follow">Follow</button></td>
+            <td>
+                <form method="post">
+                <button type="submit" class="btn btn-primary" name="follow" th:value="${sg.id}">Follow</button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
