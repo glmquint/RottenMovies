@@ -156,16 +156,29 @@ public class AppController {
                                 @PathVariable(value = "mid") String mid,
                                 HttpSession session){
         System.out.println("credentials: " + session.getAttribute("credentials"));
+        RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
         HashMap<String, String> hm = extractRequest(request);
         System.out.println(hm);
         MovieService movieService = new MovieService();
         boolean result = false;
         if (hm.containsKey("admin_operation")){
+            if (credentials == null || !(credentials instanceof AdminDTO)){
+                model.addAttribute("error", "this operation isn't permitted to non-admin users");
+                return "index";
+            }
             result = movieService.modifyMovie(mid, hm);
             if (result){
                 model.addAttribute("success", "movie successfully updated");
             } else {
                 model.addAttribute("error", "error while updating movie");
+            }
+        }
+        else if (hm.containsKey("critic_operation")){
+            result = movieService.modifyReview(mid, hm, credentials);
+            if (result){
+                model.addAttribute("success", "review successfully updated");
+            } else {
+                model.addAttribute("error", "error while updating review");
             }
         }
         if (page < 0){
