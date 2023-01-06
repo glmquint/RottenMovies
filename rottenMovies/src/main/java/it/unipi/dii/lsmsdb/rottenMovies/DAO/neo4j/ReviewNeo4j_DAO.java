@@ -97,7 +97,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
      */
     public MovieReviewBombingDTO checkReviewBombing(Movie movie, int month) throws  DAOException{
         MovieReviewBombingDTO reviewBombingList = new MovieReviewBombingDTO();
-        if(movie.getPrimaryTitle().isEmpty() || month < 0){
+        if(movie.getPrimaryTitle().isEmpty() || month <= 0){
             return reviewBombingList;
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -114,8 +114,14 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
                     "100*toFloat(SUM(CASE WHEN r.date>=date(\""+strDate+"\") AND r.date<date(\""+todayString+"\") AND r.freshness = true THEN 1 ELSE 0 END))" +
                     "/SUM(CASE WHEN r.date>=date(\""+strDate+"\") AND r.date<date(\""+todayString+"\") THEN 1 ELSE 0 END) as TargetRate " +
                     "RETURN StoricCount, StoricRate, TargetCount, TargetRate";
-            Result result = tx.run(query, parameters("movieTitle", movie.getPrimaryTitle(),
-                    "date", strDate));
+            Result result=null;
+            try{
+                result=tx.run(query, parameters("movieTitle", movie.getPrimaryTitle(),
+                        "date", strDate));
+            }
+            catch (org.neo4j.driver.exceptions.ClientException e){
+                return null;
+            }
             MovieReviewBombingDTO feed = new MovieReviewBombingDTO(
                     movie.getPrimaryTitle(),
                     result.peek().get("StoricCount").asInt(),

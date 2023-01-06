@@ -4,9 +4,12 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.AdminDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieReviewBombingDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PopulationByGenerationDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import org.bson.types.ObjectId;
 
 
@@ -43,6 +46,15 @@ public class AdminService {
         catch (Exception e){
             System.err.println(e.getStackTrace());
             return false;
+        }
+    }
+    public MovieReviewBombingDTO checkReviewBombing(Movie movie, int month){
+        try(ReviewDAO reviewDAO = DAOLocator.getReviewDAO(DataRepositoryEnum.NEO4j)){
+            return reviewDAO.checkReviewBombing(movie,month);
+        }
+        catch (Exception e){
+            System.err.println(e);
+            return null;
         }
     }
 

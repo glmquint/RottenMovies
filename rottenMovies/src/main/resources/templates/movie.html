@@ -105,7 +105,8 @@
 
                                   <button class="w-10 mx-2 btn btn-lg btn-primary" type="submit" name="admin_operation" value="update">Update</button>
                                   <button class="w-10 mx-2 btn btn-lg btn-danger" type="submit" name="admin_operation" value="delete">Delete</button>
-                                </form>
+                                  <button class="w-10 mx-2 btn btn-lg btn-warning" type="submit" name="admin_operation" th:value="${movie.primaryTitle}">Check Review Bombing</button>
+                              </form>
                           </div>
                           <div th:unless="${(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
                               <h1 class="display-5 fw-bold" th:text="${movie.primaryTitle}">Titolo</h1>

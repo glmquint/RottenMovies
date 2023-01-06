@@ -1,6 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.controller;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import it.unipi.dii.lsmsdb.rottenMovies.services.AdminService;
@@ -161,6 +162,12 @@ public class AppController {
         MovieService movieService = new MovieService();
         boolean result = false;
         if (hm.containsKey("admin_operation")){
+            if(!hm.get("admin_operation").equals("update") && !hm.get("admin_operation").equals("delete")){ // review bombing
+                String urlPath = "/review-bombing/"+hm.get("admin_operation");
+                System.out.println(urlPath);
+                model.addAttribute("redirect", urlPath);
+                return "movie";
+            }
             result = movieService.modifyMovie(mid, hm);
             if (result){
                 model.addAttribute("success", "movie successfully updated");
@@ -428,5 +435,28 @@ public class AppController {
         model.addAttribute("username",user.getUsername());
         return "feed";
     }
-
+    @GetMapping("/review-bombing/{primaryTitle}")
+    public String checkReviewBombing (Model model,
+                                      HttpServletRequest request,
+                                      @PathVariable(value = "primaryTitle") String primaryTitle,
+                                      @RequestParam(value = "month_count", defaultValue = "36") int month_count,
+                                      HttpSession session) {
+        if (!(session.getAttribute("credentials") instanceof AdminDTO)) {
+            return "login";
+        }
+        if (month_count <= 0) {
+            month_count = 24;
+        }
+        AdminService adminService = new AdminService();
+        System.out.println(primaryTitle);
+        Movie movie = new Movie();
+        movie.setPrimaryTitle(primaryTitle);
+        MovieReviewBombingDTO movieReviewBombingDTO = adminService.checkReviewBombing(movie, month_count);
+        if (movieReviewBombingDTO == null){
+            model.addAttribute("error", "Please try with higher month number");
+        }
+        model.addAttribute("reviewBombing",adminService.checkReviewBombing(movie,month_count));
+        model.addAttribute("month_count",month_count);
+        return "review-bombing";
+    }
 }
