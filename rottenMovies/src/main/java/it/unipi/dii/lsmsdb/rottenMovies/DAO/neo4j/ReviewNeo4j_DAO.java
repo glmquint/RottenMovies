@@ -4,24 +4,19 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseNeo4jDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieReviewBombingDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewFeedDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
+import org.bson.types.ObjectId;
 import org.neo4j.driver.*;
-import org.neo4j.driver.Record;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.NEO4J_DATABASE_STRING;
-import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.REVIEWS_IN_FEED;
 import static org.neo4j.driver.Values.parameters;
 /**
  * @author Fabio
@@ -141,6 +136,11 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
     }
 
     public boolean update(BaseUser usr, Review review) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
+
+    @Override
+    public ArrayList<Object> getIndexOfReview(ObjectId userid, String primaryTitle) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 

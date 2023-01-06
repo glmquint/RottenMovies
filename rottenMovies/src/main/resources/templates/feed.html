@@ -18,6 +18,9 @@
             <div class="p-1 mb-4 rounded-3 shadow-sm bg-opacity-10" th:classappend="${review.freshness}?'bg-success':'bg-danger'">
                 <div class="row align-item-between py-2">
                     <div class="col-6 mx-4" th:text="${review.content}?|“${review.content}...”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
+                    <form>
+                        <button type="submit" class="btn btn-primary" name="readfullrev" th:value="${review.criticId}+','+${review.movieTitle}">Read full review</button>
+                    </form>
                     <div class="col mx-4" th:text="${review.reviewDate}?|Date: “${review.reviewDate}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
                 </div>
             </div>

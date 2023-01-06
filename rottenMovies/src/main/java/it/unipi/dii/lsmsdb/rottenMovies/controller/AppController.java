@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -164,7 +165,6 @@ public class AppController {
         if (hm.containsKey("admin_operation")){
             if(!hm.get("admin_operation").equals("update") && !hm.get("admin_operation").equals("delete")){ // review bombing
                 String urlPath = "/review-bombing/"+hm.get("admin_operation");
-                System.out.println(urlPath);
                 model.addAttribute("redirect", urlPath);
                 return "movie";
             }
@@ -423,6 +423,7 @@ public class AppController {
     }
     @RequestMapping("/feed")
     public String userFeed (Model model,
+                            HttpServletRequest request,
                             @RequestParam(value = "page", defaultValue = "0") int page,
                             HttpSession session){
         System.out.println("credentials: " + session.getAttribute("credentials"));
@@ -433,6 +434,17 @@ public class AppController {
             page = 0;
         }
         UserService userService = new UserService();
+        HashMap<String, String> hm = extractRequest(request);
+        if(hm.containsKey("readfullrev")){
+            String data= hm.get("readfullrev");
+            String[] field = data.split(",");
+            ArrayList<Object> movieAndIndex;
+            movieAndIndex = userService.getReviewIndex(new ObjectId(field[0]),field[1]);
+            System.out.println(movieAndIndex.get(0) + " " + movieAndIndex.get(1));
+            String urlPath = "/movie/"+movieAndIndex.get(0).toString()+"/"+movieAndIndex.get(1);
+            model.addAttribute("redirect", urlPath);
+            return "movie";
+        }
         BaseUser user = new User((UserDTO) session.getAttribute("credentials"));
         model.addAttribute("feed",userService.createUserFeed(user,page).getEntries());
         model.addAttribute("page",page);

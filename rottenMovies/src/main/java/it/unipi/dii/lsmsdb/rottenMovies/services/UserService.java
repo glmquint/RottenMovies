@@ -3,6 +3,7 @@ package it.unipi.dii.lsmsdb.rottenMovies.services;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
@@ -198,5 +199,13 @@ public class UserService {
             System.out.println(e);
         }
         return -1;
+    }
+    public ArrayList<Object> getReviewIndex(ObjectId userid, String primaryTitle){
+        try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.MONGO)) {
+            return reviewdao.getIndexOfReview(userid,primaryTitle);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return null;
     }
 }
