@@ -101,54 +101,6 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         return true;
     }
     */
-    /**
-     * <method>getMostReviewUser</method>
-     * @return a list of  5 of user non-top critic with the most review made
-     * @throws DAOException
-     */
-    @Override
-    public ArrayList<UserDTO> getMostReviewUser() throws DAOException {
-        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
-        ArrayList<UserDTO> userList = session.readTransaction((TransactionWork<ArrayList<UserDTO>>) tx ->{
-            String query = "MATCH (u:User)-[:REVIEWED]->(m:Movie) " +
-                    "RETURN u.name AS Name, count(*) as NumMovies " +
-                    "ORDER BY NumMovies DESC " +
-                    "LIMIT 5";
-            Result result = tx.run(query);
-            ArrayList<UserDTO> list = new ArrayList<>();
-            while(result.hasNext()){
-                Record r = result.next();
-                UserDTO user = new UserDTO();
-                user.setUsername(r.get("Name").asString());
-                list.add(user);
-            }
-            return list;
-        });
-        return userList;
-    }
-
-    /**
-     * <method>getMostFollowedCritic</method>
-     * @return the top critic user with the most followers
-     * @throws DAOException
-     */
-    @Override
-    public TopCriticDTO getMostFollowedCritic() throws DAOException{
-        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
-        TopCritic topCritic = new TopCritic();
-        String mostFollowedCritic = session.readTransaction((TransactionWork<String>) tx ->{
-            String query = "MATCH (t:TopCritic)<-[:FOLLOWS]-(u:User) " +
-                    "RETURN t.name AS Name, count(*) as NumMovies " +
-                    "ORDER BY NumMovies DESC " +
-                    "LIMIT 1";
-            Result result = tx.run(query);
-            System.out.println(result.peek().get("NumMovies"));
-            return result.single().get("Name").asString();
-
-        });
-        topCritic.setUsername((mostFollowedCritic));
-        return new TopCriticDTO(topCritic);
-    }
 
     public int getNumberOfFollowers(TopCritic topCritic) throws DAOException{
         Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));

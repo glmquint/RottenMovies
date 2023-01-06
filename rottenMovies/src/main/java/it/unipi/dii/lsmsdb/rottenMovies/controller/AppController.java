@@ -375,4 +375,23 @@ public class AppController {
         return "feed";
     }
 
+    @GetMapping("/admin-panel/mostReviewUser")
+    public String  mostReviewUser(Model model,
+                                  HttpSession session){
+    AdminService adminService = new AdminService();
+    model.addAttribute("credentials", session.getAttribute("credentials"));
+    model.addAttribute("userList", adminService.getMostReviewUser());
+
+        return "mostReviewUser";
+    }
+
+    @GetMapping("/admin-panel/mostFollowTopCritic")
+    public String  mostFollowTopCritic(Model model,
+                                  HttpSession session){
+        AdminService adminService = new AdminService();
+        model.addAttribute("credentials", session.getAttribute("credentials"));
+        model.addAttribute("userList", adminService.getFollowTopCritic());
+
+        return "mostReviewUser";
+    }
 }

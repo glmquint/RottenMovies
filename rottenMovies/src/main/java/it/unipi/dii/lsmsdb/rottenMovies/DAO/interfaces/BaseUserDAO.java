@@ -26,8 +26,6 @@ public interface BaseUserDAO extends AutoCloseable{
     ArrayList<RegisteredUserDTO> executeSearchQuery(int page) throws DAOException;
 
     boolean executeDeleteQuery() throws DAOException;
-    ArrayList<UserDTO> getMostReviewUser() throws DAOException;
-    TopCriticDTO getMostFollowedCritic() throws DAOException;
     boolean followTopCritic(BaseUser user, BaseUser topCritic) throws DAOException;
     boolean unfollowTopCritic(BaseUser user, BaseUser topCritic) throws DAOException;
     public ArrayList<ReviewFeedDTO> getFeed(BaseUser usr, int page) throws DAOException;

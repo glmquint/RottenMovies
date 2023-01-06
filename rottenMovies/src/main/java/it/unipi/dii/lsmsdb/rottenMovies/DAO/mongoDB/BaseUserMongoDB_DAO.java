@@ -274,12 +274,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         return resultSet;
     }
-    public ArrayList<UserDTO> getMostReviewUser() throws DAOException{
-        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
-    }
-    public TopCriticDTO getMostFollowedCritic() throws DAOException{
-        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
-    }
+
 
     public boolean followTopCritic(BaseUser user, BaseUser topCritic) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");

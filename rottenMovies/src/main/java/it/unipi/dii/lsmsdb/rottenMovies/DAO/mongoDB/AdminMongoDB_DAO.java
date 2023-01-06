@@ -1,15 +1,15 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DAO.mongoDB;
 
-import com.mongodb.MongoException;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.UpdateResult;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.AdminDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PopulationByGenerationDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.models.User;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserLeaderboardDTO;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -22,7 +22,7 @@ import static com.mongodb.client.model.Filters.exists;
 
 public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
     @Override
-    public ArrayList<PopulationByGenerationDTO> userPopulationByGeneration(int offset) {
+    public ArrayList<PopulationByGenerationDTO> userPopulationByGeneration(int offset) throws DAOException {
         MongoCollection<Document> collectionUser = getUserCollection();
         BucketOptions opt = new BucketOptions();
         ArrayList<Integer> buck=new ArrayList<>();
@@ -54,12 +54,12 @@ public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
         }
         return resultSet;
     }
-    public ArrayList<PopulationByGenerationDTO> userPopulationByGeneration(){
+    public ArrayList<PopulationByGenerationDTO> userPopulationByGeneration() throws DAOException{
         return userPopulationByGeneration(5);
     }
 
     @Override
-    public boolean changeUserStatus(ObjectId userId,boolean ban) {
+    public boolean changeUserStatus(ObjectId userId,boolean ban) throws DAOException {
         MongoCollection<Document>  collection = getUserCollection();
         Bson usrFilter = eq("_id",userId);
         Bson update;
@@ -73,6 +73,16 @@ public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
         result=collection.updateOne(usrFilter,update);
         return (result.getModifiedCount()!=0);
     }
+
+    public ArrayList<UserLeaderboardDTO> getMostReviewUser() throws DAOException{
+        throw new DAOException("requested a query for the Neo4j in the MongoDB connection");
+    }
+
+
+    public ArrayList<UserLeaderboardDTO> getMostFollowedCritic() throws DAOException {
+        throw new DAOException("requested a query for the Neo4j in the MongoDB connection");
+    }
+
 
 }
 
