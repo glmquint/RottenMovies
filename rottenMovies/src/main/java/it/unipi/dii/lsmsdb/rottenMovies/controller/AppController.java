@@ -272,6 +272,39 @@ public class AppController {
         model.addAttribute("credentials", session.getAttribute("credentials"));
         return "preferred-genres";
     }
+    @GetMapping("/suggested-top-critic/{username}")
+    public  String suggestedTopCritic(Model model,
+                                      @PathVariable(value = "username") String username,
+                                      @RequestParam(value = "page", defaultValue = "0") int page,
+                                      HttpSession session){
+        if(session.getAttribute("credentials")==null){
+            return "login";
+        }
+        if((session.getAttribute("credentials") instanceof AdminDTO)){
+            model.addAttribute("redirect", "/admin-panel");
+            return "movie";
+        }
+        if((session.getAttribute("credentials") instanceof TopCriticDTO)){
+            model.addAttribute("redirect", "/user");
+            return "movie";
+        }
+        UserDTO userDTO = (UserDTO) session.getAttribute("credentials");
+        if(!userDTO.getUsername().equals(username)){
+            model.addAttribute("go_to_user", userDTO.getId().toString());
+            return "movie";
+        }
+        UserService userService = new UserService();
+        if(username==null){
+            username="";
+        }
+        if (page<=0){
+            page=0;
+        }
+        model.addAttribute("suggestions",userService.getTopCriticSuggestions(new User(userDTO),page).getEntries());
+        model.addAttribute("page",page);
+        model.addAttribute("username",userDTO.getUsername());
+        return "suggested-top-critic";
+    }
 
     @GetMapping("/recommendations")
     public String recommendations(Model model,

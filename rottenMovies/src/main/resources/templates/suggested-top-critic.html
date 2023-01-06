@@ -46,27 +46,36 @@
     </div>
 </header>
 <div class="container">
-    <h3 th:text="'Here is your review feed, '+${username}"></h3>
-    <div th:each="review:${feed}">
-        <div class="row">
-            <b class="col mx-2" th:text="${review.movieTitle}">Movie</b>
-            <a class="col mx-2" th:text="${review.criticName}" th:href="'/user/'+ ${review.criticId}">username</a>
-            <div class="p-1 mb-4 rounded-3 shadow-sm bg-opacity-10" th:classappend="${review.freshness}?'bg-success':'bg-danger'">
-                <div class="row align-item-between py-2">
-                    <div class="col-6 mx-4" th:text="${review.content}?|“${review.content}...”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
-                    <div class="col mx-4" th:text="${review.reviewDate}?|Date: “${review.reviewDate}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <h3 th:text="'Here you can find your top critic suggestions, '+${username}"></h3>
+    </form>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Username</th>
+            <th scope="col">Rate</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="sg,iterStat : ${suggestions}">
+            <td scope="row" th:text="${iterStat.count}">1</td>
+            <td>
+                <a class="col mx-2" th:text="${sg.username}" th:href="'/user/'+ ${sg.id}">username</a>
+            </td>
+            <td th:text="${sg.rate}">16</td>
+            <td><button type="button" class="btn btn-primary" value="follow">Follow</button></td>
+        </tr>
+        </tbody>
+    </table>
     <form>
-    <div class="row">
-        <ul class="pagination text-align justify-content-center my-2">
-            <li class="page-item"><button type="submit" name="page" class="page-link" th:with="newPage=(${page}?:0)-1" th:value="${newPage}&gt;0?${newPage}:0">Previous</button></li>
-            <li class="page-item"><button type="submit" name="page" class="page-link" th:value="${page}?:0" th:text="${page}?:0" ></button></li>
-            <li class="page-item"><button type="submit" name="page" class="page-link" th:with="newPage=(${page}?:0)+1" th:value="${newPage}">Next</button></li>
-        </ul>
-    </div>
+        <div class="row">
+            <ul class="pagination text-align justify-content-center my-2">
+                <li class="page-item"><button type="submit" name="page" class="page-link" th:with="newPage=(${page}?:0)-1" th:value="${newPage}&gt;0?${newPage}:0">Previous</button></li>
+                <li class="page-item"><button type="submit" name="page" class="page-link" th:value="${page}?:0" th:text="${page}?:0" ></button></li>
+                <li class="page-item"><button type="submit" name="page" class="page-link" th:with="newPage=(${page}?:0)+1" th:value="${newPage}">Next</button></li>
+            </ul>
+        </div>
     </form>
 </div>
 <footer>

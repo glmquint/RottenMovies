@@ -258,7 +258,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
      * @throws DAOException
      */
     @Override
-    public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException{
+    public ArrayList<TopCriticSuggestionDTO> getSuggestion(User usr, int page) throws DAOException{
         if(usr.getId().toString().isEmpty() || page<0){
             return null;
         }

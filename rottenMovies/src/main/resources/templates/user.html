@@ -59,8 +59,8 @@
                         <div th:if="${credentials}">
                             <div th:if="${!(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
                                 <form method="post" th:if="${credentials.id!=user.id}">
-                                    <button type="submit" class="button" name="follow" th:value="${credentials.id}">Follow</button>
-                                    <button type="submit" class="button" name="unfollow" th:value="${credentials.id}">Unfollow</button>
+                                    <button type="submit" class="btn btn-success" name="follow" th:value="${credentials.id}">Follow</button>
+                                    <button type="submit" class="btn btn-danger" name="unfollow" th:value="${credentials.id}">Unfollow</button>
                                 </form>
                             </div>
                             <div th:if="${(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
