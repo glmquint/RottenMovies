@@ -11,6 +11,7 @@
 <header th:replace="header :: html_header"></header>
 <div class="container">
     <h3 th:text="'Here is your review feed, '+${username}"></h3>
+    <div th:replace="infoBox :: html_infoBox"></div>
     <div th:each="review:${feed}">
         <div class="row">
             <b class="col mx-2" th:text="${review.movieTitle}">Movie</b>
