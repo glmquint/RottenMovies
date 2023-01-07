@@ -201,10 +201,11 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         MongoCollection<Document>  collection = getUserCollection();
         boolean returnvalue=true;
         Bson updates = Updates.combine(
-                    Updates.set("password", usr.getPassword()),
                     Updates.set("first_name", usr.getFirstName()),
-                    Updates.set("last_name", usr.getLastName()),
-                    Updates.set("registration_date", usr.getRegistrationDate()));
+                    Updates.set("last_name", usr.getLastName()));
+        if(!usr.getPassword().isEmpty()){
+            updates = Updates.combine(updates, Updates.set("password", usr.getPassword()));
+        }
         if (usr instanceof User){
             updates = Updates.combine(updates, Updates.set("date_of_birth", ((User)usr).getBirthdayDate()));
         }

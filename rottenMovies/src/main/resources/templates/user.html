@@ -15,10 +15,30 @@
                 <div class="container-fluid py-5">
                     <h1 class="display-5 fw-bold" th:text="${user.username}">UserName</h1>
                     <div class="row">
-                        <div class="col-md-8 fs-4" th:text="${#dates.format(user.registrationDate, 'yyyy-MM-dd')}">1989, 120 min, Warner Bros</div>
+                        <div th:text="${user.firstName}">FirstName</div>
+                        <div th:text="${user.lastName}">LastName</div>
+                        <div th:if="${credentials}">
+                            <div th:if="${user.username==credentials.username}">
+                                <form method="post">
+                                    <label for="password">Password</label>
+                                    <input class="form-control" id="password" type="text" placeholder="password" name="password">
+                                    <label for="firstName">first name</label>
+                                    <input class="form-control" id="firstName" type="text" placeholder="firstName" name="firstName" th:value="${user.firstName}">
+                                    <label for="lastName">last name</label>
+                                    <input class="form-control" id="lastName" type="text" placeholder="lastName" name="lastName" th:value="${user.lastName}">
+                                    <div th:if="${credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO'}">
+                                        <label for="birthday">Birthday</label>
+                                        <input type="date" class="form-control" id="birthday" placeholder="Birthday" name="birthday"  th:value="${#dates.format(user.birthdayDate, 'yyyy-MM-dd')}">
+                                    </div>
+
+                                    <button class="w-10 mx-2 btn btn-lg btn-primary" type="submit" name="user_operation" value="update">Update</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-8 fs-4" th:text="${#dates.format(user.registrationDate, 'yyyy-MM-dd')}">Registration Date</div>
                         <div th:switch="${user.class.name}">
-                            <a th:case="'it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO'" th:text="'Top Critic *'">Test</a>
-                            <a th:case="*" th:text="'Normal User'">Adventure</a>
+                            <a th:case="'it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO'" th:text="'Top Critic *'">Top</a>
+                            <a th:case="*" th:text="'Normal User'">Normal</a>
                         </div>
                         <div th:if="${user.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO'}">
                             <div th:text="${numberOfFollowers}">Followers 100</div>
