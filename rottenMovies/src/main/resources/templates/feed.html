@@ -19,7 +19,9 @@
                 <div class="row align-item-between py-2">
                     <div class="col-6 mx-4" th:text="${review.content}?|“${review.content}...”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
                     <form>
-                        <button type="submit" class="btn btn-primary" name="readfullrev" th:value="${review.criticId}+','+${review.movieTitle}">Read full review</button>
+                        <input type="hidden" name="critic_id" th:value="${review.criticId}">
+                        <input type="hidden" name="movieTitle" th:value="${review.movieTitle}">
+                        <button type="submit" class="btn btn-primary">Read full review</button>
                     </form>
                     <div class="col mx-4" th:text="${review.reviewDate}?|Date: “${review.reviewDate}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
                 </div>

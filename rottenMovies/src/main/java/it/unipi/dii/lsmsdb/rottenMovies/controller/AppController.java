@@ -448,11 +448,11 @@ public class AppController {
         }
         UserService userService = new UserService();
         HashMap<String, String> hm = extractRequest(request);
-        if(hm.containsKey("readfullrev")){
-            String data= hm.get("readfullrev");
-            String[] field = data.split(",");
+        if(hm.containsKey("critic_id") && hm.containsKey("movieTitle")){
+            String topCriticId= hm.get("critic_id");
+            String movieTitle = hm.get("movieTitle");
             ArrayList<Object> movieAndIndex;
-            movieAndIndex = userService.getReviewIndex(new ObjectId(field[0]),field[1]);
+            movieAndIndex = userService.getReviewIndex(new ObjectId(topCriticId),movieTitle);
             System.out.println(movieAndIndex.get(0) + " " + movieAndIndex.get(1));
             String urlPath = "/movie/"+movieAndIndex.get(0).toString()+"/"+movieAndIndex.get(1);
             model.addAttribute("redirect", urlPath);
