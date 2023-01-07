@@ -14,22 +14,25 @@
               <li><a href="/login" class="text-white">Login</a></li>
               <li><a href="/" class="text-white">Home</a></li>
               <div th:if="${credentials}">
-                <div th:if="${!(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
-                  <li>
-                    <a th:href="|/user/${credentials.id}|">Your profile</a>
-                  </li>
-                  <li>
-                    <a href="/feed">Feed</a>
-                  </li>
-                  <li>
-                    <a th:href="|/suggested-top-critic/${credentials.username}|">Suggestions</a>
-                  </li>
-                </div>
                 <li th:if="${credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO'}"><a th:href="'/admin-panel'">Admin panel</a></li>
                 <li><a href="/logout" class="text-white">Logout</a></li>
-
               </div>
             </ul>
+            <div th:if="${credentials}"
+            >
+              <div th:if="${!(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownPersonal" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Personal Area
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownPersonal">
+                    <a class="dropdown-item" th:href="|/user/${credentials.id}|">Your profile</a>
+                    <a class="dropdown-item" th:href="|/suggested-top-critic/${credentials.username}|">Suggestions</a>
+                    <a class="dropdown-item" th:href="|/preferred_genres/${credentials.username}|">Your preferred genres</a>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="dropdown">
               <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Hall of Fame

@@ -209,4 +209,41 @@ public class UserService {
         }
         return null;
     }
+
+    public boolean modifyUser(String uid, HashMap<String, String> hm, boolean isTop) {
+        BaseUser newUser = null;
+        if(!isTop){
+            newUser = new User();
+        }
+        else{
+            newUser = new TopCritic();
+        }
+        newUser.setId(new ObjectId(uid));
+        newUser.setPassword("");
+        for (Map.Entry<String, String> entry : hm.entrySet()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            if (v == null || v.isEmpty()) {
+                continue;
+            }
+            if (k.equals("firstName")) {
+                newUser.setFirstName(v);
+            } else if (k.equals("lastName")) {
+                newUser.setLastName(v);
+            }
+            else if (k.equals("password")) {
+                newUser.setPassword(MD5.getMd5(v));
+            }
+            else if (k.equals("birthday")) {
+                ((User) newUser).setBirthdayDate(v);
+            }
+        }
+
+        try(BaseUserDAO baseUserDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
+            return baseUserDAO.update(newUser);
+        }catch (Exception e){
+            System.err.println(e);
+            return false;
+        }
+    }
 }
