@@ -470,7 +470,7 @@ public class AppController {
         movie.setPrimaryTitle(primaryTitle);
         MovieReviewBombingDTO movieReviewBombingDTO = adminService.checkReviewBombing(movie, month_count);
         if (movieReviewBombingDTO == null) {
-            model.addAttribute("error", "Please try with higher month number");
+            model.addAttribute("error", "No reviews were made in the last "+ month_count +" months. Please try with higher month number");
         }
         model.addAttribute("reviewBombing", adminService.checkReviewBombing(movie, month_count));
         model.addAttribute("month_count", month_count);
