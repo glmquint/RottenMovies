@@ -483,10 +483,14 @@ public class AppController {
             String[] field = data.split(",");
             ArrayList<Object> movieAndIndex;
             movieAndIndex = userService.getReviewIndex(new ObjectId(field[0]),field[1]);
-            System.out.println(movieAndIndex.get(0) + " " + movieAndIndex.get(1));
-            String urlPath = "/movie/"+movieAndIndex.get(0).toString()+"/"+movieAndIndex.get(1);
-            model.addAttribute("redirect", urlPath);
-            return "movie";
+            if (movieAndIndex == null || movieAndIndex.size() == 0){
+                model.addAttribute("error", "Can't find a review for this critic");
+            } else {
+                System.out.println(movieAndIndex.get(0) + " " + movieAndIndex.get(1));
+                String urlPath = "/movie/" + movieAndIndex.get(0).toString() + "/" + movieAndIndex.get(1);
+                model.addAttribute("redirect", urlPath);
+                return "movie";
+            }
         }
         BaseUser user = new User((UserDTO) session.getAttribute("credentials"));
         model.addAttribute("feed",userService.createUserFeed(user,page).getEntries());
