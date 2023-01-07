@@ -73,10 +73,10 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         }
         Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         session.writeTransaction(tx -> {
-            String query = "MATCH (b{id: $user}) -[r:REVIEWED] -> (m:Movie{title: $movie})" +
+            String query = "MATCH (b{id: $user}) -[r:REVIEWED] -> (m:Movie{id: $movieId})" +
                     "DELETE r";
             Result result = tx.run(query, parameters("user", review.getCriticName(),
-                    "movie", review.getMovie()));
+                    "$movieId", review.getMovie_id().toString()));
 
             return 1;
         });
