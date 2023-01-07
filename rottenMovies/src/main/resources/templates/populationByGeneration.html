@@ -13,7 +13,7 @@
     <form>
         <label for="insertval">Insert start year, the offset and the index</label>
         <div id="insertval" class="col input-group">
-            <input type="number" name="offset" min="1" step="1" th:value="${offset}?${offset}:'5'">
+            <input type="number" class="form-control" name="offset" min="1" step="1" th:value="${offset}?${offset}:'5'">
             <button class="btn btn-outline-secondary" id="search-addon" type="submit">Search</button>
         </div>
     </form>
