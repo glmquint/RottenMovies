@@ -35,7 +35,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
      */
     @Override
     public boolean reviewMovie(BaseUser usr, Review review)  throws DAOException{
-
+        // TODO: change this query to work with movie_id instead of movie_title
 
         if(usr.getId().toString().isEmpty() ||review.getMovie().isEmpty() || review.getReviewContent().isEmpty() || review.getReviewDate()==null){
             return false;
@@ -136,7 +136,25 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
     }
 
     public boolean update(BaseUser usr, Review review) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+        if(usr.getId().toString().isEmpty() ||review.getMovie_id()==null || review.getReviewContent().isEmpty() || review.getReviewDate()==null){
+            return false;
+        }
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String strDate = dateFormat.format(review.getReviewDate());
+        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
+        boolean freshness = (review.getReviewType().equals("Fresh")) ? true : false;
+        session.writeTransaction(tx -> {
+            String query = "MATCH (u{id: $userId})-[r:REVIEWED]->(m:Movie{id: $movieId}) " +
+                    "SET r.content = $content, " +
+                    "r.date = date(\"" + strDate + "\"), " +
+                    "r.freshness = $freshness";
+            Result result = tx.run(query, parameters("userId", usr.getId().toString(),
+                    "movieId", review.getMovie_id().toString(),
+                    "content", review.getReviewContent(),
+                    "freshness", freshness));
+            return 1;
+        });
+        return true;
     }
 
     @Override

@@ -8,6 +8,65 @@
 </head>
 
 <body>
+<script>
+    saved_content = ''
+    saved_score = ''
+
+    function toggle_buttons(review){
+        review.children[3].classList.toggle("d-none")
+        review.children[4].classList.toggle("d-none")
+        review.children[5].classList.toggle("d-none")
+        review.children[6].classList.toggle("d-none")
+        review.children[7].classList.toggle("d-none")
+
+    }
+    function makeEditForm(anchor){
+        cn = anchor.getAttribute("data-criticname");
+        review = document.getElementById(cn);
+
+        saved_content = review.children[0].textContent
+        saved_class_list = review.children[0].classList
+        newNode = document.createElement("textarea")
+        newNode.name = "content"
+        newNode.classList = saved_class_list
+        newNode.value = saved_content.slice(1, -1) // quotation marks
+        review.insertBefore(newNode, review.children[0])
+        review.removeChild(review.children[1])
+
+        saved_score = review.children[1].textContent
+        saved_class_list = review.children[1].classList
+        newNode = document.createElement("textarea")
+        newNode.name = "score"
+        newNode.classList = saved_class_list
+        newNode.value = saved_score.split("Review Score: ")[1].slice(1, -1)
+        review.insertBefore(newNode, review.children[1])
+        review.removeChild(review.children[2])
+
+        toggle_buttons(review)
+    }
+
+    function restoreEditForm(anchor){
+        cn = anchor.getAttribute("data-criticname");
+        review = document.getElementById(cn);
+
+        saved_class_list = review.children[0].classList
+        newNode = document.createElement("div")
+        newNode.classList = saved_class_list
+        newNode.textContent = saved_content
+        review.insertBefore(newNode, review.children[0])
+        review.removeChild(review.children[1])
+
+        saved_class_list = review.children[1].classList
+        newNode = document.createElement("div")
+        newNode.classList = saved_class_list
+        newNode.textContent = saved_score
+        review.insertBefore(newNode, review.children[1])
+        review.removeChild(review.children[2])
+
+        toggle_buttons(review)
+
+    }
+</script>
 <div th:if="${redirect}">
     <script th:inline="javascript">
             window.location.assign([[${redirect}]]);
@@ -62,7 +121,7 @@
 
                                   <button class="w-10 mx-2 btn btn-lg btn-primary" type="submit" name="admin_operation" value="update">Update</button>
                                   <button class="w-10 mx-2 btn btn-lg btn-danger" type="submit" name="admin_operation" value="delete">Delete</button>
-                                  <button class="w-10 mx-2 btn btn-lg btn-warning" type="submit" name="admin_operation" th:value="${movie.primaryTitle}">Check Review Bombing</button>
+                                  <button class="w-10 mx-2 btn btn-lg btn-warning" type="submit" name="admin_operation" value="reviewBombing">Check Review Bombing</button>
                               </form>
                           </div>
                           <div th:unless="${(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
@@ -139,9 +198,9 @@
 
           </form>
           <div th:each="review:${movie.reviews}">
-              <div class="row">
-                  <b class="col mx-2" th:text="|${review.criticName} (| + ${#dates.format(review.reviewDate, 'yyyy-MM-dd')} + ')'">autore</b>
-                  <div class="col-2" th:if="${review.topCritic}">
+              <div class="row align-start">
+                  <b class="col-3 mx-2" th:text="|${review.criticName} (| + ${#dates.format(review.reviewDate, 'yyyy-MM-dd')} + ')'">autore</b>
+                  <div class="col-3" th:if="${review.topCritic}">
                       <form method="post">
                           <button type="submit" class="button" name="view" th:value="${review.criticName}">View Profile</button>
                       </form>
@@ -149,10 +208,17 @@
                   <div class="col-3 text-danger" th:text="${review.topCritic}?'Top Critic ★':''">Top Critic ★</div>
               </div>
               <div class="p-1 mb-4 rounded-3 shadow-sm bg-opacity-10" th:classappend="${review.reviewType=='Fresh'}?'bg-success':'bg-danger'">
-                  <div class="row align-item-between py-2">
-                      <div class="col-6 mx-4" th:text="${review.reviewContent}?|“${review.reviewContent}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
-                      <div class="col mx-4" th:text="${review.reviewScore}?|Review Score: “${review.reviewScore}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
-                  </div>
+                  <form th:id="|review_${review.criticName}|" class="row align-item-between py-2 input-group">
+                      <div class="col-4 mx-4" th:text="${review.reviewContent}?|“${review.reviewContent}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
+                      <div class="col-1 mx-4" th:text="${review.reviewScore}?|Review Score: “${review.reviewScore}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
+                      <div class="col"><input class="d-none" name="title" th:value="${movie.primaryTitle}"></div>
+                      <div class="d-none col-1" th:if="${credentials}?(${credentials.username==review.criticName}):false"><label class="form-check-label" for="isFreshToggle">Fresh :</label><input class="form-check-input" type="checkbox" role="switch" id="isFreshToggle" name="isFresh" th:checked="${review.reviewType=='Fresh'}"></div>
+                      <div class="d-none col-1" th:if="${credentials}?(${credentials.username==review.criticName}):false"><button class="btn btn-outline-success" type="submit" value="update" name="critic_operation" th:data-criticname="|review_${review.criticName}|">Apply</button></div>
+                      <div class="d-none col-1" th:if="${credentials}?(${credentials.username==review.criticName}):false"><a class="btn btn-outline-dark" th:onclick="restoreEditForm(this)" th:data-criticname="|review_${review.criticName}|">Cancel</a></div>
+                      <div class="d-none col-2" th:if="${credentials}?(${credentials.username==review.criticName}):false"><button class="btn btn-outline-danger" type="submit" value="delete" name="critic_operation" th:data-criticname="|review_${review.criticName}|">Delete</button></div>
+                      <div class="col-2" th:if="${credentials}?(${credentials.username==review.criticName}):false"><a class="btn btn-outline-dark" th:onclick="makeEditForm(this)" th:data-criticname="|review_${review.criticName}|">Edit</a></div>
+
+                  </form>
               </div>
           </div>
 

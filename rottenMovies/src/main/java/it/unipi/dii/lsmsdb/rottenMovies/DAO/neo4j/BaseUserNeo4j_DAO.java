@@ -29,14 +29,16 @@ import static org.neo4j.driver.Values.parameters;
 public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     /**
      * <method>insert</method> create a new entry in the GraphDB
+     *
      * @param usr is the BaseUser model to insert into the DB
      * @return true in case of success
      * @throws DAOException
      */
     @Override
-    public boolean insert(BaseUser usr) throws DAOException {
-        if(usr.getId().toString().isEmpty() || usr.getUsername().isEmpty()){
-            return  false;
+    public ObjectId insert(BaseUser usr) throws DAOException {
+        ObjectId newId = usr.getId();
+        if(newId.toString().isEmpty() || usr.getUsername().isEmpty()){
+            return null;
         }
 
         Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
@@ -57,7 +59,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
             return result.single().get("Name").asString();
         });
         System.out.println(newUserName);
-        return true;
+        return newId;
     }
 
     /**

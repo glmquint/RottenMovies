@@ -3,21 +3,16 @@ package it.unipi.dii.lsmsdb.rottenMovies.services;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.HallOfFameDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
-import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
+import it.unipi.dii.lsmsdb.rottenMovies.models.*;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.ReviewProjectionOptions;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.ReviewProjectionOptionsEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptionsEnum;
 import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -154,33 +149,6 @@ public class MovieService {
         }
         return hallOfFameDTO;
     }
-//    <label for="title">title</label>
-//  <input class="form-control" id="title" type="text" placeholder="Title" name="title" th:value="${movie.primaryTitle}?:''">
-//
-//  <label for="year">year</label>
-//  <input class="form-control" id="year" type="number" placeholder="year" name="year" th:value="${movie.year}?:0">
-//
-//  <label for="runtimeMinutes">runtimeMinutes</label>
-//  <input class="form-control" id="runtimeMinutes" type="number" placeholder="runtimeMinutes" name="runtimeMinutes" th:value="${movie.runtimeMinutes}?:0">
-//
-//  <label for="productionCompany">productionCompany</label>
-//  <input class="form-control" id="productionCompany" type="text" placeholder="productionCompany" name="productionCompany" th:value="${movie.productionCompany}?:''">
-//
-//  <label for="genres">genres</label>
-//  <input class="form-control" id="genres" type="text" placeholder="genres" name="title" th:value="${movie.genres}?:${#strings.listJoin(movie.genres,', ')}">
-//
-//<label>Personnel</label>
-//<ul class="col-md-4 fs-6 mx-3" th:each="w:${movie.personnel}">
-//  <label for="primaryName">primaryName</label>
-//  <input class="form-control" id="primaryName" type="text" placeholder="primaryName" name="primaryName" th:value="${w.primaryName}?:''">
-//  <label for="category">category</label>
-//  <input class="form-control" id="category" type="text" placeholder="category" name="category" th:value="${w.category}?:''">
-//  <label for="job_characters">job_characters</label>
-//  <input class="form-control" id="job_characters" type="text" placeholder="job_characters" name="job_characters" th:value="${w.job}?:(${w.characters}?:'')">
-//</ul>
-//
-//  <button class="w-10 mx-2 btn btn-lg btn-primary" type="submit" name="admin_operation" value="update">Update</button>
-//  <button class="w-10 mx-2 btn btn-lg btn-danger" type="submit" name="admin_operation" value="delete">Delete</button>
     private Movie buildMovieFromForm(String mid, HashMap<String, String> hm){
         Movie newMovie = new Movie();
         newMovie.setId(new ObjectId(mid));
@@ -318,5 +286,76 @@ public class MovieService {
             return null;
         }
         return id;
+    }
+
+// {score=Review Score: �A�,
+// critic_operation=update,
+// content=Overcomes its artificial contrivances to become a touching psychological drama about despair and loneliness.,
+// isFresh=on}
+    private Review buildReviewFromForm(String mid, HashMap<String, String> hm, RegisteredUserDTO credentials) {
+        Review newReview = new Review();
+        newReview.setMovie_id(new ObjectId(mid));
+        newReview.setCriticName(credentials.getUsername());
+        newReview.setReviewType("Rotten");
+        for (Map.Entry<String, String> entry : hm.entrySet()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            if (v == null || v.isEmpty()) {
+                continue;
+            }
+            if (k.equals("score")) {
+                newReview.setReviewScore(v);
+            } else if (k.equals("content")) {
+                newReview.setReviewContent(v);
+            } else if (k.equals("isFresh")) {
+                newReview.setReviewType(v.equals("on") ? "Fresh" : "Rotten");
+            } else if (k.equals("title")){
+                newReview.setMovie(v);
+            }
+        }
+        newReview.setTopCritic(credentials instanceof TopCriticDTO);
+        newReview.setReviewDate_date(new Date());
+        return newReview;
+    }
+    public boolean modifyReview(String mid, HashMap<String, String> hm, RegisteredUserDTO credentials) {
+        String op = hm.get("critic_operation");
+        Review review = buildReviewFromForm(mid, hm, credentials);
+        boolean result = false;
+        BaseUser user = (credentials instanceof TopCriticDTO) ?
+                new TopCritic((TopCriticDTO) credentials) :
+                new User((UserDTO) credentials);
+
+        try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.MONGO)) {
+            if (op.equals("update")) {
+                result = reviewdao.update(user, review);
+            } else if (op.equals("delete")) {
+                result = reviewdao.delete(review);
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+            return false;
+        }
+        if (result) {
+            try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.NEO4j)) {
+                if (op.equals("update")) {
+                    result = reviewdao.update(user, review);
+                } else if (op.equals("delete")) {
+                    result = reviewdao.delete(review);
+                }
+            } catch (Exception e) {
+                System.err.println(e);
+                return false;
+            }
+            if (!result) { // mongo roll-back (insert)
+                try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.MONGO)) {
+                    reviewdao.reviewMovie(user, review);
+                } catch (Exception e) {
+                    System.err.println(e);
+                }
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }
