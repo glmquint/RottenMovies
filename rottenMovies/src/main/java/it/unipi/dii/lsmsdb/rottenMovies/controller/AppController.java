@@ -340,6 +340,7 @@ public class AppController {
         model.addAttribute("suggestions",userService.getTopCriticSuggestions(new User(userDTO),page).getEntries());
         model.addAttribute("page",page);
         model.addAttribute("username",userDTO.getUsername());
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "suggested-top-critic";
     }
 
@@ -462,6 +463,7 @@ public class AppController {
         model.addAttribute("feed",userService.createUserFeed(user,page).getEntries());
         model.addAttribute("page",page);
         model.addAttribute("username",user.getUsername());
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "feed";
     }
 

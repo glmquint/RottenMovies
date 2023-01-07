@@ -14,9 +14,17 @@
               <li><a href="/login" class="text-white">Login</a></li>
               <li><a href="/" class="text-white">Home</a></li>
               <div th:if="${credentials}">
-                <li th:if="${!(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}" >
-                  <a th:href="|/user/${credentials.id}|">Your profile</a>
-                </li>
+                <div th:if="${!(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
+                  <li>
+                    <a th:href="|/user/${credentials.id}|">Your profile</a>
+                  </li>
+                  <li>
+                    <a href="/feed">Feed</a>
+                  </li>
+                  <li>
+                    <a th:href="|/suggested-top-critic/${credentials.username}|">Suggestions</a>
+                  </li>
+                </div>
                 <li th:if="${credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO'}"><a th:href="'/admin-panel'">Admin panel</a></li>
                 <li><a href="/logout" class="text-white">Logout</a></li>
               </div>

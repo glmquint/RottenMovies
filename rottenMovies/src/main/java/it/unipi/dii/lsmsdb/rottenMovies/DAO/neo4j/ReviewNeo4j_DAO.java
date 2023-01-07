@@ -76,7 +76,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
             String query = "MATCH (b{id: $user}) -[r:REVIEWED] -> (m:Movie{id: $movieId})" +
                     "DELETE r";
             Result result = tx.run(query, parameters("user", review.getCriticName(),
-                    "$movieId", review.getMovie_id().toString()));
+                    "movieId", review.getMovie_id().toString()));
 
             return 1;
         });

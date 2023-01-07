@@ -237,7 +237,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
                     "WHERE NOT (u)-[:FOLLOWS]->(t) " +
                     "RETURN 100*(toFloat(sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/(count(m.title)+2)) as Rate, "+
                     "t.name as Name, t.id as Id ORDER BY Rate DESC SKIP $skip LIMIT $limit";
-            Result result = tx.run(query, parameters("$userId", usr.getId().toString(),
+            Result result = tx.run(query, parameters("userId", usr.getId().toString(),
                     "skip", skip, "limit", SUGGESTIONS_IN_FEED));
             ArrayList<TopCriticSuggestionDTO> feed = new ArrayList<>();
             while(result.hasNext()){
