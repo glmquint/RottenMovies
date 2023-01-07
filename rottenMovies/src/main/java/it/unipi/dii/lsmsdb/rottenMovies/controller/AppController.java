@@ -478,11 +478,11 @@ public class AppController {
         }
         UserService userService = new UserService();
         HashMap<String, String> hm = extractRequest(request);
-        if(hm.containsKey("readfullrev")){
-            String data= hm.get("readfullrev");
-            String[] field = data.split(",");
+        if(hm.containsKey("critic_id") && hm.containsKey("movieTitle")){
+            String topCriticId= hm.get("critic_id");
+            String movieTitle = hm.get("movieTitle");
             ArrayList<Object> movieAndIndex;
-            movieAndIndex = userService.getReviewIndex(new ObjectId(field[0]),field[1]);
+            movieAndIndex = userService.getReviewIndex(new ObjectId(topCriticId),movieTitle);
             if (movieAndIndex == null || movieAndIndex.size() == 0){
                 model.addAttribute("error", "Can't find a review for this critic");
             } else {
@@ -517,7 +517,7 @@ public class AppController {
         movie.setPrimaryTitle(primaryTitle);
         MovieReviewBombingDTO movieReviewBombingDTO = adminService.checkReviewBombing(movie, month_count);
         if (movieReviewBombingDTO == null) {
-            model.addAttribute("error", "Please try with higher month number");
+            model.addAttribute("error", "No reviews were made in the last "+ month_count +" months. Please try with higher month number");
         }
         model.addAttribute("reviewBombing", adminService.checkReviewBombing(movie, month_count));
         model.addAttribute("month_count", month_count);
