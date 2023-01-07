@@ -171,11 +171,12 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         query = Filters.and(query, new_query);
     }
-    public boolean insert(BaseUser usr){
+    public ObjectId insert(BaseUser usr){
         MongoCollection<Document>  collection = getUserCollection();
+        ObjectId newId = new ObjectId();
         try {
             Document newdoc = new Document()
-                    .append("_id", new ObjectId())
+                    .append("_id", newId)
                     .append("username", usr.getUsername())
                     .append("password", usr.getPassword())
                     .append("first_name", usr.getFirstName())
@@ -191,10 +192,10 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         catch (MongoException me) {
             System.err.println("Unable to insert due to an error: " + me);
-            return false;
+            return null;
         }
         // also remember to add the user in Neo4j
-        return true;
+        return newId;
     }
     public boolean update(BaseUser usr) throws DAOException{
         MongoCollection<Document>  collection = getUserCollection();

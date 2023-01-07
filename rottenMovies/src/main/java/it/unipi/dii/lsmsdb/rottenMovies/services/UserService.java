@@ -84,25 +84,26 @@ public class UserService {
             }
         }
         user.setRegistrationDate(new Date());
-        boolean res;
+        ObjectId newId;
         try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
-            res = userDAO.insert(user);
+            newId = userDAO.insert(user);
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
-        if (!res) {
+        if (newId == null) {
             return null;
         }
-        res = false;
+        user.setId(newId);
+        newId = null;
         try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)) {
-            res = userDAO.insert(user);
+            newId = userDAO.insert(user);
         } catch (Exception e) {
             System.out.println(e);
         }
-        if (!res) {
+        if (newId == null) { // mongo roll-back
             try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
-                res = userDAO.delete(user);
+                userDAO.delete(user);
             } catch (Exception e) {
                 System.err.println(e);
             }
