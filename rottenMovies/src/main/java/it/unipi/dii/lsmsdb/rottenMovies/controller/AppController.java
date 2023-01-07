@@ -111,6 +111,36 @@ public class AppController {
         return "register";
     }
 
+    @PostMapping("/registerTopCritic")
+    public String registerTopCritic(Model model, HttpSession session, HttpServletRequest request){
+        RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
+        if (credentials == null || !(credentials instanceof AdminDTO)) {
+            model.addAttribute("error", "this operation isn't permitted to non-admin users");
+            return "index";
+        }
+        UserService userService = new UserService();
+        HashMap<String, String> hm = extractRequest(request);
+        System.out.println(hm);
+        RegisteredUserDTO registeredUserDTO = userService.register(hm);
+        if (registeredUserDTO == null){
+            model.addAttribute("error", "something went wrong during registration");
+            return "registerTopCritic";
+        }
+        model.addAttribute("success", "new Top Critic successfully created");
+        return "registerTopCritic";
+    }
+
+    @GetMapping("/registerTopCritic")
+    public String registerTopCriticGet(Model model,
+                              HttpSession session){
+        RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
+        if (credentials == null || !(credentials instanceof AdminDTO)) {
+            model.addAttribute("error", "this operation isn't permitted to non-admin users");
+            return "index";
+        }
+        return "registerTopCritic";
+    }
+
     @GetMapping("/logout")
     public String logout(Model model, HttpSession session){
         session.invalidate();
