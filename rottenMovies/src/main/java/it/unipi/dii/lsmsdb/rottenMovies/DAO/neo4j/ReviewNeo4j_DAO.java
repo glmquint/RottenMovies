@@ -73,10 +73,10 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         }
         Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         session.writeTransaction(tx -> {
-            String query = "MATCH (b{name: $user}) -[r:REVIEWED] -> (m:Movie{title: $movie})" +
+            String query = "MATCH (b{id: $user}) -[r:REVIEWED] -> (m:Movie{id: $movieId})" +
                     "DELETE r";
             Result result = tx.run(query, parameters("user", review.getCriticName(),
-                    "movie", review.getMovie()));
+                    "movieId", review.getMovie_id().toString()));
 
             return 1;
         });
@@ -101,7 +101,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         String todayString = today.format(formatter);
         Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         reviewBombingList = session.readTransaction((TransactionWork<MovieReviewBombingDTO>)(tx -> {
-            String query = "MATCH (m:Movie{title:$movieTitle})<-[r:REVIEWED]-() " +
+            String query = "MATCH (m:Movie{id:$movieId})<-[r:REVIEWED]-() " +
                     "WITH SUM(CASE WHEN r.date<date(\""+strDate+"\") THEN 1 ELSE 0 END) as StoricCount, " +
                     "100*toFloat(SUM(CASE WHEN r.date<date(\""+strDate+"\") AND r.freshness = true THEN 1 ELSE 0 END))" +
                     "/SUM(CASE WHEN r.date<date(\""+strDate+"\") THEN 1 ELSE 0 END) as StoricRate, " +
@@ -111,7 +111,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
                     "RETURN StoricCount, StoricRate, TargetCount, TargetRate";
             Result result=null;
             try{
-                result=tx.run(query, parameters("movieTitle", movie.getPrimaryTitle(),
+                result=tx.run(query, parameters("movieId", movie.getId().toString(),
                         "date", strDate));
             }
             catch (org.neo4j.driver.exceptions.ClientException e){
@@ -161,18 +161,5 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
     public ArrayList<Object> getIndexOfReview(ObjectId userid, String primaryTitle) throws DAOException {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
-
-    /*
-        MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
-        WHERE NOT (u)-[:FOLLOWS]->(t)
-        RETURN 100*toFloat( sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/ (count(m.title)+2) as perc,
-        t.name as name ORDER by perc DESC LIMIT 10
-
-
-        MATCH (u:User{name:"Dennis Schwartz"})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic)
-        WHERE NOT (u)-[:FOLLOWS]->(t)
-        RETURN 100*toFloat( sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/ (count(m.title)+2) as perc,
-        t.name as name, collect(m.title) as movies, collect(r.freshness=r2.freshness) as alignement ORDER by perc DESC LIMIT 20
-     */
 
 }
