@@ -358,4 +358,43 @@ public class MovieService {
         }
         return false;
     }
+
+    public boolean reviewMovie(RegisteredUserDTO credentials, String movieId, String movieTitle) {
+        BaseUser user = (credentials instanceof TopCriticDTO) ?
+                new TopCritic((TopCriticDTO) credentials) :
+                new User((UserDTO) credentials);
+        Review review = new Review();
+        review.setMovie_id(new ObjectId(movieId));
+        review.setCriticName(credentials.getUsername());
+        review.setMovie(movieTitle);
+        review.setReviewDate_date(new Date());
+        review.setReviewType("Fresh");
+        review.setReviewScore("");
+        review.setTopCritic(user instanceof TopCritic);
+        review.setReviewContent("");
+        boolean result = false;
+        try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.MONGO)) {
+            result = reviewdao.reviewMovie(user, review);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if (result) {
+            try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.NEO4j)) {
+                result = reviewdao.reviewMovie(user, review);
+            } catch (Exception e) {
+                System.err.println(e);
+                return false;
+            }
+            if (!result) { // mongo roll-back (insert)
+                try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.MONGO)) {
+                    reviewdao.delete(review);
+                } catch (Exception e) {
+                    System.err.println(e);
+                }
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
 }

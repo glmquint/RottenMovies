@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="https://thymleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <div th:if="${redirect}">
+    <script th:inline="javascript">
+              window.location.assign([[${redirect}]]);
+    </script>
+    You are being redirected to <a th:href="${redirect}" th:text="${redirect}"></a>
+  </div>
+  <div th:unless="${redirect}">
+    <script>
+        window.location.assign("/");
+    </script>
+    You are being redirected to <a href="/">index</a>
+  </div>
+</body>
+</html>

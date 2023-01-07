@@ -37,7 +37,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
     public boolean reviewMovie(BaseUser usr, Review review)  throws DAOException{
         // TODO: change this query to work with movie_id instead of movie_title
 
-        if(usr.getId().toString().isEmpty() ||review.getMovie().isEmpty() || review.getReviewContent().isEmpty() || review.getReviewDate()==null){
+        if(usr.getId().toString().isEmpty() || review.getMovie().isEmpty() || review.getReviewDate()==null){
             return false;
         }
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -46,11 +46,11 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         boolean freshness = (review.getReviewType().equals("Fresh")) ? true : false;
         session.writeTransaction(tx -> {
             String query = "MATCH (b{id: $userId}), " +
-                    "(m:Movie{title: $movieTitle}) " +
+                    "(m:Movie{id: $movieId}) " +
                     "MERGE (b)-[r:REVIEWED {content: $content, date: date(\""+strDate+"\"), freshness: $freshness}]->(m)" +
                     "RETURN type(r) as Type, r.date as Date, r.freshness as Freshness";
             Result result = tx.run(query, parameters("userId", usr.getId().toString(),
-                    "movieTitle", review.getMovie(),
+                    "movieId", review.getMovie_id().toString(),
                     "content", review.getReviewContent(),
                     "freshness", freshness));
             System.out.println(result.peek().get("Type").asString());

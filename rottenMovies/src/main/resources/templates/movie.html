@@ -67,6 +67,7 @@
 
     }
 </script>
+<!--TODO: should delete this: use redirect.html instead-->
 <div th:if="${redirect}">
     <script th:inline="javascript">
             window.location.assign([[${redirect}]]);
@@ -153,7 +154,8 @@
                                   </div>
                                   <form>
                                       <input type="hidden" name="title" th:value="${movie.primaryTitle}">
-                                      <button class="btn btn-success" type="submit" name="user_operation" value="user_operation">Review</button>
+                                      <input type="hidden" name="movieId" th:value="${movie.id}">
+                                      <button class="btn btn-success col-md-2 offset-md-5" type="submit" name="user_operation" value="user_operation">Review</button>
                                   </form>
                               </div>
                           </div>
@@ -185,6 +187,7 @@
                                       </div>
                                   </div>
                               </div>
+                              <a class="btn btn-outline-success col-md-4 offset-md-4" href="/login">login to review this movie</a>
                           </div>
                       </div>
 
@@ -214,14 +217,14 @@
               <div class="p-1 mb-4 rounded-3 shadow-sm bg-opacity-10" th:classappend="${review.reviewType=='Fresh'}?'bg-success':'bg-danger'">
                   <form th:id="|review_${review.criticName}|" class="row align-item-between py-2 input-group">
                       <div class="col-4 mx-4" th:text="${review.reviewContent}?|“${review.reviewContent}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
-                      <div class="col-1 mx-4" th:text="${review.reviewScore}?|Review Score: “${review.reviewScore}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
+                      <div class="col-1 mx-4" th:text="'Review Score: ' + (${review.reviewScore}?'“'+${review.reviewScore}+'”':'“”')">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
                       <div class="col"><input class="d-none" name="title" th:value="${movie.primaryTitle}"></div>
                       <div class="d-none col-1" th:if="${credentials}?(${credentials.username==review.criticName}):false"><label class="form-check-label" for="isFreshToggle">Fresh :</label><input class="form-check-input" type="checkbox" role="switch" id="isFreshToggle" name="isFresh" th:checked="${review.reviewType=='Fresh'}"></div>
                       <div class="d-none col-1" th:if="${credentials}?(${credentials.username==review.criticName}):false"><button class="btn btn-outline-success" type="submit" value="update" name="critic_operation" th:data-criticname="|review_${review.criticName}|">Apply</button></div>
                       <div class="d-none col-1" th:if="${credentials}?(${credentials.username==review.criticName}):false"><a class="btn btn-outline-dark" th:onclick="restoreEditForm(this)" th:data-criticname="|review_${review.criticName}|">Cancel</a></div>
                       <div class="d-none col-2" th:if="${credentials}?(${credentials.username==review.criticName}):false"><button class="btn btn-outline-danger" type="submit" value="delete" name="critic_operation" th:data-criticname="|review_${review.criticName}|">Delete</button></div>
                       <div class="col-2" th:if="${credentials}?(${credentials.username==review.criticName}):false"><a class="btn btn-outline-dark" th:onclick="makeEditForm(this)" th:data-criticname="|review_${review.criticName}|">Edit</a></div>
-
+                      <input type="hidden" th:value="${page}?:'0'" name="page">
                   </form>
               </div>
           </div>
