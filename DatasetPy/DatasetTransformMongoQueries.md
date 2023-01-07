@@ -1,6 +1,6 @@
 ## review
-```py
-db.test.find().limit(5).forEach(
+```js
+db.movie.find().limit(5).forEach(
     x => {
         print(
             x.review.replaceAll('"\'', '"')
@@ -8,8 +8,11 @@ db.test.find().limit(5).forEach(
                 .replaceAll('"false"', 'false')
                 .replaceAll('"true"', 'true')
                 .replaceAll('"None"', 'null')
+                .replaceAll(/\\x\d{2}/g, "")
+                .replaceAll(/"([0-9-]{10}T[0-9:.+]{18})"/g, "$1")
                 .replaceAll("##single-quote##", "\'")
                 .replaceAll("##double-quote##", '\\"')
+                .replaceAll("\\x", "x")
         )
     }
 )
@@ -17,18 +20,20 @@ db.test.find().limit(5).forEach(
 
 ### review JSON
 
-```py
-db.test.find().limit(5).forEach(
+```js
+db.movie.find().limit(5).forEach(
     x => {
         print(
             JSON.parse(
                 x.review.replaceAll('"\'', '"')
-                    .replaceAll('\'"', '"')
-                    .replaceAll('"false"', 'false')
-                    .replaceAll('"true"', 'true')
-                    .replaceAll('"None"', 'null')
-                    .replaceAll("##single-quote##", "\'")
-                    .replaceAll("##double-quote##", '\\"')
+                .replaceAll('\'"', '"')
+                .replaceAll('"false"', 'false')
+                .replaceAll('"true"', 'true')
+                .replaceAll('"None"', 'null')
+                .replaceAll(/\\x\d{2}/g, "")
+                .replaceAll("##single-quote##", "\'")
+                .replaceAll("##double-quote##", '\\"')
+                .replaceAll("\\x", "x")
             )
         )
     }
@@ -37,8 +42,8 @@ db.test.find().limit(5).forEach(
 
 ### review update query
 
-```py
-db.test.find().limit(5).forEach(
+```js
+db.movie.find().limit(5).forEach(
     x => {
         x.review = JSON.parse(
             x.review.replaceAll('"\'', '"')
@@ -46,10 +51,12 @@ db.test.find().limit(5).forEach(
                 .replaceAll('"false"', 'false')
                 .replaceAll('"true"', 'true')
                 .replaceAll('"None"', 'null')
+                .replaceAll(/\\x\d{2}/g, "")
                 .replaceAll("##single-quote##", "\'")
                 .replaceAll("##double-quote##", '\\"')
+                .replaceAll("\\x", "x")
         );
-        db.test.updateOne(
+        db.movie.updateOne(
             {"_id": x._id}, 
             {$set: 
                 {"review": x.review}
@@ -63,8 +70,8 @@ db.test.find().limit(5).forEach(
 
 ## personnel
 
-```py
-db.test.find().limit(5).forEach(
+```js
+db.movie.find().limit(5).forEach(
     x => {
         print(
             x.personnel.replaceAll('"\'', '"')
@@ -81,8 +88,8 @@ db.test.find().limit(5).forEach(
 
 ### personnel JSON
 
-```py
-db.test.find().limit(5).forEach(
+```js
+db.movie.find().limit(5).forEach(
     x => {
         print(
             JSON.parse(
@@ -101,8 +108,8 @@ db.test.find().limit(5).forEach(
 
 ### personnel update query
 
-```py
-db.test.find().limit(5).forEach(
+```js
+db.movie.find().limit(5).forEach(
     x => {
         x.personnel = JSON.parse(
             x.personnel.replaceAll('"\'', '"')
@@ -113,7 +120,7 @@ db.test.find().limit(5).forEach(
                 .replaceAll('"[\'', '["')
                 .replaceAll('\']"', '"]')
         );
-        db.test.updateOne(
+        db.movie.updateOne(
             {"_id": x._id}, 
             {$set: 
                 {"personnel": x.personnel}
@@ -127,8 +134,8 @@ db.test.find().limit(5).forEach(
 
 ## genre
 
-```py
-db.test.find().limit(5).forEach(
+```js
+db.movie.find().limit(5).forEach(
     x => {
         print(
             x.genres.replaceAll('"\'', '"')
@@ -143,8 +150,8 @@ db.test.find().limit(5).forEach(
 
 ### genre JSON
 
-```py
-db.test.find().limit(5).forEach(
+```js
+db.movie.find().limit(5).forEach(
     x => {
         print(
             JSON.parse(
@@ -161,8 +168,8 @@ db.test.find().limit(5).forEach(
 
 ### genre update query
 
-```py
-db.test.find().limit(5).forEach(
+```js
+db.movie.find().limit(5).forEach(
     x => {
         x.genres = JSON.parse(
             x.genres.replaceAll('"\'', '"')
@@ -171,7 +178,7 @@ db.test.find().limit(5).forEach(
                     .replaceAll("##single-quote##", "\'")
                     .replaceAll("##double-quote##", '\\"')
         );
-        db.test.updateOne(
+        db.movie.updateOne(
             {"_id": x._id}, 
             {$set: 
                 {"genres": x.genres}
@@ -183,10 +190,10 @@ db.test.find().limit(5).forEach(
 
 ---
 
-### test final
+## movie final
 
-```py
-db.test.find().forEach(
+```js
+db.movie.find().forEach(
     x => {
         x.review = x.review.replaceAll('"\'', '"')
                 .replaceAll('\'"', '"')
@@ -225,11 +232,12 @@ db.test.find().forEach(
 );
 ```
 
-#### this is final for entire dataset (this is the one)
+### this is final for entire dataset (this is the real one)
 
-```py
-db.test.find().forEach(
+```js
+db.movie.find().forEach(
     x => {
+        print(x.primaryTitle);
         x.review = JSON.parse(
             x.review.replaceAll('"\'', '"')
                 .replaceAll('\'"', '"')
@@ -262,34 +270,241 @@ db.test.find().forEach(
                     .replaceAll("##single-quote##", "\'")
                     .replaceAll("##double-quote##", '\\"')
         );
-        db.test.updateOne(
+        db.movie.updateOne(
             {"_id": x._id}, 
             {$set: 
                 {
                     "review": x.review,
                     "personnel": x.personnel,
-                    "genres": x.genres
+                    "genres": x.genres,
+                    "runtimeMinutes":parseInt(x.runtimeMinutes),
+                    "year":parseInt(x.year), 
+                    "tomatometer_rating":parseFloat(x.tomatometer_rating), 
+                    "audience_rating":parseFloat(x.audience_rating), 
+                    "audience_count":parseFloat(x.audience_count), 
+                    "tomatometer_fresh_critics_count":parseInt(x.tomatometer_fresh_critics_count), 
+                    "tomatometer_rotten_critics_count":parseInt(x.tomatometer_rotten_critics_count)
                 }
             }
         );
     }
 );
 ```
+### create rating movie fields 
 
-(remember to drop `tconst` as we use `_id` as the final index in mongo)
+```js
+total = db.movie.find().count();
+i = 0;
+
+db.movie.find().forEach(
+    x => {
+        print(x.primaryTitle);
+        y=x.review;
+        top_critic_fresh_count=0;
+        top_critic_rotten_count=0;
+        user_fresh_count=0;
+        user_rotten_count=0;
+        y.forEach(rev => {
+            if(rev.top_critic){
+                if(rev.review_type=="Fresh"){
+                    top_critic_fresh_count++;
+                }
+                else{ 
+                    top_critic_rotten_count++;
+                }
+            }
+            else {
+                if(rev.review_type=="Fresh"){
+                    user_fresh_count++;
+                }
+                else {
+                    user_rotten_count++;
+                }
+            }
+            top_critic_status="";
+            top_critic_rating=0;
+            if(top_critic_fresh_count!=0 || top_critic_rotten_count!=0){
+                top_critic_rating=~~(((top_critic_fresh_count/(top_critic_rotten_count+top_critic_fresh_count))*100)+0.5);
+                if(top_critic_rating>=60){
+                    top_critic_status="Fresh";
+                    if(top_critic_rating>=75 && 
+                        (top_critic_fresh_count+top_critic_rotten_count+user_fresh_count+user_rotten_count>=80)&&
+                        (top_critic_fresh_count+top_critic_rotten_count>=5)){
+                            top_critic_status="Certified Fresh";
+                    }
+                }
+                else{
+                    top_critic_status="Rotten";
+                }
+            }
+            user_status="";
+            user_rating=0;
+            if(user_fresh_count!=0 || user_rotten_count!=0){
+                user_rating=~~(((user_fresh_count/(user_fresh_count+user_rotten_count))*100)+0.5);
+                if(user_rating>=60){
+                    user_status="Upright";
+                }
+                else{
+                    user_status="Spilled";
+                }
+            }
+            
+        })
+               
+        db.movie.updateOne(
+            {"primaryTitle": x.primaryTitle},
+            {$set: 
+                {"top_critic_fresh_count": top_critic_fresh_count,
+                "top_critic_rotten_count": top_critic_rotten_count,
+                "user_fresh_count": user_fresh_count,
+                "user_rotten_count": user_rotten_count,
+                "tomatometer_rating": top_critic_rating,
+                "tomatometer_status": top_critic_status,
+                "audience_status": user_status,
+                "audience_rating": user_rating
+                }
+            }
+        )
+        db.movie.updateOne(
+            {"primaryTitle": x.primaryTitle},
+            {$rename:{'tomatometer_status':'top_critic_status',
+                    'tomatometer_rating':'top_critic_rating',
+                    'audience_status':'user_status',
+                    'audience_rating':'user_rating'}
+            }
+        )
+        db.movie.updateOne(
+            {"primaryTitle": x.primaryTitle},
+            {$unset: {audience_count:"",tomatometer_fresh_critics_count:"",tomatometer_rotten_critics_count:""}}
+
+        )
+        print(100*i++/total);
+    }
+
+);
+
+```
+### update review date to use only ISODate
+```js
+total = db.movie.find().count();
+i = 0;
+db.movie.find().forEach(
+    x => {
+        print(x.primaryTitle);
+        x.review.forEach(rev =>{
+            if(typeof (rev.review_date) === "string" ){
+                db.movie.updateOne(
+                    {primaryTitle: x.primaryTitle },
+                    { $set: { "review.$[elem].review_date" : new Date(rev.review_date) } },
+                    { arrayFilters: [ { "elem.critic_name": rev.critic_name } ] }
+                 )    
+            }
+        })
+        print(100*i++/total);           
+});
+```
+#### parse type strings to floats and integers
+```js
+db.movie.find().forEach(
+    (x)=>{
+        db.movie.updateOne(
+            {"_id":x._id},
+            {"$set":{
+                "runtimeMinutes":parseInt(x.runtimeMinutes),
+                "year":parseInt(x.year), 
+                "tomatometer_rating":parseFloat(x.tomatometer_rating), 
+                "audience_rating":parseFloat(x.audience_rating), 
+                "audience_count":parseFloat(x.audience_count), 
+                "tomatometer_fresh_critics_count":parseInt(x.tomatometer_fresh_critics_count), 
+                "tomatometer_rotten_critics_count":parseInt(x.tomatometer_rotten_critics_count)
+                }
+            }
+        )
+    }
+) ;
+
+# or alternatively:
+
+db.movie.updateMany({}, 
+    {"$set":{
+        "runtimeMinutes":parseInt(x.runtimeMinutes),
+        "year":parseInt(x.year), 
+        "tomatometer_rating":parseFloat(x.tomatometer_rating), 
+        "audience_rating":parseFloat(x.audience_rating), 
+        "audience_count":parseFloat(x.audience_count), 
+        "tomatometer_fresh_critics_count":parseInt(x.tomatometer_fresh_critics_count), 
+        "tomatometer_rotten_critics_count":parseInt(x.tomatometer_rotten_critics_count)
+        }
+    }
+);
+```
+
+#### review_date parsing
+```js
+db.movie.find().forEach(
+    m => {
+        print(m.primaryTitle);
+        m.review.forEach(
+            r => {
+                r.review_date = new Date(r.review_date);
+                db.movie.updateOne(
+                    {
+                        _id: m._id, 
+                        "review.critic_name": r.critic_name
+                    },
+                    {
+                        $set: {"review.$.review_date": r.review_date}
+                    }
+                );
+            }
+        );
+    }
+)
+```
+### Movies URL poster generation 
+```js
+total = db.movie.find().count();
+i = 0;
+db.movie.find().forEach(
+    x => {
+        print(x.primaryTitle);
+        reg=new RegExp("^"+x.primaryTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')+"$", "i");
+        //print(reg);
+        h=db.testPoster.find({title: {$regex:  reg} }).toArray();
+        if(h[0]!=null){
+            //print(h[0].poster);
+            url=h[0].poster;
+        }
+        else {
+            url="images/poster_not_found.jpg";
+        }
+        //print(url);
+        
+        db.movie.updateOne(
+            {primaryTitle:x.primaryTitle},
+            {$set:{"poster_url": url}}
+        )
+        
+        print(100*i++/total);   
+});
+```
+
+`r.review_date = new Date(r.review_date + "T00:00:00Z");`
+
+---
 
 ```sql
-SELECT COUNT(test.primary_title)
-FROM test
-WHERE test.review.critic_name = "$x"
+SELECT COUNT(movie.primary_title)
+FROM movie
+WHERE movie.review.critic_name = "$x"
 ```
 translates to
 
 ```
-db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(
+db.runCommand({ distinct: "movie", key: "review.critic_name" }).values.forEach(
     (x) => {
         print(x, 
-            db.test.find(
+            db.movie.find(
                 { "review.critic_name": x }, 
                 { primaryTitle: 1, _id:0 }
             ).count() 
@@ -298,18 +513,19 @@ db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(
 )
 ```
 
+#### get all reviewed movies for each user
 ```sql
-SELECT test._id
-FROM test
-WHERE test.review.critic_name = "$x"
+SELECT movie._id
+FROM movie
+WHERE movie.review.critic_name = "$x"
 ```
 translates to
 
 ```
-db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(
+db.runCommand({ distinct: "movie", key: "review.critic_name" }).values.forEach(
     (x) => {
         print(x, 
-            db.test.find(
+            db.movie.find(
                 { "review.critic_name": x }, 
                 { _id:1 }
             )
@@ -320,11 +536,11 @@ db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(
 
 checkpoint
 ```
-db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(x => {
-    db.test.find(
+db.runCommand({ distinct: "movie", key: "review.critic_name" }).values.forEach(x => {
+    db.movie.find(
         { "review.critic_name": x }, { primaryTitle: 1, _id:0 }
     ).forEach(y => {
-        db.test.find(
+        db.movie.find(
             {primaryTitle: y.primaryTitle}, 
             {"review.critic_name": 1} 
         ).review.forEach(z =>{
@@ -334,13 +550,37 @@ db.runCommand({ distinct: "test", key: "review.critic_name" }).values.forEach(x 
     }) 
 })
 ```
+
+```
+i = 0;
+total = db.movie.find().count();
+db.movie.find().forEach(
+    x => {
+        i++;
+        print(100 * i/total)
+})
+```
+
+#### split first_name and last name from username
+```js
+i = 0;
+db.runCommand({distinct: "movie", key: "review.critic_name"}).values.forEach(
+    x => {
+        name_parts = x.split(/[^.]\s/)
+        first_name = name_parts.splice(0, 1)[0]
+        last_name = name_parts.join(' ')
+        print(100*i++/total, first_name, ':', last_name)
+    }
+)
+```
+
 #### for each user get their review for each reviewed movie
-```py 
+```js 
 db.runCommand(
-{ distinct: "test", key: "review.critic_name" }).values.forEach(
+{ distinct: "movie", key: "review.critic_name" }).values.forEach(
     (x) => {
         print(x)
-        db.test.aggregate(
+        db.movie.aggregate(
             [
                 { $project: 
                     {
@@ -349,7 +589,7 @@ db.runCommand(
                 {$match:{index:{$gt:-1}}}
             ]
         ).forEach(y => {
-            db.test.aggregate([
+            db.movie.aggregate([
                 {
                     $project:
                     {
@@ -370,10 +610,225 @@ db.runCommand(
 
 next step: create new new user in `forEach(x)`, then append found aggregated review to list of reviews for that user
 
+#### get if user is top_critic from all its reviews
+```js 
+i = 0;
+db.runCommand(
+{ distinct: "movie", key: "review.critic_name" }).values.forEach(
+    (x) => {
+        is_top = false
+        db.movie.aggregate(
+            [
+                { $project: 
+                    {
+                        index: { $indexOfArray: ["$review.critic_name", x]}
+                    }},
+                {$match:{index:{$gt:-1}}}
+            ]
+        ).forEach(y => {
+            is_top |= db.movie.aggregate([
+                {
+                    $project:
+                    {
+                        is_top_critic: {
+                            $arrayElemAt: ["$review.top_critic", y.index]
+                        }
+                    }
+                },
+                {
+                    $match:{_id:{$eq:y._id}}
+                }
+            ]).toArray()[0].is_top_critic
+        })
+        print(100*i++/total, x, is_top)
+    }   
+)
+                
+```
+
+```js 
+db.runCommand(
+{ distinct: "movie", key: "review.critic_name" }).values.forEach(
+    (x) => {
+        arr = []
+        db.movie.aggregate(
+            [
+                { $project: 
+                    {
+                        index: { $indexOfArray: ["$review.critic_name", x]}
+                    }},
+                {$match:{index:{$gt:-1}}}
+            ]
+        ).forEach(
+            y => {
+                arr.push(db.movie.aggregate([
+                    {
+                        $project:
+                        {
+                            movie_id: 1,
+                            top_critic: {
+                                $arrayElemAt: ["$review.top_critic", y.index]
+                            },
+                            critic_name: {
+                                $arrayElemAt: ["$review.critic_name", y.index]
+                            },
+                            review_type: {
+                                $arrayElemAt: ["$review.review_type", y.index]
+                            },
+                            review_score: {
+                                $arrayElemAt: ["$review.review_score", y.index]
+                            },
+                            review_date: {
+                                $arrayElemAt: ["$review.review_date", y.index]
+                            },
+                            review_content: {
+                                $arrayElemAt: ["$review.review_content", y.index]
+                            }
+                        }
+                    },
+                    {
+                        $match:{_id:{$eq:y._id}}
+                    }
+                ]).toArray()[0])
+            })
+        print(x, arr)
+    }   
+)
+                
+```
+
+### user creation
+```js
+total = db.runCommand({ distinct: "movie", key: "review.critic_name", query: {"review.critic_name":{$ne:null}}}).values.length
+i = 0;
+db.runCommand(
+{ distinct: "movie", key: "review.critic_name", query: {"review.critic_name":{$ne:null}}}).values.forEach(
+    (x) => {
+        review_arr = []
+        movie_arr = []
+        is_top = false
+        db.movie.aggregate(
+            [
+                { $project: 
+                    {
+                        index: { $indexOfArray: ["$review.critic_name", x]},
+                        primaryTitle: 1
+                    }},
+                {$match:{index:{$gt:-1}}}
+            ]
+        ).forEach(
+            y => {
+                tmp = db.movie.aggregate([
+                    {
+                        $project:
+                        {
+                            top_critic: {
+                                $arrayElemAt: ["$review.top_critic", y.index]
+                            },
+                            primaryTitle: y.primaryTitle,
+                            review_type: {
+                                $arrayElemAt: ["$review.review_type", y.index]
+                            },
+                            review_score: {
+                                $arrayElemAt: ["$review.review_score", y.index]
+                            },
+                            review_date: {
+                                $arrayElemAt: ["$review.review_date", y.index]
+                            },
+                            review_content: {
+                                $arrayElemAt: ["$review.review_content", y.index]
+                            }
+                        }
+                    },
+                    {
+                        $match:{_id:{$eq:y._id}}
+                    }
+                ]).toArray()[0];
+                is_top |= tmp.top_critic;
+                review_arr.push(tmp)
+                //movie_arr.push(tmp._id)
+                movie_arr.push({"movie_id": tmp._id, "primaryTitle": y.primaryTitle, "review_index": y.index})
+            })
+
+        name_parts = x.split(/\s/)
+        first_name = name_parts.splice(0, 1)[0]
+        last_name = name_parts.join(' ')
+
+        print(100*i++/total, x, is_top)
+        //print(first_name, ':', last_name)
+        //print(review_arr)
+        //print(movie_arr)
+        db.user.insertOne(
+            {
+                "username": x,
+                "password": "",
+                "first_name": first_name,
+                "last_name": last_name,
+                "registration_date": new Date("2000-01-01"),
+                "last_3_reviews": review_arr,
+                "reviews" : movie_arr
+            }
+        );
+        if (!is_top){
+            db.user.updateOne(
+                {"username": x},
+                {$set: 
+                    {"date_of_birth": new Date("1970-07-20")}
+                }
+            )
+        }
+        print("================================")
+    }   
+)
+                
+```
+### user date generation
+```js
+total = db.user.find().count();
+i = 0;
+
+db.user.find().forEach(
+    x => {
+        print(x.username);
+        dayOfBirth=Math.floor(Math.random() * (28) + 1); // (max - min +1)+min
+        monthOfBirth=Math.floor(Math.random() * (12) + 1);
+        yearOfBirth=Math.floor(Math.random() * (37) + 1970); // 2006 - 1970 + 1
+        date=new Date(yearOfBirth,monthOfBirth,dayOfBirth);
+        date.setUTCHours(0,0,0,0);
+        
+        db.user.updateOne(
+            {"username": x.username,
+            "date_of_birth" : {$exists:true} },
+            { $set: { "date_of_birth" : date } }
+        )
+        
+        startyear=yearOfBirth+16;
+        yearOfSubScription=Math.floor(Math.random() * (2023 - startyear) + startyear); // 2022 - startyear + 1
+        monthOfSubScription=Math.floor(Math.random() * (12) + 1);
+        dayOfSubScription=Math.floor(Math.random() * (28) + 1);
+        date=new Date(yearOfSubScription,monthOfSubScription,dayOfSubScription);
+        date.setUTCHours(0,0,0,0);
+        
+        db.user.updateOne(
+            {"username": x.username},
+            {$set: 
+                {"registration_date": date}
+            }
+        );
+        
+        print(100*i++/total);
+    }
+);
+```
+
+#### modify users date_of_birth  
+```js
+db.user.updateMany({"date_of_birth":{$exists:true}}, {$set: {"date_of_birth": new Date("1970-07-20")}} )
+```
 #### an imposter (find the error)
 
-```py
-db.test.find().forEach(
+```js
+db.movie.find().forEach(
     x => {
         x.review = JSON.parse(
             x.review.replaceAll('"\'', '"')
@@ -405,7 +860,7 @@ db.test.find().forEach(
                     .replaceAll("##single-quote##", "\'")
                     .replaceAll("##double-quote##", '\\"')
         );
-        db.test.updateOne(
+        db.movie.updateOne(
             {"_id": x._id}, 
             {$set: 
                 {
@@ -419,10 +874,10 @@ db.test.find().forEach(
 );
 ```
 
-### another test
+### another movie
 
-```py
-db.test.find().forEach(
+```js
+db.movie.find().forEach(
     x => {
         print(x.review);
         x.review = JSON.parse(
@@ -459,8 +914,8 @@ db.test.find().forEach(
 
 ## final script (this works on head)
 
-```py
-db.test.find().forEach(
+```js
+db.movie.find().forEach(
     x => {
         x.review = JSON.parse(
             x.review.replaceAll('"\'', '"')
@@ -487,7 +942,7 @@ db.test.find().forEach(
                     .replaceAll("##single-quote##", "\'")
                     .replaceAll("##double-quote##", '\\"')
         );
-        db.test.updateOne(
+        db.movie.updateOne(
             {"_id": x._id}, 
             {$set: 
                 {
