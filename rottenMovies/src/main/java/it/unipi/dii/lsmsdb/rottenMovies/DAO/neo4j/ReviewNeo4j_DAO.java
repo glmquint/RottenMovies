@@ -92,7 +92,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
      */
     public MovieReviewBombingDTO checkReviewBombing(Movie movie, int month) throws  DAOException{
         MovieReviewBombingDTO reviewBombingList = new MovieReviewBombingDTO();
-        if(movie.getPrimaryTitle().isEmpty() || month <= 0){
+        if(movie.getId()==null || month <= 0){
             return reviewBombingList;
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -107,8 +107,8 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
                     "/SUM(CASE WHEN r.date<date(\""+strDate+"\") THEN 1 ELSE 0 END) as StoricRate, " +
                     "SUM(CASE WHEN r.date>=date(\""+strDate+"\") AND r.date<date(\""+todayString+"\") THEN 1 ELSE 0 END) as TargetCount, " +
                     "100*toFloat(SUM(CASE WHEN r.date>=date(\""+strDate+"\") AND r.date<date(\""+todayString+"\") AND r.freshness = true THEN 1 ELSE 0 END))" +
-                    "/SUM(CASE WHEN r.date>=date(\""+strDate+"\") AND r.date<date(\""+todayString+"\") THEN 1 ELSE 0 END) as TargetRate " +
-                    "RETURN StoricCount, StoricRate, TargetCount, TargetRate";
+                    "/SUM(CASE WHEN r.date>=date(\""+strDate+"\") AND r.date<date(\""+todayString+"\") THEN 1 ELSE 0 END) as TargetRate, m.title as Title " +
+                    "RETURN Title, StoricCount, StoricRate, TargetCount, TargetRate";
             Result result=null;
             try{
                 result=tx.run(query, parameters("movieId", movie.getId().toString(),
@@ -118,7 +118,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
                 return null;
             }
             MovieReviewBombingDTO feed = new MovieReviewBombingDTO(
-                    movie.getPrimaryTitle(),
+                    result.peek().get("Title").asString(),
                     result.peek().get("StoricCount").asInt(),
                     (int)result.peek().get("StoricRate").asDouble(),
                     result.peek().get("TargetCount").asInt(),

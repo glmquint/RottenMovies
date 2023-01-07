@@ -169,7 +169,7 @@ public class AppController {
                 return "index";
             }
             if(hm.getOrDefault("admin_operation", "").equals("reviewBombing")){
-                String urlPath = "/review-bombing/"+hm.getOrDefault("title", "");
+                String urlPath = "/review-bombing/"+mid;
                 model.addAttribute("redirect", urlPath);
                 return "movie";
             }
@@ -467,10 +467,10 @@ public class AppController {
         return "feed";
     }
 
-    @GetMapping("/review-bombing/{primaryTitle}")
+    @GetMapping("/review-bombing/{mid}")
     public String checkReviewBombing (Model model,
                                       HttpServletRequest request,
-                                      @PathVariable(value = "primaryTitle") String primaryTitle,
+                                      @PathVariable(value = "mid") String mid,
                                       @RequestParam(value = "month_count", defaultValue = "36") int month_count,
                                       HttpSession session) {
         if (!(session.getAttribute("credentials") instanceof AdminDTO)) {
@@ -480,14 +480,13 @@ public class AppController {
             month_count = 24;
         }
         AdminService adminService = new AdminService();
-        System.out.println(primaryTitle);
         Movie movie = new Movie();
-        movie.setPrimaryTitle(primaryTitle);
+        movie.setId(new ObjectId(mid));
         MovieReviewBombingDTO movieReviewBombingDTO = adminService.checkReviewBombing(movie, month_count);
         if (movieReviewBombingDTO == null) {
             model.addAttribute("error", "No reviews were made in the last "+ month_count +" months. Please try with higher month number");
         }
-        model.addAttribute("reviewBombing", adminService.checkReviewBombing(movie, month_count));
+        model.addAttribute("reviewBombing", movieReviewBombingDTO);
         model.addAttribute("month_count", month_count);
         return "review-bombing";
     }

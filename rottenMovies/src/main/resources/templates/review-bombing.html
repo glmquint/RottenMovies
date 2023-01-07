@@ -49,12 +49,12 @@
     <div class="alert alert-danger" role="alert" th:if="${error}" th:text="${error}">
         A simple success alert—check it out!
     </div>
-    <form class="input-group">
-        <div class="row">
-            <label for="min_month_count">Insert the number of month</label>
-            <input class="form-control" type="number" id="min_month_count" name="month_count" min="24" step="1" th:value="${month_count}?${month_count}:'36'" aria-describedby="search-addon">
+    <form>
+        <label for="ingroup">Insert the number of month</label>
+        <div id="ingroup" class="input-group mb-3">
+            <input type="number" id="min_month_count" name="month_count" min="24" step="1" th:value="${month_count}?${month_count}:'36'" class="form-control" placeholder="36" aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
         </div>
-            <button class="btn btn-outline-secondary" id="search-addon" type="submit">Submit</button>
     </form>
     <table class="table">
         <thead>
