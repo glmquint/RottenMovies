@@ -121,7 +121,7 @@
 
                                   <button class="w-10 mx-2 btn btn-lg btn-primary" type="submit" name="admin_operation" value="update">Update</button>
                                   <button class="w-10 mx-2 btn btn-lg btn-danger" type="submit" name="admin_operation" value="delete">Delete</button>
-                                  <button class="w-10 mx-2 btn btn-lg btn-warning" type="submit" name="admin_operation" value="reviewBombing">Check Review Bombing</button>
+                                  <a class="w-10 mx-2 btn btn-lg btn-warning" th:href="|/review-bombing/${movie.id}|">Check Review Bombing</a>
                               </form>
                           </div>
                           <div th:unless="${(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
@@ -151,6 +151,10 @@
                                           </div>
                                       </div>
                                   </div>
+                                  <form>
+                                      <input type="hidden" name="title" th:value="${movie.primaryTitle}">
+                                      <button class="btn btn-success" type="submit" name="user_operation" value="user_operation">Review</button>
+                                  </form>
                               </div>
                           </div>
                       </div>

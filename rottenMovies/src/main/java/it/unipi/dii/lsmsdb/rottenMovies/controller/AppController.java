@@ -192,48 +192,49 @@ public class AppController {
         HashMap<String, String> hm = extractRequest(request);
         System.out.println(hm);
         MovieService movieService = new MovieService();
+        UserService userService = new UserService();
         boolean result = false;
+        if (page < 0){
+            page = 0;
+        }
+
         if (hm.containsKey("admin_operation")){
             if (credentials == null || !(credentials instanceof AdminDTO)) {
                 model.addAttribute("error", "this operation isn't permitted to non-admin users");
                 return "index";
             }
-            if(hm.getOrDefault("admin_operation", "").equals("reviewBombing")){
-                String urlPath = "/review-bombing/"+hm.getOrDefault("title", "");
-                model.addAttribute("redirect", urlPath);
-                return "movie";
-            }
+//            if(hm.getOrDefault("admin_operation", "").equals("reviewBombing")){
+//                String urlPath = "/review-bombing/"+hm.getOrDefault("title", "");
+//                model.addAttribute("redirect", urlPath);
+//                return "movie";
+//            }
             result = movieService.modifyMovie(mid, hm);
             if (result){
                 model.addAttribute("success", "movie successfully updated");
             } else {
                 model.addAttribute("error", "error while updating movie");
             }
-        }
-        else if (hm.containsKey("critic_operation")){
+        } else if (hm.containsKey("critic_operation")){
             result = movieService.modifyReview(mid, hm, credentials);
             if (result){
                 model.addAttribute("success", "review successfully updated");
             } else {
                 model.addAttribute("error", "error while updating review");
             }
-        }
-        if (page < 0){
-            page = 0;
-        }
-
-        hm = extractRequest(request);
-        if(hm.containsKey("view")){
-            UserService userService = new UserService();
+        } else if (hm.containsKey("user_operation")) {
+            ArrayList<Object> movieAndIndex = userService.getReviewIndex(credentials.getId(), hm.getOrDefault("title", ""));
+            if (movieAndIndex == null || movieAndIndex.size() != 2) {
+                // create new review
+            } else {
+                model.addAttribute("redirect", "/movie/" + movieAndIndex.get(0) + "/" + movieAndIndex.get(1));
+            }
+        } else if(hm.containsKey("view")){
             RegisteredUserDTO topCritic = userService.getUserByUsername(hm.get("view"));
             model.addAttribute("go_to_user", topCritic.getId().toString());
-        }
-
-        model.addAttribute("movie", movieService.getMovie(page, mid, -1));
-        model.addAttribute("page", page);
-        model.addAttribute("credentials", session.getAttribute("credentials"));
-        if (hm.getOrDefault("admin_operation", "").equals("delete")){
-            model.addAttribute("redirect", "/movie");
+        } else {
+            model.addAttribute("movie", movieService.getMovie(page, mid, -1));
+            model.addAttribute("page", page);
+            model.addAttribute("credentials", session.getAttribute("credentials"));
         }
         return "movie";
     }
