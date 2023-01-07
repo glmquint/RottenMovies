@@ -11,17 +11,22 @@
 <header th:replace="header :: html_header"></header>
 <div class="container">
     <form>
-    <label for="sort">Sort By</label>
-        <div class="col input-group">
-            <select id="sort" name="sort" class="form-select" aria-label="Sort By">
-                <option value="top_critic" th:selected="${sort}=='top_critic'">top critic rating</option>
-                <option value="user" th:selected="${sort}=='user'">user rating</option>
-            </select>
-            <button class="btn btn-outline-secondary" id="search-addon" type="submit">Search</button>
+        <div class="row">
+            <div class="col">
+                <label for="sort">Sort By</label>
+                <select id="sort" name="sort" class="form-select" aria-label="Sort By">
+                    <option value="top_critic" th:selected="${sort}=='top_critic'">Top Critic rating</option>
+                    <option value="user" th:selected="${sort}=='user'">User rating</option>
+                </select>
+            </div>
+            <div class="col">
+                <label for="min_movie_count">Minimum number of movies per genre</label>
+                <div class="col input-group">
+                    <input type="number" class="form-control" id="min_movie_count" name="min_movie_count" min="5" step="1" th:value="${min_movie_count}?${min_movie_count}:'5'">
+                    <button class="btn btn-outline-secondary" id="search-addon" type="submit">Search</button>
+                </div>
+            </div>
         </div>
-        <label for="min_movie_count">Minimum number of movies per genre</label>
-        <input type="number" id="min_movie_count" name="min_movie_count" min="5" step="1" th:value="${min_movie_count}?${min_movie_count}:'5'">
-
     </form>
     <table class="table">
         <thead>

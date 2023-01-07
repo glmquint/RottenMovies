@@ -206,7 +206,7 @@
                   <b class="col-3 mx-2" th:text="|${review.criticName} (| + ${#dates.format(review.reviewDate, 'yyyy-MM-dd')} + ')'">autore</b>
                   <div class="col-3" th:if="${review.topCritic}">
                       <form method="post">
-                          <button type="submit" class="button" name="view" th:value="${review.criticName}">View Profile</button>
+                          <button type="submit" class="btn btn-primary" name="view" th:value="${review.criticName}">View Profile</button>
                       </form>
                   </div>
                   <div class="col-3 text-danger" th:text="${review.topCritic}?'Top Critic ★':''">Top Critic ★</div>
