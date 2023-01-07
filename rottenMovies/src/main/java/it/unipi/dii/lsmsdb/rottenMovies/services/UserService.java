@@ -3,11 +3,8 @@ package it.unipi.dii.lsmsdb.rottenMovies.services;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
-import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
-import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
-import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptionsEnum;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
@@ -15,10 +12,6 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.MD5;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.models.*;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -183,5 +176,36 @@ public class UserService {
             System.out.println(e);
         }
         return reviewFeedDTO;
+    }
+
+    public PageDTO<TopCriticSuggestionDTO> getTopCriticSuggestions (User usr, int page) {
+        PageDTO<TopCriticSuggestionDTO> topCriticSuggestionDTO = new PageDTO<>();
+        ArrayList<TopCriticSuggestionDTO> topCriticSuggestionPages = new ArrayList<>();
+        try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)) {
+            topCriticSuggestionPages = userDAO.getSuggestion(usr, page);
+            topCriticSuggestionDTO.setEntries(topCriticSuggestionPages);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return topCriticSuggestionDTO;
+    }
+
+    public int getFollowers(String id){
+        TopCritic topCritic = new TopCritic();
+        topCritic.setId(new ObjectId(id));
+        try(BaseUserDAO baseUserDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
+            return baseUserDAO.getNumberOfFollowers(topCritic);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return -1;
+    }
+    public ArrayList<Object> getReviewIndex(ObjectId userid, String primaryTitle){
+        try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.MONGO)) {
+            return reviewdao.getIndexOfReview(userid,primaryTitle);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return null;
     }
 }

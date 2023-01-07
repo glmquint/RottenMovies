@@ -101,53 +101,19 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         return true;
     }
     */
-    /**
-     * <method>getMostReviewUser</method>
-     * @return a list of  5 of user non-top critic with the most review made
-     * @throws DAOException
-     */
-    @Override
-    public ArrayList<UserDTO> getMostReviewUser() throws DAOException {
-        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
-        ArrayList<UserDTO> userList = session.readTransaction((TransactionWork<ArrayList<UserDTO>>) tx ->{
-            String query = "MATCH (u:User)-[:REVIEWED]->(m:Movie) " +
-                    "RETURN u.name AS Name, count(*) as NumMovies " +
-                    "ORDER BY NumMovies DESC " +
-                    "LIMIT 5";
-            Result result = tx.run(query);
-            ArrayList<UserDTO> list = new ArrayList<>();
-            while(result.hasNext()){
-                Record r = result.next();
-                UserDTO user = new UserDTO();
-                user.setUsername(r.get("Name").asString());
-                list.add(user);
-            }
-            return list;
-        });
-        return userList;
-    }
 
-    /**
-     * <method>getMostFollowedCritic</method>
-     * @return the top critic user with the most followers
-     * @throws DAOException
-     */
-    @Override
-    public TopCriticDTO getMostFollowedCritic() throws DAOException{
+    public int getNumberOfFollowers(TopCritic topCritic) throws DAOException{
         Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
-        TopCritic topCritic = new TopCritic();
-        String mostFollowedCritic = session.readTransaction((TransactionWork<String>) tx ->{
-            String query = "MATCH (t:TopCritic)<-[:FOLLOWS]-(u:User) " +
-                    "RETURN t.name AS Name, count(*) as NumMovies " +
-                    "ORDER BY NumMovies DESC " +
-                    "LIMIT 1";
-            Result result = tx.run(query);
+        int numberOfFollowers = session.readTransaction((TransactionWork<Integer>) tx ->{
+            String query = "MATCH (t:TopCritic{id:$id})<-[:FOLLOWS]-() " +
+                    "RETURN count(*) as NumFollowers";
+            Result result = tx.run(query, parameters("id", topCritic.getId().toString()));
             System.out.println(result.peek().get("NumMovies"));
-            return result.single().get("Name").asString();
+            return result.single().get("NumFollowers").asInt();
 
         });
-        topCritic.setUsername((mostFollowedCritic));
-        return new TopCriticDTO(topCritic);
+
+        return numberOfFollowers;
     }
 
     /**
@@ -258,7 +224,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
      * @throws DAOException
      */
     @Override
-    public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException{
+    public ArrayList<TopCriticSuggestionDTO> getSuggestion(User usr, int page) throws DAOException{
         if(usr.getId().toString().isEmpty() || page<0){
             return null;
         }
@@ -361,5 +327,8 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
+    public void queryBuildExcludeAdmin() throws DAOException{
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
+    }
 
 }

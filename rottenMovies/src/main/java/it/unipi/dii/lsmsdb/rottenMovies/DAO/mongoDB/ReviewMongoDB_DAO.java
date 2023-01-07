@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoException;
-import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.UpdateResult;
@@ -12,7 +11,6 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieReviewBombingDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewFeedDTO;
 
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
@@ -23,10 +21,11 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.*;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
+
 import java.util.ArrayList;
 import java.util.*;
 
-import static com.mongodb.client.model.Accumulators.sum;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.*;
 import static com.mongodb.client.model.Updates.popFirst;
@@ -332,6 +331,31 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             }
         }
         return true;
+    }
+
+    @Override
+    public ArrayList<Object> getIndexOfReview(ObjectId userid, String primaryTitle) {
+        MongoCollection <Document> userCollection = getUserCollection();
+        ArrayList<Object> movieAndIndex = new ArrayList<>();
+        Bson projection = Projections.fields( excludeId(), elemMatch("reviews", eq("primaryTitle", primaryTitle)));
+        Document doc= userCollection.find(eq("_id",userid)).projection(projection).first();
+        Object obj = doc.get("reviews");
+        Document doc2 = null;
+        if (obj instanceof ArrayList) {
+            ArrayList<?> dboArrayNested = (ArrayList<?>) obj;
+            Object dboNestedObj = dboArrayNested.get(0);
+            if (dboNestedObj instanceof Document) {
+                doc2= (Document) dboNestedObj;
+            }
+            else
+                return movieAndIndex;
+        }
+        else {
+            return movieAndIndex;
+        }
+        movieAndIndex.add(doc2.get("movie_id"));
+        movieAndIndex.add(doc2.getInteger("review_index"));
+        return movieAndIndex;
     }
 
     public MovieReviewBombingDTO checkReviewBombing(Movie movie, int month) throws DAOException{
