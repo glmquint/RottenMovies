@@ -262,6 +262,18 @@ public class AppController {
             page = 0;
         }
         HashMap<String, String> hm = extractRequest(request);
+        if(hm.containsKey("user_operation")){
+            boolean result;
+            if(hm.containsKey("birthday"))
+                result = userService.modifyUser(uid, hm, false);
+            else
+                result = userService.modifyUser(uid, hm, true);
+            if (result){
+                model.addAttribute("success", "profile successfully updated");
+            } else {
+                model.addAttribute("error", "error while updating profile");
+            }
+        }
         if(hm.containsKey("ban")){
            AdminService adminService = new AdminService();
            if(adminService.setBannedStatus(uid, true)){
