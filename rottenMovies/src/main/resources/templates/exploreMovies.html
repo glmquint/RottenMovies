@@ -108,17 +108,21 @@
                     </div>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
-                      <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                      <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                        <form th:if="${credentials}" th:action="|/movie/${movie.id}">
+                            <input type="hidden" name="title" th:value="${movie.primaryTitle}">
+                            <input type="hidden" name="movieId" th:value="${movie.id}">
+                            <button class="btn btn-success" type="submit" name="user_operation" value="user_operation">Review</button>
+                        </form>
+                        <a th:unless="${credentials}" class="btn btn-outline-success" href="/login">Login to Review</a>
                     </div>
-                    <small class="text-muted">9 mins</small>
+                    <small class="text-muted" th:text="|${movie.runtimeMinutes} mins|">9 mins</small>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div th:replace="infoBox :: html_infoBox">
+        <div th:replace="infoBox :: html_infoBox"></div>
 
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
