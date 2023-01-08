@@ -24,7 +24,7 @@
                         <input type="hidden" name="movieTitle" th:value="${review.movieTitle}">
                         <button type="submit" class="btn btn-primary">Read full review</button>
                     </form>
-                    <div class="col mx-4" th:text="${review.reviewDate}?|Date: “${review.reviewDate}”|:''">contenuto lungo contenuto lungo contenuto lungocontenuto lungo contenuto lungo</div>
+                    <div class="col mx-4" th:text="${review.reviewDate}?|Date: “${#dates.format(review.reviewDate, 'yyyy-MM-dd')}”|:''">18/11/2022</div>
                 </div>
             </div>
         </div>
