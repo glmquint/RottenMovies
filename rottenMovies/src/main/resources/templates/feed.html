@@ -14,7 +14,7 @@
     <div th:replace="infoBox :: html_infoBox"></div>
     <div th:each="review:${feed}">
         <div class="row">
-            <b class="col mx-2" th:text="${review.movieTitle}">Movie</b>
+            <a class="col mx-2 fw-bold" th:text="${review.movieTitle}" th:href="|/movie/${review.movieId}|">Movie</a>
             <a class="col mx-2" th:text="${review.criticName}" th:href="'/user/'+ ${review.criticId}">username</a>
             <div class="p-1 mb-4 rounded-3 shadow-sm bg-opacity-10" th:classappend="${review.freshness}?'bg-success':'bg-danger'">
                 <div class="row align-item-between py-2">
@@ -22,7 +22,7 @@
                     <form class="col-6">
                         <input type="hidden" name="critic_id" th:value="${review.criticId}">
                         <input type="hidden" name="movieTitle" th:value="${review.movieTitle}">
-                        <button type="submit" class="btn btn-primary">Read full review</button>
+                        <button type="submit" class="btn btn-outline-primary">Read full review</button>
                     </form>
                     <div class="col mx-4" th:text="${review.reviewDate}?|Date: “${#dates.format(review.reviewDate, 'yyyy-MM-dd')}”|:''">18/11/2022</div>
                 </div>
