@@ -1,0 +1,10 @@
+DatasetGenerator -- genera il dataset per imdb
+RottenGenerator -- genera il dataset per rottenTomatoes
+MergeImdbRotten -- genera il dataset joined dei 2 sopra
+PersonnelJson -- modifica il dataset per far stare il personel in una colonna
+the real one -- popola la movie collection come dio comanda
+dateNormalization -- normalize the date field for review
+movies url poster generation -- aggiunge l'url delle locandine
+user creation -- genera il dataset per user
+main.py -- genera le password per gli utenti
+doc2graph -- genera il db per neo4j

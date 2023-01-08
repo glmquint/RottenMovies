@@ -1,0 +1,39 @@
+\include{./../Preamble/preamble.tex}
+\begin{document}
+
+\begin{alphasection}
+\section{Python Code}\label{sec:pycode}
+\subsection{Creation of one single dataset from the tsv imdb file}\label{subsec:datasetGeneratorImdb}
+\lstinputlisting[language=Python]{./code/datasetgenerator.py}
+
+\subsection{Creation of one single dataset from the csv kaggle file}\label{subsec:datasetGeneratorRotten}
+\lstinputlisting[language=Python]{./code/rottengenerator.py}
+
+\subsection{Merging of the file generated in the previous script}\label{subsec:datasetMerge}
+\lstinputlisting[language=Python]{./code/mergeimdbrottendataset.py}
+
+\subsection{Collapsing different rows in a single one generating an array for personnel field}\label{subsec:datasetPersonnelCollapse}
+\lstinputlisting[language=Python]{./code/personelljson.py}
+
+\subsection{Generates a hashed password for all the users}\label{subsec:createUserPassword}
+\lstinputlisting[language=Python]{./code/createUserPassword.py}
+
+\subsection{Generates the graph database by randomly which user follows a top critic}\label{subsec:createGraphDB}
+\lstinputlisting[language=Python]{./code/createGraphDB.py}
+\newpage
+\section{Mongosh scripts}
+\subsection{Perform the escape on the string fields}\label{subsec:theOne}
+\lstinputlisting[language=JavaScript]{./code/theOne.js}
+
+\subsection{Normalize the date field in the DB}\label{subsec:dateNormalization}
+\lstinputlisting[language=JavaScript]{./code/dateNormalization.js}
+
+\subsection{Create a new collection for the user based on the data present in the movie collection}\label{subsec:userCreation}
+\lstinputlisting[language=JavaScript]{./code/userCreation.js}
+
+\section{matematica}\label{eq:pippo}
+\begin{equation}\label{pippo}
+x^2-5x+6=0
+\end{equation}
+\end{alphasection}
+\end{document}

@@ -23,5 +23,7 @@
 
 \include{./Feasibility Study/Feasibility_Study.tex}
 
+\include{./Appendix/appendix.tex}
+
 
 \end{document}

@@ -1,13 +1,13 @@
-\include{./../Preamble/preamble.tex}
+\include{./../Preamble/preamble}
 
 
 \begin{document}
 
 \chapter{Feasibility Study}
 \justifying
-The very first step to perform is to look up for what type of data we need to create the application and how to handle it by performing a feasibility study.
+The very first step was to perform is to look up for what type of data we need to create the application and how to handle it by performing a feasibility study.
 \section{Dataset analysis and creation}
-Initially we search online for available dataset, we ended up with five different files coming from Kaggle and imdb with a combined storage of 4.18 Gb:
+Initially we searched online for available dataset, we ended up with five different files coming from Kaggle and imdb with a combined storage of 4.18 GB:
 \begin{itemize}
   \item title\textunderscore principal.tsv  
   \item name\textunderscore basic.tsv 
@@ -18,72 +18,21 @@ Initially we search online for available dataset, we ended up with five differen
 \end{itemize} 
 \paragraph{}
 The first three were found on the imdb site containing general data about the title of the entries, type (not all were movies), cast, crew and other useful information. The last two came from Kaggle and they contain data scraped from the rotten tomatoes site regarding the movies rating and their reviews. All of these dataset were organized in a relational manner.
-\paragraph{}
-The next step was to delete all useless information and perform a join operation to generate one single final dataset for the document database. These operations were performed through a python script with the help of the pandas library and Google Colab, the end result was a single json file of 270 Mb. The structure of the document is the following:
-\\
-\begin{lstlisting}[language=json,firstnumber=1]
-{
-    "_id" : ObjectId(<<id_field>>),
-    "primaryTitle": "The first ever movie",
-    "year": 1989,
-    "runtimeMinutes": 70,
-    "genres": [
-        "Crime", "Drama", "Romantic"
-    ],
-    "productionCompany": "Dingo Picture Production" ,
-    "personnel": [
-        {
-            "name": "John Doe",
-            "category": "producer",
-            "job": "writer"
-        },
-        {
-            "name": "Christopher Lee",
-            "category": "actor",
-            "character": ["The one"]
-        },
-        ...
-    ],
-    "top_critic_fresh_count": "4",
-    "top_critic_rotten_count": 0,
-    "user_fresh_count": 14,
-    "user_rotten_count": 1,
-    "top_critic_rating": 100,
-    "top_critic_status": "Fresh",
-    "user_rating": 93,
-    "user_status": "Fresh", 
-    "review":
-    [ 
-        {
-            "author"        : "AntonyE",
-            "date"          : "2018-12-07",
-            "freshness"     : "Rotten",
-            "top_critic"    : flas,
-            "content"       : "I really didn't liked it!",
-            "vote"          : "1/10"
-        },
-        {
-            "author"        : "Albran",
-            "date"          : "2020-02-07",
-            "freshness"     : "Rotten",
-            "isTopReview"   : 0,
-            "content"       : "The director is a rat",
-            "vote"          : "E+"
-        },
-        {
-            "author"        : "MovieLiker2000",
-            "date"          : "2019-12-17",
-            "freshness"     : "Fresh",
-            "isTopReview"   : 0,
-            "content"       : "Really good paicing",
-            "vote"          : "4.5/5"
-        },
-        ...
-    ]
-    
+\subparagraph{Initial steps and creation of the movie collection}
+After a general look it was clear that we needed to process the data to obtain a less bloated dataset by deciding what to keep in base of our needs and specification; we decided to use python as programming language to trim the original file, this was also achieved through the use of Google Colab.
 
-}
+We started by taking all the tsv file and transforming them into a single file, we performed a join operation on all of them based on their id and then discarded the useless information. For the code see  \cref{subsec:datasetGeneratorImdb}. After that we performed the same operation on the csv file coming from Rotten Tomatoes \cref{subsec:datasetGeneratorRotten}. We then proceed to join the two files based on the title of the movies \cref{subsec:datasetMerge}.
 
-\end{lstlisting}
+Unfortunately we noticed that after the join there were more rows for the same movie, in fact, due to the relational nature of the first dataset, we had a different entry for personnel on each row, so we rollback to the start, but this time we collapsed all the information in a single row \cref{subsec:datasetPersonnelCollapse}.
 
+Due to the variability of the data in the string fields, like the content of the reviews, we decided to perform an escape on various elements to avoid crashes and failure during the import into the DBSM \cref{subsec:theOne}. We also had to do a similar process of normalization for the date fields \cref{subsec:dateNormalization}
+
+
+Finally we achieved our goal of having a json file for the movie collection, the file occupied a space of 270MB.
+
+\subparagraph{Creation of the user collection}
+The following step was to generate a collection for the user, this was achieved by starting from the movie one and for each different review author we generated a document later to be placed in a single json file of which the total storage size was 86,6 MB, this step was performed directly on the mongo shell \cref{subsec:userCreation}. 
+
+\section{Analysis result}
+With the dataset for the document database ready we finally had a better understanding on how to shape the models and the relative functionality in the application code. We will discuss later of the design of the collections and the methods used to interact with them. The same goes for the graph database of whom the structure was heavily influenced by the one in the MongoDB
 \end{document}
