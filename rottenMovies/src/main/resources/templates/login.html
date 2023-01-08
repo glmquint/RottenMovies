@@ -14,43 +14,12 @@
 </head>
 <body>
 
-<header>
-  <div class="collapse bg-dark" id="navbarHeader">
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-8 col-md-7 py-4">
-          <h4 class="text-white">Explore</h4>
-          <p class="text-muted">Explore our vast catalogue of movies and leave a review</p>
-        </div>
-        <div class="col-sm-4 offset-md-1 py-4">
-          <h4 class="text-white">Links</h4>
-          <ul class="list-unstyled">
-            <li><a href="/login" class="text-white">Login</a></li>
-            <li><a href="/" class="text-white">Home</a></li>
-            <li th:if="${credentials}" th:text="|Hi ${credentials.username}|"></li>
-            <li><a href="/logout" class="text-white">Logout</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="navbar navbar-dark bg-dark shadow-sm">
-    <div class="container">
-      <a href="/" class="navbar-brand d-flex align-items-center">
-        <img class="me-2" src="/images/icon.png" width="30" height="30">
-        <strong>rotten Movies</strong>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    </div>
-  </div>
-</header>
+<header th:replace="header :: html_header"></header>
 <div  class="text-center">
   <script th:if="${credentials}">window.location.assign("/movie");</script>
   <main class="form-signin w-100 m-auto">
     <form method="post">
-      <img class="me-2" src="/images/icon.png" width="30" height="30">
+      <img class="mb-4" src="images/logo.png" alt="" width="72" height="100">
       <h1 class="h3 mb-3 fw-normal">Please login</h1>
 
       <div class="form-floating">
@@ -67,7 +36,7 @@
       <!--            <input type="checkbox" value="remember-me"> Remember me-->
       <!--            </label>-->
       <!--        </div>-->
-      <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
+      <button class="w-100 btn btn-lg btn-primary my-4" type="submit">Login</button>
       <a href="/register">Don't have an account? Register</a>
       <p class="mt-5 mb-3 text-muted">© 2017–2022</p>
     </form>
