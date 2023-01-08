@@ -229,12 +229,12 @@
               </div>
 
           </form>
-          <div th:each="review:${movie.reviews}">
+          <div th:each="review:${movie.reviews}" th:unless="${review.criticName}=='Deleted Review'">
               <div class="row align-start">
                   <b class="col-3 mx-2" th:text="|${review.criticName} (| + ${#dates.format(review.reviewDate, 'yyyy-MM-dd')} + ')'">autore</b>
                   <div class="col-3" th:if="${review.topCritic}">
-                      <form method="post">
-                          <button type="submit" class="btn btn-primary" name="view" th:value="${review.criticName}">View Profile</button>
+                      <form method="post" th:action="|/movie/${movie.id}">
+                          <button type="submit" class="btn btn-outline-primary" name="view" th:value="${review.criticName}">View Profile</button>
                       </form>
                   </div>
                   <div class="col-3 text-danger" th:text="${review.topCritic}?'Top Critic ★':''">Top Critic ★</div>

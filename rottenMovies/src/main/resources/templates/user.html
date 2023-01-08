@@ -35,7 +35,7 @@
                                 </form>
                             </div>
                         </div>
-                        <div class="col-md-8 fs-4" th:text="'Registration Date: '+${#dates.format(user.registrationDate, 'yyyy-MM-dd')}">Registration Date</div>
+                        <div class="col-md-8" th:text="'Registration Date: '+${#dates.format(user.registrationDate, 'yyyy-MM-dd')}">Registration Date</div>
                         <div th:switch="${user.class.name}">
                             <a th:case="'it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO'" th:text="'Top Critic *'">Top</a>
                             <a th:case="*" th:text="'Normal User'">Normal</a>
@@ -61,7 +61,7 @@
                     </div>
                 </div>
             </div>
-            <div class="he text-center">Reviews:</div>
+            <div class="he text-center">Most recent Reviews:</div>
             <div th:each="review:${user.last3Reviews}">
                 <div class="row">
                     <a class="col mx-2" th:text="|${review.movie} (| + ${#dates.format(review.reviewDate, 'yyyy-MM-dd')} + ')'" th:href="'/movie/'+${review.movie_id}">autore</a>
@@ -73,7 +73,7 @@
                     </div>
                </div>
             </div>
-            <div class="he text-center">Other reviews:</div>
+            <div class="he text-center">All reviews:</div>
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                 <div class="col" th:each="review:${user.reviews}">
                     <div class="row">

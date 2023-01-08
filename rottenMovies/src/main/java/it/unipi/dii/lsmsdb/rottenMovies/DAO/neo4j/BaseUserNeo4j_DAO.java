@@ -190,7 +190,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
         Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
         ArrayList<ReviewFeedDTO> reviewFeed = session.readTransaction((TransactionWork<ArrayList<ReviewFeedDTO>>)(tx -> {
             String query = "MATCH(u:User{id:$userId})-[f:FOLLOWS]->(t:TopCritic)-[r:REVIEWED]->(m:Movie) "+
-                    "RETURN t.id as Id, m.title AS movieTitle,t.name AS criticName, r.date AS reviewDate, "+
+                    "RETURN t.id as Id, m.title AS movieTitle, m.id AS movieId, t.name AS criticName, r.date AS reviewDate, "+
                     "r.content AS content, r.freshness AS freshness " +
                     "ORDER BY r.date DESC SKIP $skip LIMIT $limit ";
             Result result = tx.run(query, parameters("userId", usr.getId().toString(),
@@ -207,6 +207,7 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
                 feed.add(new ReviewFeedDTO(
                         r.get("Id").asString(),
                         r.get("movieTitle").asString(),
+                        r.get("movieId").asString(),
                         r.get("criticName").asString(),
                         r.get("content").asString(),
                         r.get("freshness").asBoolean(),

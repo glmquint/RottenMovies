@@ -55,7 +55,10 @@ public class AppController {
     }
 
     @GetMapping("/")
-    public String index(Model model){
+    public String index(Model model,
+                        HttpSession session){
+        RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
+        model.addAttribute("credentials", credentials);
         return "index";
     }
 
@@ -112,7 +115,7 @@ public class AppController {
         return "register";
     }
 
-    @PostMapping("/registerTopCritic")
+    @PostMapping("/admin-panel/registerTopCritic")
     public String registerTopCritic(Model model, HttpSession session, HttpServletRequest request){
         RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
         if (credentials == null || !(credentials instanceof AdminDTO)) {
@@ -128,10 +131,11 @@ public class AppController {
             return "registerTopCritic";
         }
         model.addAttribute("success", "new Top Critic successfully created");
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "registerTopCritic";
     }
 
-    @GetMapping("/registerTopCritic")
+    @GetMapping("/admin-panel/registerTopCritic")
     public String registerTopCriticGet(Model model,
                               HttpSession session){
         RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
@@ -139,6 +143,7 @@ public class AppController {
             model.addAttribute("error", "this operation isn't permitted to non-admin users");
             return "index";
         }
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "registerTopCritic";
     }
 
@@ -155,6 +160,7 @@ public class AppController {
         //System.out.println("requested page");
         //System.out.println(page);
         //model.addAttribute("page", page);
+        RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
         model.addAttribute("credentials", session.getAttribute("credentials"));
         MovieService movieService = new MovieService();
         HashMap<String, String> hm = extractRequest(request);
