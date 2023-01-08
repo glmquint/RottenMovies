@@ -110,7 +110,10 @@
                                   <label for="genres">genres (use a comma ',' separated list of genres)</label>
                                   <input class="form-control" id="genres" type="text" placeholder="genres" name="genres" th:value="${movie.genres}?${#strings.listJoin(movie.genres,', ')}:''">
 
-                              <label>Personnel</label>
+                                  <label for="posterUrl">posterUrl</label>
+                                  <input class="form-control" id="posterUrl" type="text" placeholder="posterUrl" name="posterUrl" th:value="${movie.posterUrl}">
+
+                                  <label>Personnel</label>
                               <ul class="col-md-4 fs-6 mx-3" th:each="w, iterStat:${movie.personnel}">
                                   <label th:for="|primaryName_${iterStat.count}|">primaryName</label>
                                   <input class="form-control" id="primaryName" type="text" placeholder="primaryName" th:name="|primaryName_${iterStat.count}|" th:value="${w.primaryName}?:''">

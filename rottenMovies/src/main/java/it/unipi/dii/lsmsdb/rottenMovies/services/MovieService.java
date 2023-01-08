@@ -152,6 +152,7 @@ public class MovieService {
     private Movie buildMovieFromForm(String mid, HashMap<String, String> hm){
         Movie newMovie = new Movie();
         newMovie.setId(new ObjectId(mid));
+        newMovie.setPosterUrl("/images/poster_not_found.jpg");
         for (Map.Entry<String, String> entry : hm.entrySet()) {
             String k = entry.getKey();
             String v = entry.getValue();
@@ -164,8 +165,10 @@ public class MovieService {
                 newMovie.setProductionCompany(v);
             } else if (k.equals("year")){
                 newMovie.setYear(Integer.parseInt(v));
-            } else if (k.equals("runtimeMinutes")){
+            } else if (k.equals("runtimeMinutes")) {
                 newMovie.setRuntimeMinutes(Integer.parseInt(v));
+            } else if (k.equals("posterUrl")){
+                newMovie.setPosterUrl(v);
             } else if (k.equals("genres")){
                 newMovie.setGenres(
                         Arrays.stream(
@@ -221,6 +224,7 @@ public class MovieService {
     public boolean modifyMovie(String mid, HashMap<String, String> hm) {
         String op = hm.get("admin_operation");
         Movie movie = buildMovieFromForm(mid, hm);
+        System.out.println("new updated movie: " + movie);
         boolean result = false;
         try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)){
             if (op.equals("update")){
@@ -232,6 +236,7 @@ public class MovieService {
             System.err.println(e);
             return false;
         }
+        /* Don't need neo4j update if movie Title is invariant
         if (result){
             try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j)){
                 if (op.equals("update")){
@@ -254,6 +259,8 @@ public class MovieService {
             return true;
         }
         return false;
+         */
+        return true;
     }
 
     public ObjectId addMovie(String title) {
