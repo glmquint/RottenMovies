@@ -222,8 +222,11 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             UpdateResult result=userCollection.updateOne(filterUsr,Updates.pull("last_3_reviews",filterMovie));
             System.out.println("Modified document count: " + result.getModifiedCount());
 
-            Document set=new Document("$set", new Document("review."+index+".critic_name",Constants.DELETED_REVIEW));
-            result=movieCollection.updateOne(filterMovie, set);
+            Document set1=new Document("$set", new Document("review."+index+".critic_name",Constants.DELETED_REVIEW));
+            Document set2=new Document("$set", new Document("review."+index+".review_content",""));
+            Document set3=new Document("$set", new Document("review."+index+".review_score",""));
+
+            result=movieCollection.updateOne(filterMovie, Updates.combine(set1, set2, set3));
             System.out.println("Modified document count: " + result.getModifiedCount());
 
             Bson updates = Updates.combine(Updates.pull("reviews",eq("movie_id",review.getMovie_id())));
