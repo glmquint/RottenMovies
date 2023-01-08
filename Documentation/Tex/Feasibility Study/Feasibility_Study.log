@@ -1,16 +1,16 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2023.1.7)  8 JAN 2023 13:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2023.1.7)  8 JAN 2023 13:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**"./RottenMovies documentation.tex"
-(RottenMovies documentation.tex
+**./Feasibility_Study.tex
+(Feasibility_Study.tex
 LaTeX2e <2022-06-01> patch level 5
 L3 programming layer <2022-09-28>
 
 LaTeX Warning: \include should only be used after \begin{document} on input lin
 e 1.
 
-(Preamble/preamble.tex
+(../Preamble/preamble.tex
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/base\report.cls
 Document Class: report 2021/10/04 v1.4n Standard LaTeX document class
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo
@@ -535,28 +535,27 @@ ex.def
 File: l3backend-pdftex.def 2022-09-28 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count317
 \l__pdf_internal_box=\box60
-) (RottenMovies documentation.aux (Introduction/Intruduction.aux)
-(Feasibility Study/Feasibility_Study.aux))
-\openout1 = `"RottenMovies documentation.aux"'.
+) (Feasibility_Study.aux)
+\openout1 = `Feasibility_Study.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 6.
-LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 4.
+LaTeX Font Info:    ... okay on input line 4.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -629,75 +628,13 @@ g
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 \c@lstlisting=\count324
-Package hyperref Info: Link coloring OFF on input line 6.
- (RottenMovies documentation.out) (RottenMovies documentation.out)
+Package hyperref Info: Link coloring OFF on input line 4.
+ (Feasibility_Study.out) (Feasibility_Study.out)
 \@outlinefile=\write3
-\openout3 = `"RottenMovies documentation.out"'.
-
-Package epstopdf Info: Source file: <./../../images/cherubino.eps>
-(epstopdf)                    date: 2023-01-07 20:43:02
-(epstopdf)                    size: 256851 bytes
-(epstopdf)             Output file: <./../../images/cherubino-eps-converted-to.
-pdf>
-(epstopdf)                    date: 2023-01-07 20:43:02
-(epstopdf)                    size: 41006 bytes
-(epstopdf)             Command: <miktex-epstopdf --outfile=./../../images/cheru
-bino-eps-converted-to.pdf ./../../images/cherubino.eps>
-(epstopdf)             \includegraphics on input line 9.
-Package epstopdf Info: Output file is already uptodate.
+\openout3 = `Feasibility_Study.out'.
 
 
-pdfTeX warning: pdflatex (file ./../../images/cherubino-eps-converted-to.pdf): 
-PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<./../../images/cherubino-eps-converted-to.pdf, id=11, 566.115pt x 302.12875pt>
-
-File: ./../../images/cherubino-eps-converted-to.pdf Graphic file (type pdf)
-<use ./../../images/cherubino-eps-converted-to.pdf>
-Package pdftex.def Info: ./../../images/cherubino-eps-converted-to.pdf  used on
- input line 9.
-(pdftex.def)             Requested size: 424.5852pt x 226.596pt.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 14.
-
-(C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 14.
-
-
-(C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-[1
-
-{C:/Users/fp99/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map} <./../../image
-s/cherubino-eps-converted-to.pdf>] (RottenMovies documentation.toc)
-\tf@toc=\write4
-\openout4 = `"RottenMovies documentation.toc"'.
-
-
-pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
-been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.22 \include{./Introduction/Intruduction.tex}
-                                               [1
-
-
-]
-\openout2 = `./Introduction/Intruduction.aux'.
-
-
-(Introduction/Intruduction.tex
 Chapter 1.
-) [2
-
-
-
-]
-\openout2 = `"./Feasibility Study/Feasibility_Study.aux"'.
-
- (Feasibility Study/Feasibility_Study.tex
-Chapter 2.
 
 Underfull \hbox (badness 10000) in paragraph at lines 22--24
 
@@ -707,39 +644,42 @@ LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 2
 4.
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/base\t1cmtt.fd
 File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
-) [3
+)
+LaTeX Font Info:    Trying to load font information for U+msa on input line 25.
+
+
+(C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 25.
+
+
+(C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+[1
 
 
 
-
-
-]
+{C:/Users/fp99/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
 LaTeX Font Info:    Trying to load font information for TS1+cmtt on input line 
 60.
 
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/base\ts1cmtt.fd
 File: ts1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
-))
-[4] (RottenMovies documentation.aux (Introduction/Intruduction.aux)
-(Feasibility Study/Feasibility_Study.aux))
-
-Package rerunfilecheck Warning: File `"RottenMovies documentation".out' has cha
-nged.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `"RottenMovies documentation".out':
-(rerunfilecheck)             Before: D93ADD9835721D356373B59B4738ED4B;234
-(rerunfilecheck)             After:  E4E95C22E98A4C8D8CC6D23F35E4BEB0;442.
+)
+[2] (Feasibility_Study.aux)
+Package rerunfilecheck Info: File `Feasibility_Study.out' has not changed.
+(rerunfilecheck)             Checksum: 913AD5CEAF4F45E80FAA4869195B7D82;339.
  ) 
 Here is how much of TeX's memory you used:
- 15795 strings out of 475385
- 253344 string characters out of 2777380
- 758780 words of memory out of 3000000
- 36826 multiletter control sequences out of 15000+600000
- 485112 words of font info for 72 fonts, out of 8000000 for 9000
+ 15656 strings out of 475385
+ 248450 string characters out of 2777380
+ 757986 words of memory out of 3000000
+ 36731 multiletter control sequences out of 15000+600000
+ 480973 words of font info for 59 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 115i,7n,111p,498b,2062s stack positions out of 10000i,1000n,20000p,200000b,80000s
+ 115i,6n,111p,410b,2061s stack positions out of 10000i,1000n,20000p,200000b,80000s
  <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tctt1
 095.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
 ectt1095.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dp
@@ -747,13 +687,10 @@ i600\ecrm1095.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/
 ec/dpi600\tcrm1200.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jkna
 ppen/ec/dpi600\ecbx1728.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour
 /jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/l
-jfour/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts
-/pk/ljfour/jknappen/ec/dpi600\ecbx2488.pk> <C:\Users\fp99\AppData\Local\MiKTeX\
-fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1440.pk> <C:\Users\fp99\AppData\Local\Mi
-KTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm2074.pk>
-Output written on "RottenMovies documentation.pdf" (5 pages, 137312 bytes).
+jfour/jknappen/ec/dpi600\ecbx2488.pk>
+Output written on Feasibility_Study.pdf (2 pages, 68326 bytes).
 PDF statistics:
- 366 PDF objects out of 1000 (max. 8388607)
- 59 named destinations out of 1000 (max. 500000)
- 22 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 266 PDF objects out of 1000 (max. 8388607)
+ 55 named destinations out of 1000 (max. 500000)
+ 17 words of extra memory for PDF output out of 10000 (max. 10000000)
 

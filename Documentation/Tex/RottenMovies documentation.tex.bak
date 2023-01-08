@@ -1,4 +1,4 @@
-\include{preamble.tex}
+\include{./Preamble/preamble.tex}
 
 \author{Fabio Piras, Giacomo Volpi, Guillaume Quint}
 \title{Large-Scale adn Multi-structured Databases - Project: Rotten Movies}
@@ -11,8 +11,7 @@
 \end{figure}
 
 \maketitle
-\centering
-a.a: 2021-2022
+
 
 \newpage
 
@@ -20,11 +19,9 @@ a.a: 2021-2022
 
 
 
-\include{Hello world.tex}
-\cleardoublepage{}
-\chapter{second chapter}
-\blindtext
+\include{./Introduction/Intruduction.tex}
 
+\include{./Feasibility Study/Feasibility_Study.tex}
 
 
 \end{document}

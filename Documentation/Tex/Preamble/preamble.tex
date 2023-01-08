@@ -1,22 +1,18 @@
 % Tipo di documento. L'uso di twoside implica che i capitoli inizino sempre con la prima pagina a sinistra, eventualmente lasciando una pagina vuota nel capitolo precedente. Se questa cosa è fastidiosa, è possibile rimuoverlo. 
-\documentclass[a4paper, twoside,openright]{report}
+\documentclass[a4paper, openright]{report}
 
 % Dimensione dei margini
 \usepackage[a4paper,top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry} 
 % Dimensione del font
-\usepackage[fontsize=13pt]{scrextend}
+\usepackage[fontsize=12pt]{scrextend}
 % Lingua del testo
-\usepackage[english,italian]{babel}
+\usepackage[english]{babel}
 % Lingua per la bibliografia
 \usepackage[fixlanguage]{babelbib}
 % Codifica del testo
 \usepackage[utf8]{inputenc} 
 % Encoding del testo
 \usepackage[T1]{fontenc}
-% Permette di generare testo fittizio. Mi è stato utile 
-% per capire quale sarebbe stata l'impostazione del 
-% testo nella pagina prima che scrivessi un determinato paragrafo
-\usepackage{lipsum}
 % Per ruotare le immagini
 \usepackage{rotating}
 % Per modificare l'header delle pagine 
@@ -44,3 +40,38 @@
 \usepackage{ragged2e}
 \usepackage{import}
 \graphicspath{{./../../images}}
+
+\definecolor{delim}{RGB}{20,105,176}
+\definecolor{numb}{RGB}{106, 109, 32}
+\definecolor{string}{rgb}{0.64,0.08,0.08}
+
+\lstdefinelanguage{json}{
+    numbers=left,
+    numberstyle=\small,
+    frame=single,
+    rulecolor=\color{black},
+    showspaces=false,
+    showtabs=false,
+    breaklines=true,
+    postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{gray}\hookrightarrow\space}},
+    breakatwhitespace=true,
+    basicstyle=\ttfamily\small,
+    upquote=true,
+    morestring=[b]",
+    stringstyle=\color{string},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
