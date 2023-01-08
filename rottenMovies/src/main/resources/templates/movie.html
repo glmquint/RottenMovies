@@ -126,56 +126,31 @@
                               </form>
                           </div>
                           <div th:unless="${(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
-                              <h1 class="display-5 fw-bold" th:text="${movie.primaryTitle}">Titolo</h1>
                               <div class="row">
-                                  <div class="col-md-8 fs-4" th:text="|${movie.year}, ${movie.runtimeMinutes} min, ${movie.productionCompany}|">1989, 120 min, Warner Bros</div>
-                                  <div>
-                                      <a class="badge rounded-pill text-bg-primary mb-3 mx-1 text-decoration-none" th:href="'/movie?genres='+${g}" th:text="${g}"  th:each="g: ${movie.genres}">Adventure</a>
-                                  </div>
-                                  <div class="row">
-                                      <div>with:</div>
-                                      <ul class="col-md-4 fs-6 mx-3" th:each="w:${movie.personnel}" th:switch="${w.category}">
-                                          <!--                              <li th:text="|${w.primaryName} | + (${w.category}=='actor' || ${w.category}=='actress')?|as ${w.characters}|:|(${w.job})|">Spielberg (director)</li>-->
-                                          <li th:if="${#strings.length(w.primaryName)!=0}" th:case="'actor'" th:text="${w.primaryName} + (${w.characters}?| as ${#strings.arrayJoin(w.characters,',')}|:'')"></li>
-                                          <li th:if="${#strings.length(w.primaryName)!=0}" th:case="'actress'" th:text="${w.primaryName} + (${w.characters}?| as ${#strings.arrayJoin(w.characters,',')}|:'')"></li>
-                                          <li th:if="${#strings.length(w.primaryName)!=0}" th:case="writer" th:text="(${w.job}?(${#strings.endsWith(w.job,'by')}?|${w.job} |:|from the ${w.job} by |):|${w.category}: |) + ${w.primaryName}"></li>
-                                          <li th:if="${#strings.length(w.primaryName)!=0}" th:case="*" th:text="|${w.category}:| + (${w.job}?(${w.job==w.category}?'':| ${w.job}|):'') + ' ' + ${w.primaryName}"></li>
-                                      </ul>
-                                      <div class="d-flex justify-content-between align-items-center pb-3">
-                                          <div class="col">
-                                              <div>User Rating: Rotten</div>
-                                              <div th:text="|${movie.user_status} (${movie.user_rating}%) (+${movie.user_fresh_count}/-${movie.user_rotten_count})|">XX%(+X/-X)</div>
+                                  <div class="col">
+                                      <h1 class="display-5 fw-bold" th:text="${movie.primaryTitle}">Titolo</h1>
+                                      <div class="row">
+                                          <div class="col-md-8 fs-4" th:text="|${movie.year}, ${movie.runtimeMinutes} min, ${movie.productionCompany}|">1989, 120 min, Warner Bros</div>
+                                          <div>
+                                              <a class="badge rounded-pill text-bg-primary mb-3 mx-1 text-decoration-none" th:href="'/movie?genres='+${g}" th:text="${g}"  th:each="g: ${movie.genres}">Adventure</a>
                                           </div>
-                                          <div class="col text-end">
-                                              <div>Top Critic Rating: Fresh</div>
-                                              <div th:text="|${movie.top_critic_status} (${movie.top_critic_rating}%) (+${movie.top_critic_fresh_count}/-${movie.top_critic_rotten_count})|">XX%(+X/-X)</div>
+                                          <div class="row">
+                                              <div>with:</div>
+                                              <ul class="col-md-4 fs-6 mx-3" th:each="w:${movie.personnel}" th:switch="${w.category}">
+                                                  <!--                              <li th:text="|${w.primaryName} | + (${w.category}=='actor' || ${w.category}=='actress')?|as ${w.characters}|:|(${w.job})|">Spielberg (director)</li>-->
+                                                  <li th:if="${#strings.length(w.primaryName)!=0}" th:case="'actor'" th:text="${w.primaryName} + (${w.characters}?| as ${#strings.arrayJoin(w.characters,',')}|:'')"></li>
+                                                  <li th:if="${#strings.length(w.primaryName)!=0}" th:case="'actress'" th:text="${w.primaryName} + (${w.characters}?| as ${#strings.arrayJoin(w.characters,',')}|:'')"></li>
+                                                  <li th:if="${#strings.length(w.primaryName)!=0}" th:case="writer" th:text="(${w.job}?(${#strings.endsWith(w.job,'by')}?|${w.job} |:|from the ${w.job} by |):|${w.category}: |) + ${w.primaryName}"></li>
+                                                  <li th:if="${#strings.length(w.primaryName)!=0}" th:case="*" th:text="|${w.category}:| + (${w.job}?(${w.job==w.category}?'':| ${w.job}|):'') + ' ' + ${w.primaryName}"></li>
+                                              </ul>
                                           </div>
                                       </div>
                                   </div>
-                                  <form>
-                                      <input type="hidden" name="title" th:value="${movie.primaryTitle}">
-                                      <input type="hidden" name="movieId" th:value="${movie.id}">
-                                      <button class="btn btn-success col-md-2 offset-md-5" type="submit" name="user_operation" value="user_operation">Review</button>
-                                  </form>
-                              </div>
-                          </div>
-                      </div>
-                      <div th:unless="${credentials}">
-                          <h1 class="display-5 fw-bold" th:text="${movie.primaryTitle}">Titolo</h1>
-                          <div class="row">
-                              <div class="col-md-8 fs-4" th:text="|${movie.year}, ${movie.runtimeMinutes} min, ${movie.productionCompany}|">1989, 120 min, Warner Bros</div>
-                              <div>
-                                  <a class="badge rounded-pill text-bg-primary mb-3 mx-1 text-decoration-none" th:href="'/movie?genres='+${g}" th:text="${g}"  th:each="g: ${movie.genres}">Adventure</a>
+                                  <div class="col-lg-4">
+                                      <img class="bd-placeholder-img card-img-top img-thumbnail" th:src="${movie.posterUrl}" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title></img>
+                                  </div>
                               </div>
                               <div class="row">
-                                  <div>with:</div>
-                                  <ul class="col-md-4 fs-6 mx-3" th:each="w:${movie.personnel}" th:switch="${w.category}">
-        <!--                              <li th:text="|${w.primaryName} | + (${w.category}=='actor' || ${w.category}=='actress')?|as ${w.characters}|:|(${w.job})|">Spielberg (director)</li>-->
-                                      <li th:if="${#strings.length(w.primaryName)!=0}" th:case="'actor'" th:text="${w.primaryName} + (${w.characters}?| as ${#strings.arrayJoin(w.characters,',')}|:'')"></li>
-                                      <li th:if="${#strings.length(w.primaryName)!=0}" th:case="'actress'" th:text="${w.primaryName} + (${w.characters}?| as ${#strings.arrayJoin(w.characters,',')}|:'')"></li>
-                                      <li th:if="${#strings.length(w.primaryName)!=0}" th:case="writer" th:text="(${w.job}?(${#strings.endsWith(w.job,'by')}?|${w.job} |:|from the ${w.job} by |):|${w.category}: |) + ${w.primaryName}"></li>
-                                      <li th:if="${#strings.length(w.primaryName)!=0}" th:case="*" th:text="|${w.category}:| + (${w.job}?(${w.job==w.category}?'':| ${w.job}|):'') + ' ' + ${w.primaryName}"></li>
-                                  </ul>
                                   <div class="d-flex justify-content-between align-items-center pb-3">
                                       <div class="col">
                                           <div>User Rating: Rotten</div>
@@ -187,7 +162,54 @@
                                       </div>
                                   </div>
                               </div>
-                              <a class="btn btn-outline-success col-md-4 offset-md-4" href="/login">login to review this movie</a>
+                              <form>
+                                  <div class="row">
+                                      <input type="hidden" name="title" th:value="${movie.primaryTitle}">
+                                      <input type="hidden" name="movieId" th:value="${movie.id}">
+                                      <button class="btn btn-success col-md-2 offset-md-5" type="submit" name="user_operation" value="user_operation">Review</button>
+                                  </div>
+                              </form>
+                          </div>
+                      </div>
+                      <div th:unless="${credentials}">
+                          <div class="row">
+                              <div class="col">
+                                  <h1 class="display-5 fw-bold" th:text="${movie.primaryTitle}">Titolo</h1>
+                                  <div class="row">
+                                      <div class="col-md-8 fs-4" th:text="|${movie.year}, ${movie.runtimeMinutes} min, ${movie.productionCompany}|">1989, 120 min, Warner Bros</div>
+                                      <div>
+                                          <a class="badge rounded-pill text-bg-primary mb-3 mx-1 text-decoration-none" th:href="'/movie?genres='+${g}" th:text="${g}"  th:each="g: ${movie.genres}">Adventure</a>
+                                      </div>
+                                      <div class="row">
+                                          <div>with:</div>
+                                          <ul class="col-md-4 fs-6 mx-3" th:each="w:${movie.personnel}" th:switch="${w.category}">
+                                              <!--                              <li th:text="|${w.primaryName} | + (${w.category}=='actor' || ${w.category}=='actress')?|as ${w.characters}|:|(${w.job})|">Spielberg (director)</li>-->
+                                              <li th:if="${#strings.length(w.primaryName)!=0}" th:case="'actor'" th:text="${w.primaryName} + (${w.characters}?| as ${#strings.arrayJoin(w.characters,',')}|:'')"></li>
+                                              <li th:if="${#strings.length(w.primaryName)!=0}" th:case="'actress'" th:text="${w.primaryName} + (${w.characters}?| as ${#strings.arrayJoin(w.characters,',')}|:'')"></li>
+                                              <li th:if="${#strings.length(w.primaryName)!=0}" th:case="writer" th:text="(${w.job}?(${#strings.endsWith(w.job,'by')}?|${w.job} |:|from the ${w.job} by |):|${w.category}: |) + ${w.primaryName}"></li>
+                                              <li th:if="${#strings.length(w.primaryName)!=0}" th:case="*" th:text="|${w.category}:| + (${w.job}?(${w.job==w.category}?'':| ${w.job}|):'') + ' ' + ${w.primaryName}"></li>
+                                          </ul>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="col-lg-4">
+                                  <img class="bd-placeholder-img card-img-top img-thumbnail" th:src="${movie.posterUrl}" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title></img>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="d-flex justify-content-between align-items-center pb-3">
+                                  <div class="col">
+                                      <div>User Rating: Rotten</div>
+                                      <div th:text="|${movie.user_status} (${movie.user_rating}%) (+${movie.user_fresh_count}/-${movie.user_rotten_count})|">XX%(+X/-X)</div>
+                                  </div>
+                                  <div class="col text-end">
+                                      <div>Top Critic Rating: Fresh</div>
+                                      <div th:text="|${movie.top_critic_status} (${movie.top_critic_rating}%) (+${movie.top_critic_fresh_count}/-${movie.top_critic_rotten_count})|">XX%(+X/-X)</div>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row">
+                            <a class="btn btn-outline-success col-md-4 offset-md-4 mb-2" href="/login">login to review this movie</a>
                           </div>
                       </div>
 
