@@ -32,7 +32,8 @@ public class Review {
     @JsonProperty("review_content")
     private String reviewContent;
 
-    public Review() {}
+    public Review() {
+    }
 
     public Review (ReviewDTO r){
         this.topCritic=r.isTopCritic();

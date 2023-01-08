@@ -97,6 +97,7 @@ public class AppController {
             model.addAttribute("error", "something went wrong during registration");
             return "register";
         }
+        registeredUserDTO = userService.authenticate(hm.get("username"), MD5.getMd5(hm.get("password")));
         session.setAttribute("credentials", registeredUserDTO);
         model.addAttribute("credentials", registeredUserDTO);
         return "register";
@@ -225,27 +226,56 @@ public class AppController {
         } else if (hm.containsKey("user_operation")) {
             ArrayList<Object> movieAndIndex = userService.getReviewIndex(credentials.getId(), hm.getOrDefault("title", ""));
             if (movieAndIndex == null || movieAndIndex.size() != 2) {
-                // create new review
-            } else {
+                movieService.reviewMovie(credentials, hm.getOrDefault("movieId", ""), hm.getOrDefault("title", ""));
+                movieAndIndex = null;
+            }
+            if (movieAndIndex == null){
+                movieAndIndex = userService.getReviewIndex(credentials.getId(), hm.getOrDefault("title", ""));
+                if (movieAndIndex == null || movieAndIndex.size() != 2) {
+                    model.addAttribute("error", "error while creating a new review");
+                    movieAndIndex = null;
+                }
+            }
+            if (movieAndIndex != null && movieAndIndex.size() == 2) {
+                // refresh credentials
+
+                session.setAttribute("credentials",
+                        userService.authenticate(
+                            ((RegisteredUserDTO) session.getAttribute("credentials")).getUsername(),
+                            ((RegisteredUserDTO) session.getAttribute("credentials")).getPassword())
+                );
                 model.addAttribute("redirect", "/movie/" + movieAndIndex.get(0) + "/" + movieAndIndex.get(1));
+                return "redirect";
             }
         } else if(hm.containsKey("view")){
             RegisteredUserDTO topCritic = userService.getUserByUsername(hm.get("view"));
             model.addAttribute("go_to_user", topCritic.getId().toString());
-        } else {
-            model.addAttribute("movie", movieService.getMovie(page, mid, -1));
-            model.addAttribute("page", page);
-            model.addAttribute("credentials", session.getAttribute("credentials"));
         }
+        model.addAttribute("movie", movieService.getMovie(page, mid, -1));
+        model.addAttribute("page", page);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "movie";
     }
 
-    @GetMapping("/movie/{mid}/{comment_index}")
+    @RequestMapping("/movie/{mid}/{comment_index}")
     public  String select_movie_comment(Model model,
+                                        HttpServletRequest request,
                                         @PathVariable(value = "mid") String mid,
                                         @PathVariable(value = "comment_index") int comment_index,
                                         HttpSession session){
         MovieService movieService = new MovieService();
+        RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
+        HashMap<String, String> hm = extractRequest(request);
+        System.out.println(hm);
+        boolean result = false;
+        if (hm.containsKey("critic_operation")) {
+            result = movieService.modifyReview(mid, hm, credentials);
+            if (result) {
+                model.addAttribute("success", "review successfully updated");
+            } else {
+                model.addAttribute("error", "error while updating review");
+            }
+        }
         model.addAttribute("credentials", session.getAttribute("credentials"));
         model.addAttribute("movie", movieService.getMovie(0, mid, comment_index));
         return "movie";
