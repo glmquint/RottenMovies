@@ -476,7 +476,7 @@ db.movie.find().forEach(
             url=h[0].poster;
         }
         else {
-            url="images/poster_not_found.jpg";
+            url="/images/poster_not_found.jpg";
         }
         //print(url);
         
