@@ -6,6 +6,7 @@
 \begin{document}
 \begin{figure}
 \centering
+%the path originates from the lsmsdb root folder
 \includegraphics[scale=0.75]{/images/cherubino}
 
 \end{figure}
