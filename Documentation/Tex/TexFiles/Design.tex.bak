@@ -1,6 +1,7 @@
 \include{./preamble}
 \begin{document}
 \chapter{Design}
+\justifying
 \section{Main actors}
 As already mentioned in the introduction we have mainly three major actors: guest user and register user, the latter can be divided between normal user and top critic. In addition there is an admin actor who's main role is to oversee the entire service.
 \section{Functional requirements}
@@ -96,4 +97,18 @@ In order to guarantee the requirements of high availability, we decided to accep
 \blindtext
 \section{Class analysis}
 In this section we shall discuss of the design of the various class and how are they related
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.5]{/images/PNG/LatexClassDiagram}
+\caption{Class Diagram}
+\label{fig:UseCases}
+\end{center}
+\end{figure}
+The diagram express the following relationship between the entities.
+\begin{itemize}
+	\item a BaseUser can write from zero to many reviews
+	\item a Review can be written by a single BaseUser for a single Movie
+	\item a Movie can have zero to many reviews and can have from 1 to many Personnel working in it
+	\item a Personnel can work in 1 to many Movie
+\end{itemize}
 \end{document}

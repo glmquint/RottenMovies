@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2023.1.7)  9 JAN 2023 12:35
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2023.1.7)  9 JAN 2023 19:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -530,23 +530,65 @@ Package: ragged2e 2021/12/15 v3.1 ragged2e Package
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/import\import.sty
 Package: import 2020/04/01  v 6.2
 )
+(C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count317
+\float@exts=\toks36
+\float@box=\box60
+\@float@everytoks=\toks37
+\@floatcapt=\box61
+)
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/tools\xr.sty
 Package: xr 2020-05-10 v5.06 eXternal References (DPC)
 )
-
-Package xr Warning: 
-No file ./../Appendix/appendix.aux
-LABELS NOT IMPORTED.
- on input line 79.
-
-\c@alphasect=\count317
+Package xr Info: IMPORTING LABELS FROM ./appendix.aux on input line 80.
+Package xr Info: IMPORTING LABELS FROM ./Feasibility_Study.aux on input line 81
+.
+\c@alphasect=\count318
 )
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdft
 ex.def
 File: l3backend-pdftex.def 2022-09-28 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count318
-\l__pdf_internal_box=\box60
-) (appendix.aux)
+\l__color_backend_stack_int=\count319
+\l__pdf_internal_box=\box62
+) (appendix.aux
+
+LaTeX Warning: Label `sec:pycode' multiply defined.
+
+
+LaTeX Warning: Label `subsec:datasetGeneratorImdb' multiply defined.
+
+
+LaTeX Warning: Label `subsec:datasetGeneratorRotten' multiply defined.
+
+
+LaTeX Warning: Label `subsec:datasetMerge' multiply defined.
+
+
+LaTeX Warning: Label `subsec:datasetPersonnelCollapse' multiply defined.
+
+
+LaTeX Warning: Label `subsec:createUserPassword' multiply defined.
+
+
+LaTeX Warning: Label `subsec:createGraphDB' multiply defined.
+
+
+LaTeX Warning: Label `subsec:theOne' multiply defined.
+
+
+LaTeX Warning: Label `subsec:dateNormalization' multiply defined.
+
+
+LaTeX Warning: Label `subsec:userCreation' multiply defined.
+
+
+LaTeX Warning: Label `eq:pippo' multiply defined.
+
+
+LaTeX Warning: Label `pippo' multiply defined.
+
+)
 \openout1 = `appendix.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 2.
@@ -616,17 +658,17 @@ babelbib: Set language for keywords in the bibliography fixed to english
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mki
 i
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count319
+\scratchcounter=\count320
 \scratchdimen=\dimen177
-\scratchbox=\box61
-\nofMPsegments=\count320
-\nofMParguments=\count321
-\everyMPshowfont=\toks36
-\MPscratchCnt=\count322
+\scratchbox=\box63
+\nofMPsegments=\count321
+\nofMParguments=\count322
+\everyMPshowfont=\toks38
+\MPscratchCnt=\count323
 \MPscratchDim=\dimen178
-\MPnumerator=\count323
-\makeMPintoPDFobject=\count324
-\everyMPtoPDFconversion=\toks37
+\MPnumerator=\count324
+\makeMPintoPDFobject=\count325
+\everyMPtoPDFconversion=\toks39
 )
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-ba
 se.sty
@@ -638,7 +680,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 g
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-\c@lstlisting=\count325
+\c@lstlisting=\count326
 Package hyperref Info: Link coloring OFF on input line 2.
  (appendix.out) (appendix.out)
 \@outlinefile=\write3
@@ -649,8 +691,8 @@ Package hyperref Info: Link coloring OFF on input line 2.
 File: lstlang1.sty 2020/03/24 1.8d listings language file
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 7.
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 7
+nput line 8.
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 8
 .
 
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/base\t1cmtt.fd
@@ -666,26 +708,35 @@ LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
 (../code/createUserPassword.py [4]) (../code/createGraphDB.py [5] [6]) [7]
 (../code/theOne.js [8]) (../code/dateNormalization.js) (../code/userCreation.js
 [9])
-LaTeX Font Info:    Trying to load font information for U+msa on input line 35.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 36.
 
  (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 35.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 36.
 
 
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 [10] [11] (appendix.aux)
-Package rerunfilecheck Info: File `appendix.out' has not changed.
-(rerunfilecheck)             Checksum: EFEA678ABCB572674CF81FD0C1AA7CC5;3707.
+
+LaTeX Warning: There were multiply-defined labels.
+
+
+Package rerunfilecheck Warning: File `appendix.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `appendix.out':
+(rerunfilecheck)             Before: EFEA678ABCB572674CF81FD0C1AA7CC5;3707
+(rerunfilecheck)             After:  A89D24F74521246B22080218FC46F89D;3463.
  ) 
 Here is how much of TeX's memory you used:
- 16571 strings out of 475385
- 261491 string characters out of 2777380
- 1466190 words of memory out of 3000000
- 37189 multiletter control sequences out of 15000+600000
+ 16644 strings out of 475385
+ 262760 string characters out of 2777380
+ 1467609 words of memory out of 3000000
+ 37257 multiletter control sequences out of 15000+600000
  478938 words of font info for 54 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  115i,6n,111p,589b,2231s stack positions out of 10000i,1000n,20000p,200000b,80000s
@@ -699,7 +750,7 @@ ype1/public/amsfonts/cm/cmmi12.pfb><C:/Users/fp99/AppData/Local/Programs/MiKTeX
 /fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/fp99/AppData/Local/Programs
 /MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/fp99/AppData/Local/Pr
 ograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on appendix.pdf (11 pages, 198864 bytes).
+Output written on appendix.pdf (11 pages, 198755 bytes).
 PDF statistics:
  862 PDF objects out of 1000 (max. 8388607)
  480 named destinations out of 1000 (max. 500000)

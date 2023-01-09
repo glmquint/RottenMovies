@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2023.1.7)  9 JAN 2023 14:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2023.1.7)  9 JAN 2023 19:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -530,18 +530,32 @@ Package: ragged2e 2021/12/15 v3.1 ragged2e Package
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/import\import.sty
 Package: import 2020/04/01  v 6.2
 )
+(C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count317
+\float@exts=\toks36
+\float@box=\box60
+\@float@everytoks=\toks37
+\@floatcapt=\box61
+)
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/tools\xr.sty
 Package: xr 2020-05-10 v5.06 eXternal References (DPC)
 )
-Package xr Info: IMPORTING LABELS FROM ./appendix.aux on input line 79.
-\c@alphasect=\count317
+Package xr Info: IMPORTING LABELS FROM ./appendix.aux on input line 80.
+Package xr Info: IMPORTING LABELS FROM ./Feasibility_Study.aux on input line 81
+.
+\c@alphasect=\count318
 )
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdft
 ex.def
 File: l3backend-pdftex.def 2022-09-28 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count318
-\l__pdf_internal_box=\box60
-) (Feasibility_Study.aux)
+\l__color_backend_stack_int=\count319
+\l__pdf_internal_box=\box62
+) (Feasibility_Study.aux
+
+LaTeX Warning: Label `sec:result' multiply defined.
+
+)
 \openout1 = `Feasibility_Study.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 4.
@@ -611,17 +625,17 @@ babelbib: Set language for keywords in the bibliography fixed to english
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mki
 i
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count319
+\scratchcounter=\count320
 \scratchdimen=\dimen177
-\scratchbox=\box61
-\nofMPsegments=\count320
-\nofMParguments=\count321
-\everyMPshowfont=\toks36
-\MPscratchCnt=\count322
+\scratchbox=\box63
+\nofMPsegments=\count321
+\nofMParguments=\count322
+\everyMPshowfont=\toks38
+\MPscratchCnt=\count323
 \MPscratchDim=\dimen178
-\MPnumerator=\count323
-\makeMPintoPDFobject=\count324
-\everyMPtoPDFconversion=\toks37
+\MPnumerator=\count324
+\makeMPintoPDFobject=\count325
+\everyMPtoPDFconversion=\toks39
 )
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-ba
 se.sty
@@ -633,7 +647,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 g
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-\c@lstlisting=\count325
+\c@lstlisting=\count326
 Package hyperref Info: Link coloring OFF on input line 4.
  (Feasibility_Study.out) (Feasibility_Study.out)
 \@outlinefile=\write3
@@ -647,14 +661,17 @@ Chapter 1.
 
 {C:/Users/fp99/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2]
 (Feasibility_Study.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
 Package rerunfilecheck Info: File `Feasibility_Study.out' has not changed.
 (rerunfilecheck)             Checksum: 36FAC00055E2827E4520939C7D6F4667;471.
  ) 
 Here is how much of TeX's memory you used:
- 15332 strings out of 475385
- 245032 string characters out of 2777380
- 656584 words of memory out of 3000000
- 36475 multiletter control sequences out of 15000+600000
+ 15404 strings out of 475385
+ 246304 string characters out of 2777380
+ 657016 words of memory out of 3000000
+ 36542 multiletter control sequences out of 15000+600000
  474631 words of font info for 37 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  115i,5n,111p,522b,456s stack positions out of 10000i,1000n,20000p,200000b,80000s

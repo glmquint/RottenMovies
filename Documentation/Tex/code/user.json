@@ -36,7 +36,7 @@
                 "vote"          : "3.5/5"
             }
         ],
-    "otherReview":[
+    "reviews":[
         {
             "movie_id" : ObjectId(<<id_field>>),
             "primaryTitle" : "Evidence",
