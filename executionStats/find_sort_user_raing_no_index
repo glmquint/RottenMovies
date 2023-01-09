@@ -1,0 +1,118 @@
+Current Mongosh Log ID:	63bc56bbf87c04dddf644575
+Connecting to:		mongodb://127.0.0.1:27017/rottenMovies?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.1
+Using MongoDB:		6.0.3
+Using Mongosh:		1.6.1
+
+For mongosh info see: [1mhttps://docs.mongodb.com/mongodb-shell/[0m
+
+------
+   The server generated these startup warnings when booting
+   2023-01-09T15:10:47.750+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2023-01-09T15:10:48.815+00:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+   2023-01-09T15:10:48.816+00:00: You are running this process as the root user, which is not recommended
+   2023-01-09T15:10:48.816+00:00: Soft rlimits for open file descriptors too low
+------
+
+------
+   Enable MongoDB's free cloud-based monitoring service, which will then receive and display
+   metrics about your deployment (disk utilization, CPU, operation statistics, etc).
+   
+   The monitoring data will be available on a MongoDB website with a unique URL accessible to you
+   and anyone you share the URL with. MongoDB may use this information to make product
+   improvements and to suggest MongoDB products and deployment options to you.
+   
+   To enable free monitoring, run the following command: db.enableFreeMonitoring()
+   To permanently disable this reminder, run the following command: db.disableFreeMonitoring()
+------
+
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'rottenMovies.movie',
+    indexFilterSet: false,
+    parsedQuery: {},
+    queryHash: '3E9B1E6C',
+    planCacheKey: '3E9B1E6C',
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    winningPlan: {
+      stage: 'SORT',
+      sortPattern: { user_rating: 1 },
+      memLimit: 104857600,
+      type: 'simple',
+      inputStage: { stage: 'COLLSCAN', direction: 'forward' }
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 14104,
+    executionTimeMillis: 1779,
+    totalKeysExamined: 0,
+    totalDocsExamined: 14104,
+    executionStages: {
+      stage: 'SORT',
+      nReturned: 14104,
+      executionTimeMillisEstimate: 1698,
+      works: 28211,
+      advanced: 14104,
+      needTime: 14106,
+      needYield: 0,
+      saveState: 45,
+      restoreState: 45,
+      isEOF: 1,
+      sortPattern: { user_rating: 1 },
+      memLimit: 104857600,
+      type: 'simple',
+      totalDataSizeSorted: 262640385,
+      usedDisk: true,
+      spills: 3,
+      inputStage: {
+        stage: 'COLLSCAN',
+        nReturned: 14104,
+        executionTimeMillisEstimate: 0,
+        works: 14106,
+        advanced: 14104,
+        needTime: 1,
+        needYield: 0,
+        saveState: 45,
+        restoreState: 45,
+        isEOF: 1,
+        direction: 'forward',
+        docsExamined: 14104
+      }
+    }
+  },
+  command: {
+    find: 'movie',
+    filter: {},
+    sort: { user_rating: 1 },
+    '$db': 'rottenMovies'
+  },
+  serverInfo: {
+    host: 'Profile2022LARGE10',
+    port: 27017,
+    version: '6.0.3',
+    gitVersion: 'f803681c3ae19817d31958965850193de067c516'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 104857600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 104857600,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1673287353, i: 1 }),
+    signature: {
+      hash: Binary(Buffer.from("0000000000000000000000000000000000000000", "hex"), 0),
+      keyId: Long("0")
+    }
+  },
+  operationTime: Timestamp({ t: 1673287353, i: 1 })
+}
