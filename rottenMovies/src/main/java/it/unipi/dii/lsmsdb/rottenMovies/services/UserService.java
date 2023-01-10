@@ -3,11 +3,8 @@ package it.unipi.dii.lsmsdb.rottenMovies.services;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
-import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
-import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
-import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptionsEnum;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
@@ -15,10 +12,6 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.MD5;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.models.*;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -91,25 +84,26 @@ public class UserService {
             }
         }
         user.setRegistrationDate(new Date());
-        boolean res;
+        ObjectId newId;
         try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
-            res = userDAO.insert(user);
+            newId = userDAO.insert(user);
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
-        if (!res) {
+        if (newId == null) {
             return null;
         }
-        res = false;
+        user.setId(newId);
+        newId = null;
         try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)) {
-            res = userDAO.insert(user);
+            newId = userDAO.insert(user);
         } catch (Exception e) {
             System.out.println(e);
         }
-        if (!res) {
+        if (newId == null) { // mongo roll-back
             try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
-                res = userDAO.delete(user);
+                userDAO.delete(user);
             } catch (Exception e) {
                 System.err.println(e);
             }
@@ -183,5 +177,73 @@ public class UserService {
             System.out.println(e);
         }
         return reviewFeedDTO;
+    }
+
+    public PageDTO<TopCriticSuggestionDTO> getTopCriticSuggestions (User usr, int page) {
+        PageDTO<TopCriticSuggestionDTO> topCriticSuggestionDTO = new PageDTO<>();
+        ArrayList<TopCriticSuggestionDTO> topCriticSuggestionPages = new ArrayList<>();
+        try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)) {
+            topCriticSuggestionPages = userDAO.getSuggestion(usr, page);
+            topCriticSuggestionDTO.setEntries(topCriticSuggestionPages);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return topCriticSuggestionDTO;
+    }
+
+    public int getFollowers(String id){
+        TopCritic topCritic = new TopCritic();
+        topCritic.setId(new ObjectId(id));
+        try(BaseUserDAO baseUserDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
+            return baseUserDAO.getNumberOfFollowers(topCritic);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return -1;
+    }
+    public ArrayList<Object> getReviewIndex(ObjectId userid, String primaryTitle){
+        try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.MONGO)) {
+            return reviewdao.getIndexOfReview(userid,primaryTitle);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public boolean modifyUser(String uid, HashMap<String, String> hm, boolean isTop) {
+        BaseUser newUser = null;
+        if(!isTop){
+            newUser = new User();
+        }
+        else{
+            newUser = new TopCritic();
+        }
+        newUser.setId(new ObjectId(uid));
+        newUser.setPassword("");
+        for (Map.Entry<String, String> entry : hm.entrySet()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            if (v == null || v.isEmpty()) {
+                continue;
+            }
+            if (k.equals("firstName")) {
+                newUser.setFirstName(v);
+            } else if (k.equals("lastName")) {
+                newUser.setLastName(v);
+            }
+            else if (k.equals("password")) {
+                newUser.setPassword(MD5.getMd5(v));
+            }
+            else if (k.equals("birthday")) {
+                ((User) newUser).setBirthdayDate(v);
+            }
+        }
+
+        try(BaseUserDAO baseUserDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
+            return baseUserDAO.update(newUser);
+        }catch (Exception e){
+            System.err.println(e);
+            return false;
+        }
     }
 }

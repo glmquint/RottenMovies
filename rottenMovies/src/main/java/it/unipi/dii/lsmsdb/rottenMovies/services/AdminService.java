@@ -4,9 +4,13 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.AdminDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieReviewBombingDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PopulationByGenerationDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import org.bson.types.ObjectId;
 
 
@@ -29,6 +33,7 @@ public class AdminService {
         PageDTO<RegisteredUserDTO> user_page = new PageDTO<>();
         try(BaseUserDAO baseUserDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
             baseUserDAO.queryBuildSearchByUsername(request.getOrDefault("searchUser", ""));
+            baseUserDAO.queryBuildExcludeAdmin();
             user_page.setEntries(baseUserDAO.executeSearchQuery(page));
         } catch (Exception e){
             System.err.println(e.getStackTrace());
@@ -45,5 +50,33 @@ public class AdminService {
             return false;
         }
     }
+    public MovieReviewBombingDTO checkReviewBombing(Movie movie, int month){
+        try(ReviewDAO reviewDAO = DAOLocator.getReviewDAO(DataRepositoryEnum.NEO4j)){
+            return reviewDAO.checkReviewBombing(movie,month);
+        }
+        catch (Exception e){
+            System.err.println(e);
+            return null;
+        }
+    }
 
+    public ArrayList<UserLeaderboardDTO> getMostReviewUser(){
+        ArrayList<UserLeaderboardDTO> list = new ArrayList<>();
+        try(AdminDAO adminDAO = DAOLocator.getAdminDAO(DataRepositoryEnum.NEO4j)){
+            list = adminDAO.getMostReviewUser();
+        }catch (Exception e){
+            System.err.println(e.getStackTrace());
+        }
+        return list;
+    }
+
+    public ArrayList<UserLeaderboardDTO> getFollowTopCritic() {
+        ArrayList<UserLeaderboardDTO> list = new ArrayList<>();
+        try(AdminDAO adminDAO = DAOLocator.getAdminDAO(DataRepositoryEnum.NEO4j)){
+            list = adminDAO.getMostFollowedCritic();
+        }catch (Exception e){
+            System.err.println(e.getStackTrace());
+        }
+        return list;
+    }
 }

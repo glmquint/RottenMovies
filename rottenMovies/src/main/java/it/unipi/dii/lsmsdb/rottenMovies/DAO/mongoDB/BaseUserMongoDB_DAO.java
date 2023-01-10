@@ -161,11 +161,22 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         query = Filters.and(query, new_query);
     }
-    public boolean insert(BaseUser usr){
+
+    @Override
+    public void queryBuildExcludeAdmin() throws DAOException {
+        Bson new_query = Filters.ne("username", "admin");
+        if (query == null) {
+            query = new_query;
+            return;
+        }
+        query = Filters.and(query, new_query);
+    }
+    public ObjectId insert(BaseUser usr){
         MongoCollection<Document>  collection = getUserCollection();
+        ObjectId newId = new ObjectId();
         try {
             Document newdoc = new Document()
-                    .append("_id", new ObjectId())
+                    .append("_id", newId)
                     .append("username", usr.getUsername())
                     .append("password", usr.getPassword())
                     .append("first_name", usr.getFirstName())
@@ -181,19 +192,20 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         catch (MongoException me) {
             System.err.println("Unable to insert due to an error: " + me);
-            return false;
+            return null;
         }
         // also remember to add the user in Neo4j
-        return true;
+        return newId;
     }
     public boolean update(BaseUser usr) throws DAOException{
         MongoCollection<Document>  collection = getUserCollection();
         boolean returnvalue=true;
         Bson updates = Updates.combine(
-                    Updates.set("password", usr.getPassword()),
                     Updates.set("first_name", usr.getFirstName()),
-                    Updates.set("last_name", usr.getLastName()),
-                    Updates.set("registration_date", usr.getRegistrationDate()));
+                    Updates.set("last_name", usr.getLastName()));
+        if(!usr.getPassword().isEmpty()){
+            updates = Updates.combine(updates, Updates.set("password", usr.getPassword()));
+        }
         if (usr instanceof User){
             updates = Updates.combine(updates, Updates.set("date_of_birth", ((User)usr).getBirthdayDate()));
         }
@@ -274,12 +286,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         }
         return resultSet;
     }
-    public ArrayList<UserDTO> getMostReviewUser() throws DAOException{
-        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
-    }
-    public TopCriticDTO getMostFollowedCritic() throws DAOException{
-        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
-    }
+
 
     public boolean followTopCritic(BaseUser user, BaseUser topCritic) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
@@ -293,10 +300,14 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 
-    public ArrayList<TopCriticSuggestionDTO> getSuggestion(BaseUser usr, int page) throws DAOException{
+    public ArrayList<TopCriticSuggestionDTO> getSuggestion(User usr, int page) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
     public boolean checkIfFollows(BaseUser user, BaseUser topCritic) throws DAOException{
+        throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
+    }
+
+    public int getNumberOfFollowers(TopCritic topCritic) throws DAOException{
         throw new DAOException("requested a query for the Neo4j DB in the MongoDB connection");
     }
 }
