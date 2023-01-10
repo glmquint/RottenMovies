@@ -8,7 +8,10 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
-
+/**
+ * <interface>ReviewDAO</interface> is the base interface that offers the methods below
+ *  to the ReviewMongoDB_DAO and ReviewNeo4j_DAO classes that implement them
+ */
 public interface ReviewDAO extends AutoCloseable {
     boolean reviewMovie(BaseUser usr, Review review) throws DAOException;
     boolean delete(Review review) throws DAOException;

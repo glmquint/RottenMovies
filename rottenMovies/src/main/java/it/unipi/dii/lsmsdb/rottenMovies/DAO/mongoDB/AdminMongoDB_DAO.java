@@ -20,7 +20,17 @@ import java.util.Arrays;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
 
+/**
+ * <class>AdminMongoDB_DAO</class> is responsible for the admin-field operation in
+ * the MongoDb
+ */
 public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
+    /**
+     * <method>userPopulationByGeneration</method> calculate the population distribution in buckets
+     * @param offset is the number of years on which the buckets are created
+     * @return an Arraylist of PopulationByGenerationDTO
+     * @throws DAOException
+     */
     @Override
     public ArrayList<PopulationByGenerationDTO> userPopulationByGeneration(int offset) throws DAOException {
         MongoCollection<Document> collectionUser = getUserCollection();
@@ -58,6 +68,13 @@ public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
         return userPopulationByGeneration(5);
     }
 
+    /**
+     * <method>changeUserStatus</method> change the status of a user from unbanned to banned and vice-versa
+     * @param userId is the id of the user targeted by the operation
+     * @param ban
+     * @return
+     * @throws DAOException
+     */
     @Override
     public boolean changeUserStatus(ObjectId userId,boolean ban) throws DAOException {
         MongoCollection<Document>  collection = getUserCollection();

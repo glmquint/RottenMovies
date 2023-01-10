@@ -12,8 +12,8 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 
 /**
- * @author Fabio
- * <interface>MovieDao</interface> interface for the DAO of the movie
+ * <interface>MovieDAO</interface> is the base interface that offers the methods below
+ *  to the MovieMongoDB_DAO and MovieNeo4j_DAO classes that implement them
  */
 public interface MovieDAO extends AutoCloseable {
 
