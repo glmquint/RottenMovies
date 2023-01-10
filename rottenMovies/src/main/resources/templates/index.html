@@ -14,8 +14,9 @@
         <h1 class="display-4 fw-bold lh-1">rottenMovies</h1>
         <p class="lead">Explore our list composing of thousands of movies. Leave a review, follow the most prestigious top critics and connect with people all around the world</p>
         <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
-          <button type="button" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold" onclick="window.location.href='/movie';">Explore</button>
-          <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="window.location.href='/login';">Login</button>
+          <a type="button" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold" href="/movie">Explore</a>
+            <a th:if="${credentials}" type="button" class="btn btn-outline-secondary btn-lg px-4" th:href="${credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO'}?'/admin-panel':'/user/'+${credentials.id}">Home</a>
+          <a th:unless="${credentials}" type="button" class="btn btn-outline-secondary btn-lg px-4" href="/login">Login</a>
         </div>
       </div>
       <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">

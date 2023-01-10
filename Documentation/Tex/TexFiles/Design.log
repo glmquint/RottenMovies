@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2023.1.7)  9 JAN 2023 19:07
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2023.1.7)  10 JAN 2023 11:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -664,17 +664,17 @@ Chapter 1.
 File: ./../../..///images/PNG/capTheorem.png Graphic file (type png)
 <use ./../../..///images/PNG/capTheorem.png>
 Package pdftex.def Info: ./../../..///images/PNG/capTheorem.png  used on input 
-line 82.
+line 83.
 (pdftex.def)             Requested size: 200.74951pt x 188.95547pt.
  [2]
 <./../../..///images/PNG/LatexUseCases.png, id=48, 1138.2525pt x 1602.98875pt>
 File: ./../../..///images/PNG/LatexUseCases.png Graphic file (type png)
 <use ./../../..///images/PNG/LatexUseCases.png>
 Package pdftex.def Info: ./../../..///images/PNG/LatexUseCases.png  used on inp
-ut line 92.
+ut line 93.
 (pdftex.def)             Requested size: 512.20891pt x 721.33829pt.
 
-Overfull \hbox (28.51204pt too wide) in paragraph at lines 92--93
+Overfull \hbox (28.51204pt too wide) in paragraph at lines 93--94
 [][]
  []
 
@@ -683,7 +683,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.1.1})
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.98 \section
+l.99 \section
              {Class analysis} <./../../..///images/PNG/capTheorem.png>]
 Overfull \vbox (76.31566pt too high) has occurred while \output is active []
 
@@ -693,17 +693,17 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.1.2})
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.98 \section
+l.99 \section
              {Class analysis} <./../../..///images/PNG/LatexUseCases.png>]
 <./../../..///images/PNG/LatexClassDiagram.png, id=61, 990.70125pt x 477.785pt>
 
 File: ./../../..///images/PNG/LatexClassDiagram.png Graphic file (type png)
 <use ./../../..///images/PNG/LatexClassDiagram.png>
 Package pdftex.def Info: ./../../..///images/PNG/LatexClassDiagram.png  used on
- input line 102.
+ input line 103.
 (pdftex.def)             Requested size: 495.34941pt x 238.8919pt.
 
-Overfull \hbox (11.65254pt too wide) in paragraph at lines 102--103
+Overfull \hbox (11.65254pt too wide) in paragraph at lines 103--104
  [] 
  []
 
@@ -712,7 +712,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.1.3})
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.114 \end{document}
+l.115 \end{document}
                      <./../../..///images/PNG/LatexClassDiagram.png>]
 (Design.aux)
 
@@ -724,7 +724,7 @@ Package rerunfilecheck Info: File `Design.out' has not changed.
 Here is how much of TeX's memory you used:
  15455 strings out of 475385
  247638 string characters out of 2777380
- 659046 words of memory out of 3000000
+ 659002 words of memory out of 3000000
  36581 multiletter control sequences out of 15000+600000
  475315 words of font info for 38 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -736,7 +736,7 @@ i600\tcrm1200.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/
 ec/dpi600\ecrm1200.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jkna
 ppen/ec/dpi600\ecbx1728.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour
 /jknappen/ec/dpi600\ecbx2488.pk>
-Output written on Design.pdf (5 pages, 308366 bytes).
+Output written on Design.pdf (5 pages, 310727 bytes).
 PDF statistics:
  214 PDF objects out of 1000 (max. 8388607)
  16 named destinations out of 1000 (max. 500000)

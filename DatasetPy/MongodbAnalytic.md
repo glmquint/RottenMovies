@@ -87,9 +87,9 @@ db.movie.aggregate([
             count:{$sum:1}
             }
         },
-        {$match:{count:{$gte:20}}},
-        {$limit: 10}, 
-        {$sort:{topCritic:-1, rate:-1}}
+        {$match:{count:{$gte:20}}}, 
+        {$sort:{topCritic:-1, rate:-1}},
+        {$limit: 10}
     ])
 
 

@@ -41,7 +41,7 @@ public class TopCriticSuggestionDTO {
     @Override
     public String toString() {
         return "TopCriticSuggestionDTO{" +
-                "id=" + id +
+                "id=" + id.toString() +
                 ", username='" + username + '\'' +
                 ", rate=" + rate +
                 '}';
