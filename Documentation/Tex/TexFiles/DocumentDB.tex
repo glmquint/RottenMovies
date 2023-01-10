@@ -48,4 +48,24 @@ To ensure high-availability we deploy a cluster of replica (3). We install and c
  \item 172.16.5.28 (secondary)
  \end{enumerate} 
 We decided to use \textbf{nearest read preference} and \textbf{W2 write preference}. In fact we can tolerate that users see temporarily an old version of data with a 33\% chanche. 
+
+\section{Aggregations}
+In this section we shall discuss on the different aggregation that the application will implement, the values between <<>> represent a values passed by an above level.
+\subsection{Return the best years by top critic and user ratings}\label{subsec:bestYear}
+\lstinputlisting[language=JavaScript]{./../code/bestYear.js}
+
+\subsection{Return the best genres by top critic and user ratings}\label{subsec:HOFGenres}
+\lstinputlisting[language=JavaScript]{./../code/HOFGenres.js}
+
+\subsection{Return the best production houses by top critic and user ratings}\label{subsec:productionHouses}
+\lstinputlisting[language=JavaScript]{./../code/productionHouses.js}
+
+\subsection{Given a movie count the review it has received by each month}\label{subsec:reviewByYearMonth}
+\lstinputlisting[language=JavaScript]{./../code/reviewByYearMonth.js}
+
+\subsection{Given a user count the review he/she has made divided by genres}\label{subsec:preferredGenres}
+\lstinputlisting[language=JavaScript]{./../code/preferredGenres.js}
+
+\subsection{Return the number of user divided by an age bucket}\label{subsec:userPopulationBucket}
+\lstinputlisting[language=JavaScript]{./../code/userPopulationBucket.js}
  \end{document}
