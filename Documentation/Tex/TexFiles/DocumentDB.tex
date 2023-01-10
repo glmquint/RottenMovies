@@ -2,9 +2,7 @@
 \begin{document}
 \chapter{Document database}
 \justifying
-In this chapter we will discuss of the organization of the document database and how we handled the replicas.
-
-We decided to use MongoDB as DBMS for the document database for the purpose of storing the main information for movies, users, reviews and personnel. In MongoDB we created the following three collection: 
+In this chapter we will discuss of the organization of the document database and how we handled the replicas. We decided to use MongoDB as DBMS for the document database for the purpose of storing the main information for movies, users, reviews and personnel. In MongoDB we created the following three collection: 
 \begin{itemize}
 	\item movie
 	\item user
@@ -22,7 +20,32 @@ The following is the composition of the User collection.
 Is important to notice that in this collection we have two fields for the reviews, \emph{last3Reviews} and \emph{reviews} which present different ways of storing data for the same underling entity. As suggested by the name itself \emph{last3Reviews} contains the last three review in the form of an embedded document meanwhile \emph{reviews} contains all the reviews made by a user in the form of document linking towards the movie for which they were written; in particular, the link is formed by the id of the movie, the title and the position in which the review can be found in the array \emph{review} of the movie document. This structure was chosen so that we could avoid a full replica of the reviews in both collections and, at the same time, avoiding to perform join operation for those reviews that are more frequently checked, which are the most recent ones. The idea of creating a separated collection for reviews was immediately discarded because it would have resorted in a design for the document database that resemble a third normal form of relational database.
 
 \section{Indexes}
-\blindtext
+In order to provide the best execution speed in search queries we use indexes. In particular we focus on the application part that is available also without registering to the site, like Hall of Fame and search movies functionalities. Without indexes we need a collection scan in user and movie collections to find the right document. \\
+\subsection{Movie collection}
+\begin{itemize}
+\item primaryTitle
+\item year
+\item genres
+\item top\textunderscore critic \textunderscore rating
+\item user\textunderscore rating
+\end{itemize}
+\lstinputlisting[language=Javascript]{./../code/executionStats/collStats_indexSizes_movie}
+
+\subsection{User collection}
+\begin{itemize}
+\item username
+\item date\textunderscore of \textunderscore birth
+\end{itemize}
+\lstinputlisting[language=Javascript]{./../code/executionStats/collStats_indexSizes_user}
+
+We decided to use these indexes because they provide a jump in term of speed in search queries without occupying much space. We accept the fact that writes are slower because our application is read-intesive. We consider the idea of using an index on personnel.primaryName but the cost in term of space was higher than potential benefit.
+For a full analityc report for the indexes you can see the appendix. \cref{mongoindexes}
 \section{Partition and replicas}
-\blindtext
-\end{document}
+To ensure high-availability we deploy a cluster of replica (3). We install and configure MongoDB in all machines, with these priorities 
+\begin{enumerate}
+ \item 172.16.5.26 (primary)
+ \item 172.16.5.27 (secondary)
+ \item 172.16.5.28 (secondary)
+ \end{enumerate} 
+We decided to use \textbf{nearest read preference} and \textbf{W2 write preference}. In fact we can tolerate that users see temporarily an old version of data with a 33\% chanche. 
+ \end{document}
