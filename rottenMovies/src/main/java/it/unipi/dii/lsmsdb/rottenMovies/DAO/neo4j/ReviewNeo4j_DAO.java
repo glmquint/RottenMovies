@@ -19,15 +19,13 @@ import java.util.ArrayList;
 import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.NEO4J_DATABASE_STRING;
 import static org.neo4j.driver.Values.parameters;
 /**
- * @author Fabio
- * @author Giacomo
- * @author Guillaume
- * <class>ReviewNeo4j_DAO</class> allow to use methods to interact with the GraphDB specifically for the REVIEWED relationship
+ * <class>ReviewNeo4j_DAO</class> allow to use methods to interact with the GraphDB
+ * specifically for the REVIEWED relationship
  */
 public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
 
     /**
-     * <method>reviewMovie</method> create a relationship between a User/TopCritic and a Movie
+     * <method>reviewMovie</method> create a REVIEWED relationship between a User/TopCritic and a Movie
      * @param usr is the User/TopCritic who wrote the review
      * @param review is the Review written by usr
      * @return true in case of success
@@ -61,7 +59,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         return true;
     }
     /**
-     * <method>delete</method> delete a relationship between a User/TopCritic and a Movie
+     * <method>delete</method> delete a REVIEWED relationship between a User/TopCritic and a Movie
      * @param review is the Review written by usr that needs to be deleted
      * @return true in case of success
      * @throws DAOException
@@ -130,11 +128,13 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
         return reviewBombingList;
     }
 
-
-    public boolean updateReviewsByDeletedBaseUser(BaseUser user) throws DAOException {
-        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
-    }
-
+    /**
+     * <method>update</method> update a REVIEWED relationship in the graph db
+     * @param usr is the model of the user who wrote the review
+     * @param review is the review written by the user
+     * @return true if the transaction concluded successfully
+     * @throws DAOException
+     */
     public boolean update(BaseUser usr, Review review) throws DAOException {
         if(usr.getId().toString().isEmpty() ||review.getMovie_id()==null || review.getReviewContent().isEmpty() || review.getReviewDate()==null){
             return false;
@@ -155,6 +155,10 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
             return 1;
         });
         return true;
+    }
+
+    public boolean updateReviewsByDeletedBaseUser(BaseUser user) throws DAOException {
+        throw new DAOException("requested a query for the MongoDB in the Neo4j connection");
     }
 
     @Override

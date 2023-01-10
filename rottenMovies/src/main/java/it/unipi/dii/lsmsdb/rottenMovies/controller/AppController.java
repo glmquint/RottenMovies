@@ -313,7 +313,7 @@ public class AppController {
         if(hm.containsKey("ban")){
            AdminService adminService = new AdminService();
            if(adminService.setBannedStatus(uid, true)){
-               model.addAttribute("success", "This User is been banned\n check this out: https://www.youtube.com/watch?v=1-EiYgCubmM");
+               model.addAttribute("success", "This User is been banned");
            }
            else{
                model.addAttribute("error", "This User is already banned");

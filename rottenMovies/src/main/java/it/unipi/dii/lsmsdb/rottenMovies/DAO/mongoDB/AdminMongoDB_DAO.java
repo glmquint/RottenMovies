@@ -71,8 +71,8 @@ public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
     /**
      * <method>changeUserStatus</method> change the status of a user from unbanned to banned and vice-versa
      * @param userId is the id of the user targeted by the operation
-     * @param ban
-     * @return
+     * @param ban indicates if the operation is a ban one (true) or an unban one (false)
+     * @return true the target user document has been update
      * @throws DAOException
      */
     @Override

@@ -21,10 +21,8 @@ import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.*;
 import static org.neo4j.driver.Values.parameters;
 
 /**
- * @author Fabio
- * @author Giacomo
- * @author Guillaume
- * <class>BaseUserNeo4j_DAO</class> allow to use methods to interact with the GraphDB specifically for the User/TopCritic entities
+ * <class>BaseUserNeo4j_DAO</class> allow to use methods to interact with the GraphDB specifically
+ * for the User/TopCritic entities
  */
 public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
     /**
@@ -84,25 +82,6 @@ public class BaseUserNeo4j_DAO extends BaseNeo4jDAO implements BaseUserDAO {
 
     }
 
-    /*
-    NOT USED BUT I'LL KEEP IT JUST IN CASE, WILL REMOVE BEFORE FINAL VERSION
-
-    private boolean updateBaseUser(String id, String newName) throws DAOException{
-        if(id.isEmpty() || newName.isEmpty()){
-            return  false;
-        }
-        Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
-        session.writeTransaction(tx -> {
-            String query = "MATCH (b{id: $id}) " +
-                    "SET b.name=$newName RETURN b.name AS Name";
-
-            Result result = tx.run(query, parameters("id", id, "newName", newName));
-            System.out.println(result.single().get("Name").asString());
-            return 1;
-        });
-        return true;
-    }
-    */
 
     public int getNumberOfFollowers(TopCritic topCritic) throws DAOException{
         Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
