@@ -2,6 +2,11 @@ package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.RegisteredUser;
 import org.bson.types.ObjectId;
 
+/**
+ * <class>RegisteredUserDTO</class> is the container used to pass information for RegisteredUser between
+ * the service and presentation layer
+ */
+
 public abstract class RegisteredUserDTO {
     protected ObjectId id;
     protected String username;

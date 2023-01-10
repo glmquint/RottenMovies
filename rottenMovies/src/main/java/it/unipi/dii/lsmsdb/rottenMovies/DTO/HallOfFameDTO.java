@@ -1,5 +1,10 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
+/**
+ * <class>HallOfFameDTO</class> is the container used to pass data regarding Hall of Fame statistics between
+ * the service and presentation layer
+ */
+
 public class HallOfFameDTO {
     private String subject;
     private double top_critic_rating;

@@ -1,5 +1,8 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
-
+/**
+ * <class>GenresLikeDTO</class> is the container used to pass data regarding genres likeness between
+ * the service and presentation layer
+ */
 public class GenresLikeDTO {
     String genre;
     int count;

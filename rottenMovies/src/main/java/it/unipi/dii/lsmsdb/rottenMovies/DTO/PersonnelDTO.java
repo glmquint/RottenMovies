@@ -4,6 +4,10 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
 
 import java.util.ArrayList;
 
+/**
+ * <class>PersonnelDTO</class> is the container used to pass movies personnel information between
+ * the service and presentation layer
+ */
 public class PersonnelDTO {
         private String primaryName;
         private String category;

@@ -1,7 +1,10 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
 import java.time.LocalDate;
-
+/**
+ * <class>MovieReviewBombingDTO</class> is the container used to pass data regarding the review bombing checking functionalities between
+ * the service and presentation layer
+ */
 public class MovieReviewBombingDTO {
     String movieTitle;
     int storicCount;

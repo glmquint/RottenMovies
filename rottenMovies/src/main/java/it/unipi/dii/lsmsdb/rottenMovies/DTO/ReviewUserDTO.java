@@ -2,6 +2,12 @@ package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
 import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
 import org.bson.types.ObjectId;
+
+/**
+ * <class>ReviewUserDTO</class> is the container used to pass specific information for review between
+ * the service and presentation layer
+ */
+
 public class ReviewUserDTO extends ReviewDTO{
     private ObjectId movie_id;
     private String movie;

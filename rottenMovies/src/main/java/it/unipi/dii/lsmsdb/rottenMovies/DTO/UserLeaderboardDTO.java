@@ -2,6 +2,11 @@ package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
 import org.bson.types.ObjectId;
 
+/**
+ * <class>UserLeaderboardDTO</class> is the container used to pass information for
+ * most followed top critic and most active user functionalities between
+ * the service and presentation layer
+ */
 public class UserLeaderboardDTO {
     protected ObjectId id;
     protected String username;
