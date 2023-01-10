@@ -4,7 +4,7 @@
 
 \section{Modules and code organization}
 \justifying
-The picture below represent the packages in which the application is organized.
+The picture below represents the packages in which the application is organized.
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=1.5]{/images/PNG/modules.png}
@@ -14,7 +14,7 @@ The picture below represent the packages in which the application is organized.
 First of all we follow the reverse-domain convention for the root package, before passing to analyzing the source code, we put in the Appendix the pom.xml file for the dependency \cref{subsec:pom}.
 
 \begin{itemize}
-	\item \emph{controller} is responsible for handling the request to the various endpoint with the use of Spring
+	\item \emph{controller} is responsible for handling the request to the various endpoints with the use of Spring
 	\begin{figure}[H]
 	\begin{center}
 	\includegraphics[scale=1.5]{/images/PNG/controller.png}
@@ -22,7 +22,7 @@ First of all we follow the reverse-domain convention for the root package, befor
 	\end{center}
 	\end{figure}
 	
-	\item \emph{DAO} (Data Access Object) is responsible for accessing the databases and retrieving the necessary object
+	\item \emph{DAO} (Data Access Object) is responsible for accessing the databases and retrieving the necessary objects
 	\begin{figure}[H]
 	\begin{center}
 	\includegraphics[scale=1]{/images/PNG/DAO.png}
@@ -30,16 +30,16 @@ First of all we follow the reverse-domain convention for the root package, befor
 	\end{center}
 	\end{figure}
 	\begin{itemize}
-		\item \emph{base} contains the classes responsible for handling the base connection the DBs, \emph{enums} is used as packet to differentiate the connection type in base of an enum for higher calls
+		\item \emph{base} contains the classes responsible for handling the base connection to the DBs, \emph{enums} is packet used to differentiate the connection type based on an enum from above calls
 	
 		\item \emph{exception} is responsible for generating and handling a custom exception invoked when trying to access the wrong database
 	
-		\item \emph{interfaces} contains the various interfaces that map all the method for accessing the databases differentiated in base of the general field for the operation, they extends the \emph{AutoClosable} interface
+		\item \emph{interfaces} contains the various interfaces that map all the methods for accessing the databases differentiated based on the general field for the operation, they extend the \emph{AutoClosable} interface
 		\item \emph{mongoDB} handles the operation on the MongoDB for the different entities
 		\item \emph{neo4j} is the same as \emph{mongoDB} but for the Neo4j database
 	
 	\end{itemize}
-	\item \emph{DTO} (Data Transfer Object) presents all the classes that are used as container of the data passed between the service layer and the presentation layer
+	\item \emph{DTO} (Data Transfer Object) presents all the classes that are used as container of data passed between the service layer and the presentation layer
 	
 	\begin{figure}[H]
 	\begin{center}
@@ -47,14 +47,14 @@ First of all we follow the reverse-domain convention for the root package, befor
 	\caption{DTO}
 	\end{center}
 	\end{figure}
-	\item \emph{Models} presents all the classes that are mapped with the database organization. They all contains private field and have getters/setters. 
+	\item \emph{Models} presents all the classes that are mapped with the database organization. They all contains private fields and have getters/setters. 
 	 \begin{figure}[H]
 	\begin{center}
 	\includegraphics[scale=1]{/images/PNG/Models.png}
 	\caption{Models}
 	\end{center}
 	\end{figure}
-	\item \emph{Services} contains the middleware of our application. It is called in AppController function and interfaces with DAO classes.
+	\item \emph{Services} contains the middleware of our application. It is called in AppController methods and interfaces with DAO classes.
 	 \begin{figure}[H]
 	\begin{center}
 	\includegraphics[scale=1]{/images/PNG/Services.png}
@@ -71,9 +71,9 @@ First of all we follow the reverse-domain convention for the root package, befor
 \end{itemize}
 
 \section{Managing consistency between MongoDB and Neo4j}
-Because we use two databases we need to manage consistency among them. An example on how it is managed is the addMovie method in MovieService. Here first we try to add a movie in MongoDB, if the Mongo operation is successfull we try to add the movie in Neo4j. If Neo4j fails we decided to roll-back the insert on MongoDB, deleting the movie added previously. This strategy is also adopted in add/update/delete operations.
+Because we use two databases we need to manage consistency among them. An example on how it is managed is the addMovie method in MovieService. Here first we try to add a movie in MongoDB, if the Mongo operation is successfull we try to add the movie in Neo4j. If Neo4j fails we roll-back the insert on MongoDB, deleting the movie added previously. This strategy is also adopted in every other add/update/delete operation.
 \subsection{Insert movie}
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}[language=Java, caption = Movie insertion]
 public ObjectId addMovie(String title) {
         if (title == null || title.isEmpty()) {
             return null;
