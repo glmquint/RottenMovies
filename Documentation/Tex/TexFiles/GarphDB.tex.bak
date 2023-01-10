@@ -1,9 +1,9 @@
-%\include{./preamble}
-%\begin{document}
+\include{./preamble}
+\begin{document}
 \chapter{Graph database}
 \justifying
 The DBSM chosen for the graph database is Neo4j, it was use to manege the social part of the site and also to keep track of the reviews made for the feed and suggestion functionality.
-
+%ADD SUGGESTION FUNTIONALITY IN DESIGN CHAPTER
 
 The entities used in the database are:
 \begin{itemize}
@@ -58,17 +58,9 @@ Below the information in a json format from the Neo4j DBSM about the new index (
 We then proceed to confront the profile of the queries with and without the above indexes, here we can see the result of this analysis: 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.33]{/images/neo4j_stats/find_movie_by_id.png}
-\caption{search by id without and with movie\textunderscore id \textunderscore index}
+\includegraphics[scale=0.45]{/images/neo4j_stats/find_movie_by_id.png}
+\caption{search by id without and with movie\textundescore id}
 \label{fig:movieId}
-\end{center}
-\end{figure}
-
-\begin{figure}[H]
-\begin{center}
-\includegraphics[scale=0.33]{/images/neo4j_stats/find_user_by_id.png}
-\caption{search by id without and with user\textunderscore id \textunderscore index}
-\label{fig:userId}
 \end{center}
 \end{figure}
 
@@ -90,136 +82,6 @@ Which are the User and TopCritic nodes that have outgoing REVIEWED edges to the 
 \hline
 Which Movie nodes have different ratio of freshness in the incoming REVIEWED edges spitted in base of their date attribute & Which movies have been targeted by review bombing in the last x month\\
 \hline
-
 \end{tabular}
 \end{center}
-
-In the following pages are presented the implementation in Java of the queries
-\subsection{Users with most reviews}
-\begin{lstlisting}[language = Java]
-ArrayList<UserLeaderboardDTO> userList = session.readTransaction((TransactionWork<ArrayList<UserLeaderboardDTO>>) tx ->{
-            String query = "MATCH (b)-[:REVIEWED]->(m:Movie) " +
-                    "RETURN b.id as Id, b.name AS Name, count(*) as NumMovies, labels(b) as Type " +
-                    "ORDER BY NumMovies DESC " +
-                    "LIMIT 10";
-            Result result = tx.run(query);
-            ArrayList<UserLeaderboardDTO> list = new ArrayList<>();
-            while(result.hasNext()){
-                Record r = result.next();
-                UserLeaderboardDTO user = new UserLeaderboardDTO();
-                user.setId(new ObjectId(r.get("Id").asString()));
-                user.setUsername(r.get("Name").asString());
-                user.setCounter(r.get("NumMovies").asInt());
-                user.setType(r.get("Type").get(0).asString());
-                list.add(user);
-            }
-            return list;
-        });
-\end{lstlisting}
-
-\subsection{Most followed top critic}
-\begin{lstlisting}[language = Java]
-Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
-        ArrayList<UserLeaderboardDTO> userList = session.readTransaction((TransactionWork<ArrayList<UserLeaderboardDTO>>) tx ->{
-            String query = "MATCH (t:TopCritic)<-[:FOLLOWS]-(u:User) " +
-                    "RETURN t.id as Id, t.name AS Name, count(*) as NumMovies " +
-                    "ORDER BY NumMovies DESC " +
-                    "LIMIT 10";
-            Result result = tx.run(query);
-            ArrayList<UserLeaderboardDTO> list = new ArrayList<>();
-            while(result.hasNext()){
-                Record r = result.next();
-                UserLeaderboardDTO user = new UserLeaderboardDTO();
-                user.setId(new ObjectId(r.get("Id").asString()));
-                user.setUsername(r.get("Name").asString());
-                user.setCounter(r.get("NumMovies").asInt());
-                list.add(user);
-            }
-            return list;
-
-
-        });
-\end{lstlisting}
-
-
-\subsection{Latest review movie by followed top critics}
-\begin{lstlisting}[language = Java]
-Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
-        ArrayList<ReviewFeedDTO> reviewFeed = session.readTransaction((TransactionWork<ArrayList<ReviewFeedDTO>>)(tx -> {
-            String query = "MATCH(u:User{id:$userId})-[f:FOLLOWS]->(t:TopCritic)-[r:REVIEWED]->(m:Movie) "+
-                    "RETURN t.id as Id, m.title AS movieTitle, m.id AS movieId, t.name AS criticName, r.date AS reviewDate, "+
-                    "r.content AS content, r.freshness AS freshness " +
-                    "ORDER BY r.date DESC SKIP $skip LIMIT $limit ";
-            Result result = tx.run(query, parameters("userId", usr.getId().toString(),
-                    "skip", skip, "limit", REVIEWS_IN_FEED));
-            ArrayList<ReviewFeedDTO> feed = new ArrayList<>();
-            while(result.hasNext()){
-                Record r = result.next();
-                Date date;
-                try {
-                    date = new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(r.get("reviewDate").asLocalDate()));
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
-                feed.add(new ReviewFeedDTO(
-                        r.get("Id").asString(),
-                        r.get("movieTitle").asString(),
-                        r.get("movieId").asString(),
-                        r.get("criticName").asString(),
-                        r.get("content").asString(),
-                        r.get("freshness").asBoolean(),
-                        date
-                ));
-            }
-            return feed;
-        }));
-\end{lstlisting}
-
-\subsection{Non-followed top critics with the most affinity}
-\begin{lstlisting}[language = Java]
-Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
-        ArrayList<TopCriticSuggestionDTO> suggestionFeed = session.readTransaction((TransactionWork<ArrayList<TopCriticSuggestionDTO>>)(tx -> {
-            String query = "MATCH(u:User{id:$userId})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic) "+
-                    "WHERE NOT (u)-[:FOLLOWS]->(t) " +
-                    "RETURN 100*(toFloat(sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/(count(m.title)+2)) as Rate, "+
-                    "t.name as Name, t.id as Id ORDER BY Rate DESC SKIP $skip LIMIT $limit";
-            Result result = tx.run(query, parameters("userId", usr.getId().toString(),
-                    "skip", skip, "limit", SUGGESTIONS_IN_FEED));
-            ArrayList<TopCriticSuggestionDTO> feed = new ArrayList<>();
-            while(result.hasNext()){
-                Record r = result.next();
-
-                feed.add(new TopCriticSuggestionDTO(
-                        r.get("Id").asString(),
-                        r.get("Name").asString(),
-                        (int) r.get("Rate").asDouble()
-                ));
-            }
-            return feed;
-        }));
-\end{lstlisting}
-
-\subsection{Non-followed top critics with the most affinity}
-\begin{lstlisting}[language = Java]
-Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
-        ArrayList<TopCriticSuggestionDTO> suggestionFeed = session.readTransaction((TransactionWork<ArrayList<TopCriticSuggestionDTO>>)(tx -> {
-            String query = "MATCH(u:User{id:$userId})-[r:REVIEWED]->(m:Movie)<-[r2:REVIEWED]-(t:TopCritic) "+
-                    "WHERE NOT (u)-[:FOLLOWS]->(t) " +
-                    "RETURN 100*(toFloat(sum(case when r.freshness = r2.freshness then 1 else 0 end)+1)/(count(m.title)+2)) as Rate, "+
-                    "t.name as Name, t.id as Id ORDER BY Rate DESC SKIP $skip LIMIT $limit";
-            Result result = tx.run(query, parameters("userId", usr.getId().toString(),
-                    "skip", skip, "limit", SUGGESTIONS_IN_FEED));
-            ArrayList<TopCriticSuggestionDTO> feed = new ArrayList<>();
-            while(result.hasNext()){
-                Record r = result.next();
-
-                feed.add(new TopCriticSuggestionDTO(
-                        r.get("Id").asString(),
-                        r.get("Name").asString(),
-                        (int) r.get("Rate").asDouble()
-                ));
-            }
-            return feed;
-        }));
-\end{lstlisting}
-%\end{document}
+\end{document}
