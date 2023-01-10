@@ -22,7 +22,7 @@ import static com.mongodb.client.model.Filters.exists;
 
 /**
  * <class>AdminMongoDB_DAO</class> is responsible for the admin-field operation in
- * the MongoDb
+ * the MongoDB
  */
 public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
     /**
