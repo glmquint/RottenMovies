@@ -11,16 +11,15 @@ Inside the movie collection are embedded the documents for the reviews and perso
 \section{Collection composition}
 \subsection{Movie collection}
 The following is the composition of a movie document in the collection.
-\lstinputlisting[language=json]{./../code/movie.json}
-\caption{Movie document}
+\lstinputlisting[language=json, caption = Movie document]{./../code/movie.json}
 
 As previously stated the field personnel and review are arrays of embedded documents.
 
 \paragraph{}
 \subsection{User collection}
 The following is the composition of a user document in the collection.
-\lstinputlisting[language=json]{./../code/user.json}
-\caption{User document}
+\lstinputlisting[language=json, caption = User document]{./../code/user.json}
+
 
 It is important to notice that in this collection we have two fields for the reviews, \emph{last3Reviews} and \emph{reviews} which present different ways of storing data for the same underling entity. As suggested by the name itself \emph{last3Reviews} contains the last three review in the form of an embedded document meanwhile \emph{reviews} contains all the reviews made by a user in the form of document linking towards the movie for which they were written; in particular, the link is formed by the id of the movie, the title and the position in which the review can be found in the array \emph{review} of the movie document. This structure was chosen so that we could avoid a full replica of the reviews in both collections and, at the same time, avoiding to perform join operation for those reviews that are more frequently checked, which are the most recent ones. The idea of creating a separated collection for reviews was immediately discarded because it would have implied a design for the document database that resembles a third normal form.
 
@@ -34,15 +33,13 @@ In order to provide the best execution speed in search queries we use indexes. I
 \item top\textunderscore critic \textunderscore rating
 \item user\textunderscore rating
 \end{itemize}
-\lstinputlisting[language=Javascript]{./../code/executionStats/collStats_indexSizes_movie}
-\caption{Movie collection indexes}
+\lstinputlisting[language=Javascript, caption = Movie collection indexes]{./../code/executionStats/collStats_indexSizes_movie}
 \subsection{User collection}
 \begin{itemize}
 \item username
 \item date\textunderscore of \textunderscore birth
 \end{itemize}
-\lstinputlisting[language=Javascript]{./../code/executionStats/collStats_indexSizes_user}
-\caption{User collection indexes}
+\lstinputlisting[language=Javascript, caption = User collection indexes]{./../code/executionStats/collStats_indexSizes_user}
 
 We decided to use these indexes because they provide a jump in term of speed in search queries without occupying much space. We accept the fact that writes are slower because our application is read-intesive. We consider the idea of using an index on personnel.primaryName but the cost in term of space was higher than the potential benefit, so we discarded it.
 For a full analytic report for the indexes, see appendix. \cref{mongoindexes}
@@ -60,10 +57,9 @@ In this section we shall discuss the different aggregations that the application
 
 \subsection{Return the best years by top critic and user ratings}\label{subsec:bestYear}
 \subsubsection{Mongo shell}
-\lstinputlisting[language=JavaScript]{./../code/bestYear.js}
-\caption{best_year.js}
+\lstinputlisting[language=JavaScript, caption = bestYear.js]{./../code/bestYear.js}
 \subsubsection{Java implementation}
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}[language=Java, caption = MovieMongoDBDAO.java]
 AggregateIterable<Document> aggregateResult = collection.aggregate(
                 Arrays.asList(
                         Aggregates.group("$year",
@@ -76,13 +72,11 @@ AggregateIterable<Document> aggregateResult = collection.aggregate(
                 )
         );
 \end{lstlisting}
-\caption{MovieMongoDB_DAO.java}
 \subsection{Return the best genres by top critic and user ratings}\label{subsec:HOFGenres}
 \subsubsection{Mongo shell}
-\lstinputlisting[language=JavaScript]{./../code/HOFGenres.js}
-\caption{best_genres.js}
+\lstinputlisting[language=JavaScript, caption = bestGenres.js]{./../code/HOFGenres.js}
 \subsubsection{Java implementation}
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}[language=Java, caption= MovieMongoDBDAO.java]
 AggregateIterable<Document> aggregateResult = collection.aggregate(
                 Arrays.asList(
                         Aggregates.unwind("$genres"),
@@ -96,13 +90,13 @@ AggregateIterable<Document> aggregateResult = collection.aggregate(
                 )
         );
 \end{lstlisting}
-\caption{MovieMongoDB_DAO.java}
+
 \subsection{Return the best production houses by top critic and user ratings}\label{subsec:productionHouses}
 \subsubsection{Mongo shell}
-\lstinputlisting[language=JavaScript]{./../code/productionHouses.js}
-\caption{best_production_houses.js}
+\lstinputlisting[language=JavaScript, caption = bestProductionHouses.js]{./../code/productionHouses.js}
+
 \subsubsection{Java implementation}
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}[language=Java, caption = MovieMongoDBDAO.java ]
 AggregateIterable<Document> aggregateResult = collection.aggregate(
                 Arrays.asList(
                         Aggregates.group("$production_company",
@@ -115,13 +109,11 @@ AggregateIterable<Document> aggregateResult = collection.aggregate(
                 )
         );
 \end{lstlisting}
-\caption{MovieMongoDB_DAO.java}
 \subsection{Given a movie count the review it has received by each month}\label{subsec:reviewByYearMonth}
 \subsubsection{Mongo shell}
-\lstinputlisting[language=JavaScript]{./../code/reviewByYearMonth.js}
-\caption{movie_count.js}
+\lstinputlisting[language=JavaScript, caption = movieCount.js]{./../code/reviewByYearMonth.js}
 \subsubsection{Java implementation}
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}[language=Java, caption = MovieMongoDBDAO.java]
 Document yearDoc = new Document("year",new Document("$year","$review.review_date"));
         Document monthDoc = new Document("month",new Document("$month","$review.review_date"));
         ArrayList<Document> test=new ArrayList<>();
@@ -137,13 +129,12 @@ Document yearDoc = new Document("year",new Document("$year","$review.review_date
                 )
         );
 \end{lstlisting}
-\caption{MovieMongoDB_DAO.java}
 \subsection{Given a user count the review he/she has made divided by genres}\label{subsec:preferredGenres}
 \subsubsection{Mongo shell}
-\lstinputlisting[language=JavaScript]{./../code/preferredGenres.js}
-\caption{genre_count.js}
+\lstinputlisting[language=JavaScript, caption = genreCount.js]{./../code/preferredGenres.js}
+
 \subsubsection{Java implementation}
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}[language=Java, caption = BaseUserMongoDBDAO.java]
 AggregateIterable<Document> aggregateResult = collectionMovie.aggregate(
                 Arrays.asList(
                         Aggregates.match(eq("review.critic_name",username)),
@@ -155,13 +146,12 @@ AggregateIterable<Document> aggregateResult = collectionMovie.aggregate(
                 )
         );
 \end{lstlisting}
-\caption{BaseUserMongoDB_DAO.java}
 \subsection{Return the number of user divided by an age bucket}\label{subsec:userPopulationBucket}
 \subsubsection{Mongo shell}
-\lstinputlisting[language=JavaScript]{./../code/userPopulationBucket.js}
-\caption{user_population.js}
+\lstinputlisting[language=JavaScript, caption = userPopulation.js]{./../code/userPopulationBucket.js}
+
 \subsubsection{Java implementation}
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}[language=Java, caption = AdminMongoDBDAO.java]
 BucketOptions opt = new BucketOptions();
         ArrayList<Integer> buck=new ArrayList<>();
         opt.output(new BsonField("population",new Document("$sum",1)));
@@ -178,7 +168,6 @@ BucketOptions opt = new BucketOptions();
                 )
         );
 \end{lstlisting}
-\caption{AdminMongoDB_DAO.java}
 
 \section{Sharding considerations}
 We consider the possibility of sharding the movie collection, with the benefit of much less space occupation, using id as a possible sharding key. However we realized that we search movies not only by id but also with their primary titles, their years, etc. With these type of queries we end up in a query flooding scenario, where every replica must be consulted in order to find the appropriate document.
