@@ -296,6 +296,7 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                 Updates.set("runtimeMinutes", updated.getRuntimeMinutes()),
                 Updates.set("production_company", updated.getProductionCompany()),
                 Updates.set("genres", updated.getGenres()),
+                Updates.set("poster_url", updated.getPosterUrl()),
 //                Updates.set("top_critic_status", updated.getTop_critic_status()),
 //                Updates.set("top_critic_rating", updated.getTop_critic_rating()),
 //                Updates.set("user_status", updated.getUser_status()),
