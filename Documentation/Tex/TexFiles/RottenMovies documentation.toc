@@ -45,8 +45,9 @@
 \contentsline {subsubsection}{Mongo shell}{18}{subsection.4.4.6}%
 \contentsline {subsubsection}{Java implementation}{19}{lstnumber.4.15.17}%
 \contentsline {chapter}{\numberline {5}Graph database}{20}{chapter.5}%
-\contentsline {section}{\numberline {1 }Index}{22}{section.5.1}%
-\contentsline {section}{\numberline {2 }Queries}{24}{section.5.2}%
+\contentsline {section}{\numberline {1 }Introduction}{20}{section.5.1}%
+\contentsline {section}{\numberline {2 }Index}{22}{section.5.2}%
+\contentsline {section}{\numberline {3 }Queries}{24}{section.5.3}%
 \contentsline {chapter}{\numberline {6}Software Architecture}{25}{chapter.6}%
 \contentsline {chapter}{\numberline {7}Application Structure}{26}{chapter.7}%
 \contentsline {section}{\numberline {1 }Modules and code organization}{26}{section.7.1}%
