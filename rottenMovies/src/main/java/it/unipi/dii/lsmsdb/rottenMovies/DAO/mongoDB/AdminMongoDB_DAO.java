@@ -37,12 +37,9 @@ public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
         BucketOptions opt = new BucketOptions();
         ArrayList<Integer> buck=new ArrayList<>();
         opt.output(new BsonField("population",new Document("$sum",1)));
-        // parti dal 1970
-        // aggiungi offset
-        // ripeti fino al 2010
-        int bucketYear=1970;
+        int bucketYear=1970; // start year
         buck.add(bucketYear);
-        while(bucketYear<=2010){
+        while(bucketYear<=2010){ // add the offset until you reach 2010
             bucketYear=(bucketYear+offset);
             buck.add(bucketYear);
         }
