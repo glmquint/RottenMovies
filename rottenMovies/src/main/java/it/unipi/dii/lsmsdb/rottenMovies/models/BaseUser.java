@@ -11,6 +11,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
+
+/**
+ * <class>BaseUser</class> is the container in which data from the backend for BaseUser is mapped
+ *                     RegisteredUser
+ *                     /            \
+ *                    /              \
+ *                  Admin           BaseUser
+ *                                  /       \
+ *                                 /         \
+ *                              User        TopCritic
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class BaseUser extends RegisteredUser {
     @JsonProperty("first_name")

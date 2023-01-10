@@ -6,6 +6,9 @@ import it.unipi.dii.lsmsdb.rottenMovies.DTO.PersonnelDTO;
 
 import java.util.ArrayList;
 
+/**
+ * <class>Personnel</class> is the container in which data from the backend for Personnel is mapped
+ */
 public class Personnel {
     @JsonProperty("primaryName")
     private String primaryName;
