@@ -3,3 +3,7 @@
 ~$*
 rottenMovies/src/main/java/it/unipi/dii/lsmsdb/rottenMovies/PersonalTestClass.java
 largescale2022.ovpn
+Documentation/Tex/TexFiles/*.aux
+Documentation/Tex/TexFiles/*.out
+Documentation/Tex/TexFiles/*.gz
+Documentation/Tex/TexFiles/*.log
