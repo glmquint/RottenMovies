@@ -69,6 +69,7 @@ Before the index
 \lstinputlisting[language=JavaScript]{./../code/executionStats/find_date_of_birth_no_index}
 After the index
 \lstinputlisting[language=JavaScript]{./../code/executionStats/find_date_of_birth_with_index}
+<<<<<<< HEAD
 \section{Managing consistency between MongoDB and Neo4j}
 Because we use two databases we need to manage consistency among them. An example on how it is managed is the addMovie method in MovieService. Here first we try to add a movie in MongoDB, if the Mongo operation is successfull we try to add the movie in Neo4j. If Neo4j fails we decided to roll-back the insert on MongoDB, deleting the movie added previously. This strategy is also adopted in add/update/delete operations.
 \subsection{Insert movie}
@@ -109,5 +110,11 @@ public ObjectId addMovie(String title) {
 \begin{equation}\label{pippo}
 x^2-5x+6=0
 \end{equation}
+=======
+
+\section{Application code}
+\subsection{Pom.xml}\label{subsec:pom}
+\lstinputlisting[language=xml]{./../code/pom.xml}
+>>>>>>> documentation_fabio
 \end{alphasection}
 \end{document}
