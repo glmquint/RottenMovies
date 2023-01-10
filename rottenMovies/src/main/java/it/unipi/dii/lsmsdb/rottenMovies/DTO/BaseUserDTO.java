@@ -7,11 +7,16 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.SimplyfiedReview;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * <class>BaseUserDTO</class> is the container used to pass data regarding a BaseUser between
+ * the service and presentation layer
+ */
 public abstract class BaseUserDTO extends RegisteredUserDTO{
     protected String firstName;
     protected String lastName;
     protected Date registrationDate;
     protected ArrayList<ReviewUserDTO> last3Reviews;
+
     protected ArrayList<SimplyfiedReviewDTO> reviews;
     protected boolean isBanned;
 

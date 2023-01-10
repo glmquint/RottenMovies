@@ -2,6 +2,10 @@ package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
 import it.unipi.dii.lsmsdb.rottenMovies.models.SimplyfiedReview;
 import org.bson.types.ObjectId;
+/**
+ * <class>SimplyfiedReviewDTO</class> is the container used to pass minified reviews information between
+ * the service and presentation layer
+ */
 
 public class SimplyfiedReviewDTO {
     private ObjectId movieID;

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoException;
-import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.UpdateResult;
@@ -12,7 +11,6 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.BaseMongoDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.exception.DAOException;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieReviewBombingDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.ReviewFeedDTO;
 
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
@@ -23,17 +21,22 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.*;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.Constants;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
+
 import java.util.ArrayList;
 import java.util.*;
 
-import static com.mongodb.client.model.Accumulators.sum;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.*;
 import static com.mongodb.client.model.Updates.popFirst;
 import static com.mongodb.client.model.Updates.push;
 
-
+/**
+ * <class>ReviewMongoDB_DAO</class> is responsible for the review-field operation in
+ * the MongoDB
+ */
 public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
+
     private BasicDBObject buildLast3ReviewField(Review r){
         BasicDBObject reviewLast3 = new BasicDBObject();
         reviewLast3.put("_id",r.getMovie_id());
@@ -62,6 +65,12 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         reviewMovie.put("review_index",index);
         return reviewMovie;
     }
+    /**
+     * <method>reviewMovie</method> add the user review in a movie
+     * @param usr, review
+     * @return true in case of success, false otherwise
+     * @throws DAOException
+     */
     @Override
     public boolean reviewMovie(BaseUser usr, Review review) {
         if(usr.getId()==null || review.getMovie_id()==null){
@@ -77,6 +86,7 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         Bson movieFilter = eq("_id", review.getMovie_id());
 
         int newReviewIndex=updateMovieRating(movieCollection,movieFilter,(usr instanceof TopCritic),freshReview,true);
+
         review.setCriticName(usr.getUsername());
         BasicDBObject reviewMovie = buildMovieReviewField(review);
         Bson updateMovie = push("review", reviewMovie);
@@ -121,6 +131,13 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         return (critic_rating>=60)?((critic_rating>=75 && (totalReviewCount)>=80 && (critic_fresh+critic_rotten)>=5)?"Certified Fresh":"Fresh"):"Rotten";
     }
 
+    /**
+     * <method>updateMovieRating</method> update the movie rating based on the review
+     * @param movieCollection, movieFilter, isTop, isFresh, isNew
+     * @return number of reviews made
+     * @throws DAOException
+     */
+
     private int updateMovieRating (MongoCollection<Document> movieCollection,Bson movieFilter,boolean isTop,boolean isFresh,boolean isNew){
         Bson projectfield=Projections.fields(excludeId(),include("user_fresh_count","user_rotten_count","top_critic_rotten_count","top_critic_fresh_count","user_status","top_critic_status"));
         Document res = movieCollection.find(movieFilter).projection(projectfield).first();
@@ -132,19 +149,19 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         String top_critic_status=res.getString("top_critic_status");
         int totalReviewCount=critic_fresh+critic_rotten+user_fresh+user_rotten;
         Bson updates=null;
-        if(!isTop){
+        if(!isTop){ // it is a user review
             if(isFresh){
                 user_fresh++;
                 updates=Updates.set("user_fresh_count",user_fresh);
-                if(!isNew) {
+                if(!isNew) { // it's an old review
                     user_rotten--;
                     updates = Updates.combine(updates, Updates.set("user_rotten_count", user_rotten));
                 }
             }
-            else {
+            else { // it is a top critic review
                 user_rotten++;
                 updates=Updates.set("user_rotten_count",user_rotten);
-                if(!isNew) {
+                if(!isNew) { // it's an old review
                     user_fresh--;
                     updates=Updates.combine(updates,Updates.set("user_fresh_count",user_fresh));
                 }
@@ -160,7 +177,7 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             if(isFresh){
                 critic_fresh++;
                 updates=Updates.set("top_critic_fresh_count",critic_fresh);
-                if(!isNew){
+                if(!isNew){ // it's an old review
                     critic_rotten--;
                     updates=Updates.combine(updates,Updates.set("top_critic_rotten_count",critic_rotten));
                 }
@@ -168,7 +185,7 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             else {
                 critic_rotten++;
                 updates=Updates.set("top_critic_rotten_count",critic_rotten);
-                if(!isNew) {
+                if(!isNew) { // it's an old review
                     critic_fresh--;
                     updates = Updates.combine(updates,Updates.set("top_critic_fresh_count", critic_fresh));
                 }
@@ -190,6 +207,12 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         return totalReviewCount;
     }
 
+    /**
+     * <method>delete</method> deletes a review both in movie and user collections
+     * @param review is the model
+     * @return true in case of success, false otherwise
+     * @throws DAOException
+     */
     @Override
     public boolean delete(Review review) {
         if(review.getCriticName()==null || review.getMovie_id()==null || review.getMovie()==null){
@@ -223,8 +246,11 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             UpdateResult result=userCollection.updateOne(filterUsr,Updates.pull("last_3_reviews",filterMovie));
             System.out.println("Modified document count: " + result.getModifiedCount());
 
-            Document set=new Document("$set", new Document("review."+index+".critic_name",Constants.DELETED_REVIEW));
-            result=movieCollection.updateOne(filterMovie, set);
+            Document set1=new Document("$set", new Document("review."+index+".critic_name",Constants.DELETED_REVIEW));
+            Document set2=new Document("$set", new Document("review."+index+".review_content",""));
+            Document set3=new Document("$set", new Document("review."+index+".review_score",""));
+
+            result=movieCollection.updateOne(filterMovie, Updates.combine(set1, set2, set3));
             System.out.println("Modified document count: " + result.getModifiedCount());
 
             Bson updates = Updates.combine(Updates.pull("reviews",eq("movie_id",review.getMovie_id())));
@@ -237,6 +263,14 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         }
         return true;
     }
+
+    /**
+     * <method>update</method> update a review that a user made
+     * @param usr is the user model, reviewUpdated is the review model
+     * @return true in case of success, false otherwise
+     * @throws DAOException
+     */
+
     public boolean update (BaseUser usr,Review reviewUpdated){
         if(reviewUpdated.getMovie_id()==null || usr.getId()==null){
             System.out.println("ReviewMongoDB_DAO.update[ERROR]:review fields cannot be null values! Check movie_id and user_id");
@@ -250,7 +284,7 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         boolean needsRatingUpdate=false;
         HashMap<String,String> changedFields = new HashMap<>();
         int index=0;
-        for(Review r:last3){
+        for(Review r:last3){ // check if the reviews to be modified is in last_3
             if(r.getMovie_id().equals(reviewUpdated.getMovie_id())){
                 index=last3.indexOf(r);
                 if(!r.getReviewType().equals(reviewUpdated.getReviewType())) {
@@ -266,7 +300,7 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
 
         }
         Bson updates=null;
-        if (!changedFields.isEmpty()){
+        if (!changedFields.isEmpty()){ // update last_3_review field if needed
             updates = Updates.set("last_3_reviews."+index+".review_date", reviewUpdated.getReviewDate());
             for(String k:changedFields.keySet()) {
                 updates=Updates.combine(updates,Updates.set("last_3_reviews."+index+k,changedFields.get(k)));
@@ -283,7 +317,7 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
 
         ArrayList<SimplyfiedReview> listrev = usr.getReviews();
         boolean found=false;
-        for(SimplyfiedReview s:listrev){
+        for(SimplyfiedReview s:listrev){ // check the presence in all reviews
             if(s.getMovieID().equals(reviewUpdated.getMovie_id())){
                 index=s.getIndex();
                 found=true;
@@ -317,7 +351,7 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
         if(needsRatingUpdate){
             updateMovieRating(movieCollection,movieFilter,(usr instanceof TopCritic),(reviewUpdated.getReviewType().equals("Fresh")),false);
         }
-        if(!changedFields.isEmpty()) {
+        if(!changedFields.isEmpty()) { // update the review in movie collection
             updates = Updates.set("review." + index + ".review_date", reviewUpdated.getReviewDate());
             for (String k : changedFields.keySet()) {
                 updates = Updates.combine(updates, Updates.set("review." + index + k, changedFields.get(k)));
@@ -332,6 +366,37 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
             }
         }
         return true;
+    }
+
+    /**
+     * <method>getIndexOfReview</method> return the index of the review made by user
+     * @param userid is the user Object Id, primaryTitle is the movie's primary title
+     * @return an ArrayList of Object (movie id and the review index)
+     * @throws DAOException
+     */
+    @Override
+    public ArrayList<Object> getIndexOfReview(ObjectId userid, String primaryTitle) {
+        MongoCollection <Document> userCollection = getUserCollection();
+        ArrayList<Object> movieAndIndex = new ArrayList<>();
+        Bson projection = Projections.fields( excludeId(), elemMatch("reviews", eq("primaryTitle", primaryTitle)));
+        Document doc= userCollection.find(eq("_id",userid)).projection(projection).first();
+        Object obj = doc.get("reviews");
+        Document doc2 = null;
+        if (obj instanceof ArrayList) {
+            ArrayList<?> dboArrayNested = (ArrayList<?>) obj;
+            Object dboNestedObj = dboArrayNested.get(0);
+            if (dboNestedObj instanceof Document) {
+                doc2= (Document) dboNestedObj;
+            }
+            else
+                return movieAndIndex;
+        }
+        else {
+            return movieAndIndex;
+        }
+        movieAndIndex.add(doc2.get("movie_id"));
+        movieAndIndex.add(doc2.getInteger("review_index"));
+        return movieAndIndex;
     }
 
     public MovieReviewBombingDTO checkReviewBombing(Movie movie, int month) throws DAOException{

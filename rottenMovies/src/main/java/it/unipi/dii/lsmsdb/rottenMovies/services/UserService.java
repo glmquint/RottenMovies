@@ -3,11 +3,8 @@ package it.unipi.dii.lsmsdb.rottenMovies.services;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
-import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
-import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
-import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptionsEnum;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.BaseUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
@@ -15,10 +12,6 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.MD5;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.RegisteredUserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.UserDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.models.*;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -26,7 +19,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * <class>UserService</class> contains all the utility method to operate as middleware for the user entities
+ */
 public class UserService {
+
+    /**
+     * <method>getUser</method> get a user from the DB and returns it to the front-end
+     * @param page is the page use for pagination
+     * @param user_id is the id of the user to search for
+     * @return a RegisteredUserDTO for checks and manipulation
+     */
     public RegisteredUserDTO getUser(int page, String user_id) {
         RegisteredUserDTO user = null;
         try (BaseUserDAO userdao = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
@@ -38,6 +41,12 @@ public class UserService {
         return user;
     }
 
+    /**
+     * <method>authenticate</method> allows to authenticate a user after the login
+     * @param username is the username passed from the front-end
+     * @param password is the password passed from the front-end
+     * @return a RegisteredUserDTO for checks and manipulation
+     */
     public RegisteredUserDTO authenticate(String username, String password) {
         ArrayList<RegisteredUserDTO> baseuserdtos = null;
         try (BaseUserDAO userdao = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
@@ -53,6 +62,11 @@ public class UserService {
         return baseuserdtos.get(0);
     }
 
+    /**
+     * <method>getGenresLike</method> builds a page for the most reviewed genres by a user
+     * @param username is the username of the user to check for
+     * @return a PageDTO of GenresLikeDTO for visualization
+     */
     public PageDTO<GenresLikeDTO> getGenresLike (String username) {
         PageDTO<GenresLikeDTO> genresLikeDTO = new PageDTO<>();
         ArrayList<GenresLikeDTO> genresLikeDTOSpages = new ArrayList<>();
@@ -65,6 +79,11 @@ public class UserService {
         return genresLikeDTO;
     }
 
+    /**
+     * <method>register</method> allows the registration of a new user to be inserted in the DB
+     * @param hm contains the information on the new user
+     * @return a RegisteredUserDTO for checks and manipulation
+     */
     public RegisteredUserDTO register(HashMap<String, String> hm) {
         BaseUser user = null;
         if (hm.containsKey("is_top_critic")) {
@@ -91,25 +110,26 @@ public class UserService {
             }
         }
         user.setRegistrationDate(new Date());
-        boolean res;
+        ObjectId newId;
         try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
-            res = userDAO.insert(user);
+            newId = userDAO.insert(user);
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
-        if (!res) {
+        if (newId == null) {
             return null;
         }
-        res = false;
+        user.setId(newId);
+        newId = null;
         try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)) {
-            res = userDAO.insert(user);
+            newId = userDAO.insert(user);
         } catch (Exception e) {
             System.out.println(e);
         }
-        if (!res) {
+        if (newId == null) { // mongo roll-back
             try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
-                res = userDAO.delete(user);
+                userDAO.delete(user);
             } catch (Exception e) {
                 System.err.println(e);
             }
@@ -121,6 +141,11 @@ public class UserService {
         return new UserDTO((User) user);
     }
 
+    /**
+     * <method>getUserByUsername</method> get a user from the db by searching on its username
+     * @param username is the username to search for
+     * @return a RegisteredUserDTO for checks and manipulation
+     */
     public RegisteredUserDTO getUserByUsername(String username) {
         RegisteredUserDTO user = null;
         try (BaseUserDAO userdao = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)) {
@@ -132,6 +157,12 @@ public class UserService {
         return user;
     }
 
+    /**
+     * <method>follow</method> allows a user to follow a top critic and it updates the db
+     * @param uid is the id of the follower user
+     * @param tid is the id of the followed top critic
+     * @return true if the operation concluded successfully
+     */
     public boolean follow (String uid, String tid){
         try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
             BaseUser user = new User();
@@ -153,6 +184,12 @@ public class UserService {
         return true;
     }
 
+    /**
+     * <method>unfollow</method> allows a user to unfollow a top critic and it updates the db
+     * @param uid is the id of the follower user
+     * @param tid is the id of the followed top critic
+     * @return true if the operation concluded successfully
+     */
     public boolean unfollow (String uid, String tid){
         try(BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
             BaseUser user = new User();
@@ -170,8 +207,14 @@ public class UserService {
             return false;
         }
         return true;
-
     }
+
+    /**
+     * <method>createUserFeed</method> builds the page for the visualization of the feed
+     * @param usr is model of the user for which the feed must be built
+     * @param page is the page use for pagination
+     * @return a pageDTO of ReviewFeedDTO for visualization
+     */
     public PageDTO<ReviewFeedDTO> createUserFeed (BaseUser usr,int page){
         PageDTO<ReviewFeedDTO> reviewFeedDTO = new PageDTO<>();
         ArrayList<ReviewFeedDTO> reviewFeedDTOpages = new ArrayList<>();
@@ -183,5 +226,100 @@ public class UserService {
             System.out.println(e);
         }
         return reviewFeedDTO;
+    }
+
+    /**
+     * <method>getTopCriticSuggestions</method> build the page for the visualization of the suggestion feed
+     * @param usr is model of the user for which the feed must be built
+     * @param page is the page use for pagination
+     * @return a pageDTO of TopCriticSuggestionDTO for visualization
+     */
+    public PageDTO<TopCriticSuggestionDTO> getTopCriticSuggestions (User usr, int page) {
+        PageDTO<TopCriticSuggestionDTO> topCriticSuggestionDTO = new PageDTO<>();
+        ArrayList<TopCriticSuggestionDTO> topCriticSuggestionPages = new ArrayList<>();
+        try (BaseUserDAO userDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)) {
+            topCriticSuggestionPages = userDAO.getSuggestion(usr, page);
+            topCriticSuggestionDTO.setEntries(topCriticSuggestionPages);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return topCriticSuggestionDTO;
+    }
+
+    /**
+     * <method>getFollowers</method> get the number of followers of a top critic from the db
+     * @param id is the id of the top critic
+     * @return the number of followers
+     */
+    public int getFollowers(String id){
+        TopCritic topCritic = new TopCritic();
+        topCritic.setId(new ObjectId(id));
+        try(BaseUserDAO baseUserDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.NEO4j)){
+            return baseUserDAO.getNumberOfFollowers(topCritic);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return -1;
+    }
+
+    /**
+     * <method>getReviewIndex</method> get the position of a review of user in the review array of a movie stored in the
+     * db
+     * @param userid is the id of the author of the review
+     * @param primaryTitle is the title of the movie
+     * @return an ArrayList with the index of the review and the id of the movie
+     */
+    public ArrayList<Object> getReviewIndex(ObjectId userid, String primaryTitle){
+        try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.MONGO)) {
+            return reviewdao.getIndexOfReview(userid,primaryTitle);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    /**
+     * <method>modifyUser</method> allows the modification of a user details with data passed from the front-end and
+     * updates the db
+     * @param uid is the id of the user
+     * @param hm contains the data to be modified
+     * @param isTop indicates if the user is a top critic or a normal user
+     * @return true if the operation concluded successfully
+     */
+    public boolean modifyUser(String uid, HashMap<String, String> hm, boolean isTop) {
+        BaseUser newUser = null;
+        if(!isTop){
+            newUser = new User();
+        }
+        else{
+            newUser = new TopCritic();
+        }
+        newUser.setId(new ObjectId(uid));
+        newUser.setPassword("");
+        for (Map.Entry<String, String> entry : hm.entrySet()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            if (v == null || v.isEmpty()) {
+                continue;
+            }
+            if (k.equals("firstName")) {
+                newUser.setFirstName(v);
+            } else if (k.equals("lastName")) {
+                newUser.setLastName(v);
+            }
+            else if (k.equals("password")) {
+                newUser.setPassword(MD5.getMd5(v));
+            }
+            else if (k.equals("birthday")) {
+                ((User) newUser).setBirthdayDate(v);
+            }
+        }
+
+        try(BaseUserDAO baseUserDAO = DAOLocator.getBaseUserDAO(DataRepositoryEnum.MONGO)){
+            return baseUserDAO.update(newUser);
+        }catch (Exception e){
+            System.err.println(e);
+            return false;
+        }
     }
 }

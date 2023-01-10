@@ -1,22 +1,25 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
-import org.bson.types.ObjectId;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+/**
+ * <class>ReviewFeedDTO</class> is the container used to pass information for the feed functionality between
+ * the service and presentation layer
+ */
 public class ReviewFeedDTO {
     public String criticId;
     private String movieTitle;
+    private String movieId;
     private String criticName;
     private String content;
     private boolean freshness;
     private Date reviewDate;
 
-    public ReviewFeedDTO(String criticId, String movieTitle, String criticName, String content, boolean freshness, Date reviewDate) {
+    public ReviewFeedDTO(String criticId, String movieTitle, String movieId, String criticName, String content, boolean freshness, Date reviewDate) {
         this.criticId = criticId;
         this.movieTitle = movieTitle;
+        this.movieId = movieId;
         this.criticName = criticName;
         this.content = content;
         this.freshness = freshness;
@@ -38,6 +41,10 @@ public class ReviewFeedDTO {
     public void setMovieTitle(String movieTitle) {
         this.movieTitle = movieTitle;
     }
+
+    public String getMovieId() {return movieId;}
+
+    public void setMovieId(String movieId) {this.movieId = movieId;}
 
     public String getCriticName() {
         return criticName;

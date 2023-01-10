@@ -5,13 +5,18 @@ import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 
+import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.*;
+/**
+ * <class>BaseNeo4jDAO</class>
+ *  is the base connector for the Neo4j,
+ * it offers methods to create a connection to the server (BaseNeo4jDAO),
+ * and close the connection to the database (close)
+ */
 public abstract class BaseNeo4jDAO implements AutoCloseable{
     protected final Driver driver;
-    private static final String user = "neo4j";
-    private static final String password = "password";
 
     public BaseNeo4jDAO() {
-        driver = GraphDatabase.driver("neo4j://localhost:7687", AuthTokens.basic(user, password));
+        driver = GraphDatabase.driver(NEO4J_CONNECTION_STRING, AuthTokens.basic(NEO4J_USERNAME, NEO4J_PASSWORD));
     }
 
     @Override

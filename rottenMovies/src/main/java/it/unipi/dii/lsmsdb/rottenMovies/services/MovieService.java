@@ -3,27 +3,33 @@ package it.unipi.dii.lsmsdb.rottenMovies.services;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.HallOfFameDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
-import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
-import it.unipi.dii.lsmsdb.rottenMovies.models.Personnel;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
+import it.unipi.dii.lsmsdb.rottenMovies.models.*;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.ReviewProjectionOptions;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.ReviewProjectionOptionsEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptions;
 import it.unipi.dii.lsmsdb.rottenMovies.utils.SortOptionsEnum;
 import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.MAXIMUM_NUMBER_OF_PERSONNEL;
 
+/**
+ * <class>MovieService</class> contains all the utility method to pass the modification
+ * from front-end to back-end regarding the movie entities and its reviews
+ */
 public class MovieService {
+    /**
+     * <method>listMoviePage</method> allows to build pages in the explorer where the movies,
+     * according to the filters, are shown
+     * @param page is the page use for pagination
+     * @param request contains the filters for which movie to search for
+     * @return a PageDTO of MovieDTO for visualization
+     */
     public PageDTO<MovieDTO> listMoviePage(int page, HashMap<String, String> request){
         PageDTO<MovieDTO> movie_page = new PageDTO<>();
         try(MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
@@ -81,6 +87,13 @@ public class MovieService {
         return movie_page;
     }
 
+    /**
+     * <method>getMovie</method> allows to get a movie from the back-end and transport it to the visualization layer
+     * @param page is the page use for pagination
+     * @param movie_id is the id of the target movie
+     * @param comment_index is the index a specific review to visualize
+     * @return a MovieDTO for visualization
+     */
     public MovieDTO getMovie(int page, String movie_id, int comment_index) {
         MovieDTO movie = new MovieDTO();
         try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
@@ -100,6 +113,12 @@ public class MovieService {
         return movie;
     }
 
+    /**
+     * <method>getHOFProductionHouses</method> builds the HoF for the production houses after querying the back-end
+     * @param sort is the type of sort requested
+     * @param min_movie_count is the minimum movie produced count to be a part of the HoF
+     * @return a PageDTO of HallOfFameDTO for visualization
+     */
     public PageDTO<HallOfFameDTO> getHOFProductionHouses(String sort, int min_movie_count){
         PageDTO<HallOfFameDTO> hallOfFameDTO= new PageDTO<>();
         ArrayList<HallOfFameDTO> listHOF = new ArrayList<>();
@@ -118,6 +137,13 @@ public class MovieService {
         }
         return hallOfFameDTO;
     }
+
+    /**
+     * <method>getHOFGenres</method> builds the HoF for genres after querying the back-end
+     * @param sort is the type of sort requested
+     * @param min_movie_count is the minimum movie produced count to be a part of the HoF
+     * @return a PageDTO of HallOfFameDTO for visualization
+     */
     public PageDTO<HallOfFameDTO> getHOFGenres(String sort, int min_movie_count){
         PageDTO<HallOfFameDTO> hallOfFameDTO= new PageDTO<>();
         ArrayList<HallOfFameDTO> listHOF = new ArrayList<>();
@@ -136,6 +162,13 @@ public class MovieService {
         }
         return hallOfFameDTO;
     }
+
+    /**
+     * <method>getHOFYears</method> builds the HoF for years after querying the back-end
+     * @param sort is the type of sort requested
+     * @param min_movie_count is the minimum movie produced count to be a part of the HoF
+     * @return a PageDTO of HallOfFameDTO for visualization
+     */
     public PageDTO<HallOfFameDTO> getHOFYears(String sort, int min_movie_count) {
         PageDTO<HallOfFameDTO> hallOfFameDTO = new PageDTO<>();
         ArrayList<HallOfFameDTO> listHOF = new ArrayList<>();
@@ -154,36 +187,17 @@ public class MovieService {
         }
         return hallOfFameDTO;
     }
-//    <label for="title">title</label>
-//  <input class="form-control" id="title" type="text" placeholder="Title" name="title" th:value="${movie.primaryTitle}?:''">
-//
-//  <label for="year">year</label>
-//  <input class="form-control" id="year" type="number" placeholder="year" name="year" th:value="${movie.year}?:0">
-//
-//  <label for="runtimeMinutes">runtimeMinutes</label>
-//  <input class="form-control" id="runtimeMinutes" type="number" placeholder="runtimeMinutes" name="runtimeMinutes" th:value="${movie.runtimeMinutes}?:0">
-//
-//  <label for="productionCompany">productionCompany</label>
-//  <input class="form-control" id="productionCompany" type="text" placeholder="productionCompany" name="productionCompany" th:value="${movie.productionCompany}?:''">
-//
-//  <label for="genres">genres</label>
-//  <input class="form-control" id="genres" type="text" placeholder="genres" name="title" th:value="${movie.genres}?:${#strings.listJoin(movie.genres,', ')}">
-//
-//<label>Personnel</label>
-//<ul class="col-md-4 fs-6 mx-3" th:each="w:${movie.personnel}">
-//  <label for="primaryName">primaryName</label>
-//  <input class="form-control" id="primaryName" type="text" placeholder="primaryName" name="primaryName" th:value="${w.primaryName}?:''">
-//  <label for="category">category</label>
-//  <input class="form-control" id="category" type="text" placeholder="category" name="category" th:value="${w.category}?:''">
-//  <label for="job_characters">job_characters</label>
-//  <input class="form-control" id="job_characters" type="text" placeholder="job_characters" name="job_characters" th:value="${w.job}?:(${w.characters}?:'')">
-//</ul>
-//
-//  <button class="w-10 mx-2 btn btn-lg btn-primary" type="submit" name="admin_operation" value="update">Update</button>
-//  <button class="w-10 mx-2 btn btn-lg btn-danger" type="submit" name="admin_operation" value="delete">Delete</button>
+
+    /**
+     * <method>buildMovieFromForm</method> creates a new Movie model from the data passed from the front-end
+     * @param mid is the new id of the movie
+     * @param hm contains all the information passed from the front-end
+     * @return a Movie model
+     */
     private Movie buildMovieFromForm(String mid, HashMap<String, String> hm){
         Movie newMovie = new Movie();
         newMovie.setId(new ObjectId(mid));
+        newMovie.setPosterUrl("/images/poster_not_found.jpg");
         for (Map.Entry<String, String> entry : hm.entrySet()) {
             String k = entry.getKey();
             String v = entry.getValue();
@@ -196,8 +210,10 @@ public class MovieService {
                 newMovie.setProductionCompany(v);
             } else if (k.equals("year")){
                 newMovie.setYear(Integer.parseInt(v));
-            } else if (k.equals("runtimeMinutes")){
+            } else if (k.equals("runtimeMinutes")) {
                 newMovie.setRuntimeMinutes(Integer.parseInt(v));
+            } else if (k.equals("posterUrl")){
+                newMovie.setPosterUrl(v);
             } else if (k.equals("genres")){
                 newMovie.setGenres(
                         Arrays.stream(
@@ -250,9 +266,17 @@ public class MovieService {
         return newMovie;
     }
 
+    /**
+     * <method>modifyMovie</method> allows the update of a movie already present in the back-end with data
+     * passed from the front-end
+     * @param mid is the movie id
+     * @param hm contains the new data
+     * @return true if the modification were completed successfully
+     */
     public boolean modifyMovie(String mid, HashMap<String, String> hm) {
         String op = hm.get("admin_operation");
         Movie movie = buildMovieFromForm(mid, hm);
+        System.out.println("new updated movie: " + movie);
         boolean result = false;
         try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)){
             if (op.equals("update")){
@@ -264,6 +288,7 @@ public class MovieService {
             System.err.println(e);
             return false;
         }
+        /* Don't need neo4j update if movie Title is invariant
         if (result){
             try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j)){
                 if (op.equals("update")){
@@ -286,8 +311,15 @@ public class MovieService {
             return true;
         }
         return false;
+         */
+        return true;
     }
 
+    /**
+     * <method>addMovie</method> insert a new movie into the DBs
+     * @param title is the title of the new movie
+     * @return the ObjectId of the newly inserted movie
+     */
     public ObjectId addMovie(String title) {
         if (title == null || title.isEmpty()) {
             return null;
@@ -318,5 +350,138 @@ public class MovieService {
             return null;
         }
         return id;
+    }
+
+// {score=Review Score: �A�,
+// critic_operation=update,
+// content=Overcomes its artificial contrivances to become a touching psychological drama about despair and loneliness.,
+// isFresh=on}
+
+    /**
+     * <method>buildReviewFromForm</method> builds a new review form data passed from the front-end
+     * @param mid is the id of the reviewed movie
+     * @param hm contains the data of the new review
+     * @param credentials contains the information on the author of the review
+     * @return a Review model
+     */
+    private Review buildReviewFromForm(String mid, HashMap<String, String> hm, RegisteredUserDTO credentials) {
+        Review newReview = new Review();
+        newReview.setMovie_id(new ObjectId(mid));
+        newReview.setCriticName(credentials.getUsername());
+        newReview.setReviewType("Rotten");
+        for (Map.Entry<String, String> entry : hm.entrySet()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            if (v == null || v.isEmpty()) {
+                continue;
+            }
+            if (k.equals("score")) {
+                newReview.setReviewScore(v);
+            } else if (k.equals("content")) {
+                newReview.setReviewContent(v);
+            } else if (k.equals("isFresh")) {
+                newReview.setReviewType(v.equals("on") ? "Fresh" : "Rotten");
+            } else if (k.equals("title")){
+                newReview.setMovie(v);
+            }
+        }
+        newReview.setTopCritic(credentials instanceof TopCriticDTO);
+        newReview.setReviewDate_date(new Date());
+        return newReview;
+    }
+
+    /**
+     * <method>modifyReview</method> allows the modification of a review with data passed from the front-end
+     * @param mid is the id of the reviewed movie
+     * @param hm contains the information for completing the modification
+     * @param credentials is the author of the review
+     * @return true if the modification were applied successfully
+     */
+    public boolean modifyReview(String mid, HashMap<String, String> hm, RegisteredUserDTO credentials) {
+        String op = hm.get("critic_operation");
+        Review review = buildReviewFromForm(mid, hm, credentials);
+        boolean result = false;
+        BaseUser user = (credentials instanceof TopCriticDTO) ?
+                new TopCritic((TopCriticDTO) credentials) :
+                new User((UserDTO) credentials);
+
+        try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.MONGO)) {
+            if (op.equals("update")) {
+                result = reviewdao.update(user, review);
+            } else if (op.equals("delete")) {
+                result = reviewdao.delete(review);
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+            return false;
+        }
+        if (result) {
+            try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.NEO4j)) {
+                if (op.equals("update")) {
+                    result = reviewdao.update(user, review);
+                } else if (op.equals("delete")) {
+                    result = reviewdao.delete(review);
+                }
+            } catch (Exception e) {
+                System.err.println(e);
+                return false;
+            }
+            if (!result) { // mongo roll-back (insert)
+                try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.MONGO)) {
+                    reviewdao.reviewMovie(user, review);
+                } catch (Exception e) {
+                    System.err.println(e);
+                }
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * <method>reviewMovie</method> allows the creation of a new review in the DB with data passed from the front-end
+     * @param credentials contains information on the author of the review
+     * @param movieId is the id of the reviewed movie
+     * @param movieTitle is the title of the reviewed movie
+     * @return true if the insert of the review was completed successfully
+     */
+    public boolean reviewMovie(RegisteredUserDTO credentials, String movieId, String movieTitle) {
+        BaseUser user = (credentials instanceof TopCriticDTO) ?
+                new TopCritic((TopCriticDTO) credentials) :
+                new User((UserDTO) credentials);
+        Review review = new Review();
+        review.setMovie_id(new ObjectId(movieId));
+        review.setCriticName(credentials.getUsername());
+        review.setMovie(movieTitle);
+        review.setReviewDate_date(new Date());
+        review.setReviewType("Fresh");
+        review.setReviewScore("");
+        review.setTopCritic(user instanceof TopCritic);
+        review.setReviewContent("");
+        boolean result = false;
+        try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.MONGO)) {
+            result = reviewdao.reviewMovie(user, review);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if (result) {
+            try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.NEO4j)) {
+                result = reviewdao.reviewMovie(user, review);
+            } catch (Exception e) {
+                System.err.println(e);
+                return false;
+            }
+            if (!result) { // mongo roll-back (insert)
+                try (ReviewDAO reviewdao = DAOLocator.getReviewDAO(DataRepositoryEnum.MONGO)) {
+                    reviewdao.delete(review);
+                } catch (Exception e) {
+                    System.err.println(e);
+                }
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }

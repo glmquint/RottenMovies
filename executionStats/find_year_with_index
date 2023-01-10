@@ -1,0 +1,130 @@
+Current Mongosh Log ID:	63bc4e193271647080116bd0
+Connecting to:		mongodb://127.0.0.1:27017/rottenMovies?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.1
+Using MongoDB:		6.0.3
+Using Mongosh:		1.6.1
+
+For mongosh info see: [1mhttps://docs.mongodb.com/mongodb-shell/[0m
+
+------
+   The server generated these startup warnings when booting
+   2023-01-09T15:10:47.750+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2023-01-09T15:10:48.815+00:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+   2023-01-09T15:10:48.816+00:00: You are running this process as the root user, which is not recommended
+   2023-01-09T15:10:48.816+00:00: Soft rlimits for open file descriptors too low
+------
+
+------
+   Enable MongoDB's free cloud-based monitoring service, which will then receive and display
+   metrics about your deployment (disk utilization, CPU, operation statistics, etc).
+   
+   The monitoring data will be available on a MongoDB website with a unique URL accessible to you
+   and anyone you share the URL with. MongoDB may use this information to make product
+   improvements and to suggest MongoDB products and deployment options to you.
+   
+   To enable free monitoring, run the following command: db.enableFreeMonitoring()
+   To permanently disable this reminder, run the following command: db.disableFreeMonitoring()
+------
+
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'rottenMovies.movie',
+    indexFilterSet: false,
+    parsedQuery: { year: { '$eq': 2012 } },
+    queryHash: '412E8B51',
+    planCacheKey: '62915BA3',
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    winningPlan: {
+      stage: 'FETCH',
+      inputStage: {
+        stage: 'IXSCAN',
+        keyPattern: { year: 1 },
+        indexName: 'year_1',
+        isMultiKey: false,
+        multiKeyPaths: { year: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { year: [ '[2012, 2012]' ] }
+      }
+    },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 480,
+    executionTimeMillis: 2,
+    totalKeysExamined: 480,
+    totalDocsExamined: 480,
+    executionStages: {
+      stage: 'FETCH',
+      nReturned: 480,
+      executionTimeMillisEstimate: 0,
+      works: 481,
+      advanced: 480,
+      needTime: 0,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1,
+      docsExamined: 480,
+      alreadyHasObj: 0,
+      inputStage: {
+        stage: 'IXSCAN',
+        nReturned: 480,
+        executionTimeMillisEstimate: 0,
+        works: 481,
+        advanced: 480,
+        needTime: 0,
+        needYield: 0,
+        saveState: 0,
+        restoreState: 0,
+        isEOF: 1,
+        keyPattern: { year: 1 },
+        indexName: 'year_1',
+        isMultiKey: false,
+        multiKeyPaths: { year: [] },
+        isUnique: false,
+        isSparse: false,
+        isPartial: false,
+        indexVersion: 2,
+        direction: 'forward',
+        indexBounds: { year: [ '[2012, 2012]' ] },
+        keysExamined: 480,
+        seeks: 1,
+        dupsTested: 0,
+        dupsDropped: 0
+      }
+    }
+  },
+  command: { find: 'movie', filter: { year: 2012 }, '$db': 'rottenMovies' },
+  serverInfo: {
+    host: 'Profile2022LARGE10',
+    port: 27017,
+    version: '6.0.3',
+    gitVersion: 'f803681c3ae19817d31958965850193de067c516'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 104857600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 104857600,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1673285143, i: 1 }),
+    signature: {
+      hash: Binary(Buffer.from("0000000000000000000000000000000000000000", "hex"), 0),
+      keyId: Long("0")
+    }
+  },
+  operationTime: Timestamp({ t: 1673285143, i: 1 })
+}

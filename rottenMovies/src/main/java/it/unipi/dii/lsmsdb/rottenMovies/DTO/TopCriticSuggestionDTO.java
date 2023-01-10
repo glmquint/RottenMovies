@@ -1,7 +1,10 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
 import org.bson.types.ObjectId;
-
+/**
+ * <class>TopCriticSuggestionDTO</class> is the container used to pass information for the suggestion functionality between
+ * the service and presentation layer
+ */
 public class TopCriticSuggestionDTO {
     ObjectId id;
     private String username;
@@ -41,7 +44,7 @@ public class TopCriticSuggestionDTO {
     @Override
     public String toString() {
         return "TopCriticSuggestionDTO{" +
-                "id=" + id +
+                "id=" + id.toString() +
                 ", username='" + username + '\'' +
                 ", rate=" + rate +
                 '}';

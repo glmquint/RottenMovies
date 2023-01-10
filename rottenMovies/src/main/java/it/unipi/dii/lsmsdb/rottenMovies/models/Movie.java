@@ -10,6 +10,9 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+/**
+ * <class>Movie</class> is the container in which data from the backend for Movie is mapped
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie {
     @JsonProperty("_id")
@@ -104,12 +107,6 @@ public class Movie {
         else if (id instanceof ObjectId){
             this.id= (ObjectId) id;
         }
-    }
-
-    //USATA SOLO PER TEST, DA RIMUOVERE
-    public void setIdString(String id){
-        this.id = new ObjectId(id);
-
     }
 
     public String getPrimaryTitle() {

@@ -1,5 +1,8 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
-
+/**
+ * <class>YearMonthReviewDTO</class> is the container used to pass information for the age division functionality between
+ * the service and presentation layer
+ */
 public class YearMonthReviewDTO {
     private int year;
     private int month;

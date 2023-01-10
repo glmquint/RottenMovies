@@ -1,6 +1,7 @@
 package it.unipi.dii.lsmsdb.rottenMovies.controller;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.*;
 import it.unipi.dii.lsmsdb.rottenMovies.models.BaseUser;
+import it.unipi.dii.lsmsdb.rottenMovies.models.Movie;
 import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import it.unipi.dii.lsmsdb.rottenMovies.models.User;
 import it.unipi.dii.lsmsdb.rottenMovies.services.AdminService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -53,7 +55,10 @@ public class AppController {
     }
 
     @GetMapping("/")
-    public String index(Model model){
+    public String index(Model model,
+                        HttpSession session){
+        RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
+        model.addAttribute("credentials", credentials);
         return "index";
     }
 
@@ -95,6 +100,7 @@ public class AppController {
             model.addAttribute("error", "something went wrong during registration");
             return "register";
         }
+        registeredUserDTO = userService.authenticate(hm.get("username"), MD5.getMd5(hm.get("password")));
         session.setAttribute("credentials", registeredUserDTO);
         model.addAttribute("credentials", registeredUserDTO);
         return "register";
@@ -107,6 +113,38 @@ public class AppController {
             model.addAttribute("info", "you're already logged in");
         }
         return "register";
+    }
+
+    @PostMapping("/admin-panel/registerTopCritic")
+    public String registerTopCritic(Model model, HttpSession session, HttpServletRequest request){
+        RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
+        if (credentials == null || !(credentials instanceof AdminDTO)) {
+            model.addAttribute("error", "this operation isn't permitted to non-admin users");
+            return "index";
+        }
+        UserService userService = new UserService();
+        HashMap<String, String> hm = extractRequest(request);
+        System.out.println(hm);
+        RegisteredUserDTO registeredUserDTO = userService.register(hm);
+        if (registeredUserDTO == null){
+            model.addAttribute("error", "something went wrong during registration");
+            return "registerTopCritic";
+        }
+        model.addAttribute("success", "new Top Critic successfully created");
+        model.addAttribute("credentials", session.getAttribute("credentials"));
+        return "registerTopCritic";
+    }
+
+    @GetMapping("/admin-panel/registerTopCritic")
+    public String registerTopCriticGet(Model model,
+                              HttpSession session){
+        RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
+        if (credentials == null || !(credentials instanceof AdminDTO)) {
+            model.addAttribute("error", "this operation isn't permitted to non-admin users");
+            return "index";
+        }
+        model.addAttribute("credentials", session.getAttribute("credentials"));
+        return "registerTopCritic";
     }
 
     @GetMapping("/logout")
@@ -122,6 +160,7 @@ public class AppController {
         //System.out.println("requested page");
         //System.out.println(page);
         //model.addAttribute("page", page);
+        RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
         model.addAttribute("credentials", session.getAttribute("credentials"));
         MovieService movieService = new MovieService();
         HashMap<String, String> hm = extractRequest(request);
@@ -156,44 +195,93 @@ public class AppController {
                                 @PathVariable(value = "mid") String mid,
                                 HttpSession session){
         System.out.println("credentials: " + session.getAttribute("credentials"));
+        RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
         HashMap<String, String> hm = extractRequest(request);
         System.out.println(hm);
         MovieService movieService = new MovieService();
+        UserService userService = new UserService();
         boolean result = false;
+        if (page < 0){
+            page = 0;
+        }
+
         if (hm.containsKey("admin_operation")){
+            if (credentials == null || !(credentials instanceof AdminDTO)) {
+                model.addAttribute("error", "this operation isn't permitted to non-admin users");
+                return "index";
+            }
+//          if(hm.getOrDefault("admin_operation", "").equals("reviewBombing")){
+//              String urlPath = "/review-bombing/"+hm.getOrDefault("title", "");
+//              model.addAttribute("redirect", urlPath);
+//              return "movie";
+//          }
+
             result = movieService.modifyMovie(mid, hm);
             if (result){
                 model.addAttribute("success", "movie successfully updated");
             } else {
                 model.addAttribute("error", "error while updating movie");
             }
-        }
-        if (page < 0){
-            page = 0;
-        }
+        } else if (hm.containsKey("critic_operation")){
+            result = movieService.modifyReview(mid, hm, credentials);
+            if (result){
+                model.addAttribute("success", "review successfully updated");
+            } else {
+                model.addAttribute("error", "error while updating review");
+            }
+        } else if (hm.containsKey("user_operation")) {
+            ArrayList<Object> movieAndIndex = userService.getReviewIndex(credentials.getId(), hm.getOrDefault("title", ""));
+            if (movieAndIndex == null || movieAndIndex.size() != 2) {
+                movieService.reviewMovie(credentials, hm.getOrDefault("movieId", ""), hm.getOrDefault("title", ""));
+                movieAndIndex = null;
+            }
+            if (movieAndIndex == null){
+                movieAndIndex = userService.getReviewIndex(credentials.getId(), hm.getOrDefault("title", ""));
+                if (movieAndIndex == null || movieAndIndex.size() != 2) {
+                    model.addAttribute("error", "error while creating a new review");
+                    movieAndIndex = null;
+                }
+            }
+            if (movieAndIndex != null && movieAndIndex.size() == 2) {
+                // refresh credentials
 
-        hm = extractRequest(request);
-        if(hm.containsKey("view")){
-            UserService userService = new UserService();
+                session.setAttribute("credentials",
+                        userService.authenticate(
+                            ((RegisteredUserDTO) session.getAttribute("credentials")).getUsername(),
+                            ((RegisteredUserDTO) session.getAttribute("credentials")).getPassword())
+                );
+                model.addAttribute("redirect", "/movie/" + movieAndIndex.get(0) + "/" + movieAndIndex.get(1));
+                return "redirect";
+            }
+        } else if(hm.containsKey("view")){
             RegisteredUserDTO topCritic = userService.getUserByUsername(hm.get("view"));
             model.addAttribute("go_to_user", topCritic.getId().toString());
         }
-
         model.addAttribute("movie", movieService.getMovie(page, mid, -1));
         model.addAttribute("page", page);
         model.addAttribute("credentials", session.getAttribute("credentials"));
-        if (hm.getOrDefault("admin_operation", "").equals("delete")){
-            model.addAttribute("redirect", "/movie");
-        }
         return "movie";
     }
 
-    @GetMapping("/movie/{mid}/{comment_index}")
+    @RequestMapping("/movie/{mid}/{comment_index}")
     public  String select_movie_comment(Model model,
+                                        HttpServletRequest request,
                                         @PathVariable(value = "mid") String mid,
                                         @PathVariable(value = "comment_index") int comment_index,
                                         HttpSession session){
         MovieService movieService = new MovieService();
+        RegisteredUserDTO credentials = (RegisteredUserDTO) session.getAttribute("credentials");
+        HashMap<String, String> hm = extractRequest(request);
+        System.out.println(hm);
+        boolean result = false;
+        if (hm.containsKey("critic_operation")) {
+            result = movieService.modifyReview(mid, hm, credentials);
+            if (result) {
+                model.addAttribute("success", "review successfully updated");
+            } else {
+                model.addAttribute("error", "error while updating review");
+            }
+        }
         model.addAttribute("credentials", session.getAttribute("credentials"));
         model.addAttribute("movie", movieService.getMovie(0, mid, comment_index));
         return "movie";
@@ -210,10 +298,22 @@ public class AppController {
             page = 0;
         }
         HashMap<String, String> hm = extractRequest(request);
+        if(hm.containsKey("user_operation")){
+            boolean result;
+            if(hm.containsKey("birthday"))
+                result = userService.modifyUser(uid, hm, false);
+            else
+                result = userService.modifyUser(uid, hm, true);
+            if (result){
+                model.addAttribute("success", "profile successfully updated");
+            } else {
+                model.addAttribute("error", "error while updating profile");
+            }
+        }
         if(hm.containsKey("ban")){
            AdminService adminService = new AdminService();
            if(adminService.setBannedStatus(uid, true)){
-               model.addAttribute("success", "This User is been banned\n check this out: https://www.youtube.com/watch?v=1-EiYgCubmM");
+               model.addAttribute("success", "This User is been banned");
            }
            else{
                model.addAttribute("error", "This User is already banned");
@@ -242,7 +342,11 @@ public class AppController {
                 model.addAttribute("success", "Successfully unfollowed this user");
             }
         }
-        model.addAttribute("user", userService.getUser(page, uid));
+        BaseUserDTO baseUser = (BaseUserDTO) userService.getUser(page, uid);
+        model.addAttribute("user", baseUser);
+        if(baseUser instanceof TopCriticDTO){
+            model.addAttribute("numberOfFollowers", userService.getFollowers(baseUser.getId().toString()));
+        }
 
         model.addAttribute("page", page);
         model.addAttribute("credentials", session.getAttribute("credentials"));
@@ -252,6 +356,18 @@ public class AppController {
     public  String mostLikedGenresByUser(Model model,
                                          @PathVariable(value = "username") String username,
                                          HttpSession session){
+        if(session.getAttribute("credentials")==null){
+            return "login";
+        }
+        if((session.getAttribute("credentials") instanceof AdminDTO)){
+            model.addAttribute("redirect", "/admin-panel");
+            return "movie";
+        }
+        BaseUserDTO userDTO = (BaseUserDTO) session.getAttribute("credentials");
+        if(!userDTO.getUsername().equals(username)){
+            model.addAttribute("go_to_user", userDTO.getId().toString());
+            return "movie";
+        }
         UserService userService = new UserService();
         if(username==null){
             username="";
@@ -259,6 +375,53 @@ public class AppController {
         model.addAttribute("genres",userService.getGenresLike(username).getEntries());
         model.addAttribute("credentials", session.getAttribute("credentials"));
         return "preferred-genres";
+    }
+    @RequestMapping("/suggested-top-critic/{username}")
+    public  String suggestedTopCritic(Model model,
+                                      HttpServletRequest request,
+                                      @PathVariable(value = "username") String username,
+                                      @RequestParam(value = "page", defaultValue = "0") int page,
+                                      HttpSession session){
+        if(session.getAttribute("credentials")==null){
+            return "login";
+        }
+        HashMap<String, String> hm = extractRequest(request);
+        UserService userService = new UserService();
+
+        if((session.getAttribute("credentials") instanceof AdminDTO)){
+            model.addAttribute("redirect", "/admin-panel");
+            return "movie";
+        }
+        if((session.getAttribute("credentials") instanceof TopCriticDTO)){
+            TopCriticDTO topCriticDTO = (TopCriticDTO) session.getAttribute("credentials");
+            model.addAttribute("go_to_user", topCriticDTO.getId().toString());
+            return "movie";
+        }
+        UserDTO userDTO = (UserDTO) session.getAttribute("credentials");
+        if(!userDTO.getUsername().equals(username)){
+            model.addAttribute("go_to_user", userDTO.getId().toString());
+            return "movie";
+        }
+
+        if(username==null){
+            username="";
+        }
+        if (page<=0){
+            page=0;
+        }
+        if(hm.containsKey("follow")){
+            if(!userService.follow(userDTO.getId().toString(), hm.get("follow"))) {
+                model.addAttribute("error", "Failed to follow this Top Critic!");
+            }
+            else{
+                model.addAttribute("success", "Successfully followed this Top Critic");
+            }
+        }
+        model.addAttribute("suggestions",userService.getTopCriticSuggestions(new User(userDTO),page).getEntries());
+        model.addAttribute("page",page);
+        model.addAttribute("username",userDTO.getUsername());
+        model.addAttribute("credentials", session.getAttribute("credentials"));
+        return "suggested-top-critic";
     }
 
     @GetMapping("/recommendations")
@@ -354,6 +517,7 @@ public class AppController {
     }
     @RequestMapping("/feed")
     public String userFeed (Model model,
+                            HttpServletRequest request,
                             @RequestParam(value = "page", defaultValue = "0") int page,
                             HttpSession session){
         System.out.println("credentials: " + session.getAttribute("credentials"));
@@ -364,11 +528,77 @@ public class AppController {
             page = 0;
         }
         UserService userService = new UserService();
+        HashMap<String, String> hm = extractRequest(request);
+        if(hm.containsKey("critic_id") && hm.containsKey("movieTitle")){
+            String topCriticId= hm.get("critic_id");
+            String movieTitle = hm.get("movieTitle");
+            ArrayList<Object> movieAndIndex;
+            movieAndIndex = userService.getReviewIndex(new ObjectId(topCriticId),movieTitle);
+            if (movieAndIndex == null || movieAndIndex.size() == 0){
+                model.addAttribute("error", "Can't find a review for this critic");
+            } else {
+                System.out.println(movieAndIndex.get(0) + " " + movieAndIndex.get(1));
+                String urlPath = "/movie/" + movieAndIndex.get(0).toString() + "/" + movieAndIndex.get(1);
+                model.addAttribute("redirect", urlPath);
+                return "movie";
+            }
+        }
         BaseUser user = new User((UserDTO) session.getAttribute("credentials"));
         model.addAttribute("feed",userService.createUserFeed(user,page).getEntries());
         model.addAttribute("page",page);
         model.addAttribute("username",user.getUsername());
+        model.addAttribute("credentials", session.getAttribute("credentials"));
         return "feed";
     }
 
+    @GetMapping("/review-bombing/{mid}")
+    public String checkReviewBombing (Model model,
+                                      HttpServletRequest request,
+                                      @PathVariable(value = "mid") String mid,
+                                      @RequestParam(value = "month_count", defaultValue = "36") int month_count,
+                                      HttpSession session) {
+        if (!(session.getAttribute("credentials") instanceof AdminDTO)) {
+            return "login";
+        }
+        if (month_count <= 0) {
+            month_count = 24;
+        }
+        AdminService adminService = new AdminService();
+        Movie movie = new Movie();
+        movie.setId(new ObjectId(mid));
+        MovieReviewBombingDTO movieReviewBombingDTO = adminService.checkReviewBombing(movie, month_count);
+        if (movieReviewBombingDTO == null) {
+            model.addAttribute("error", "No reviews were made in the last "+ month_count +" months. Please try with higher month number");
+        }
+        model.addAttribute("reviewBombing", movieReviewBombingDTO);
+        model.addAttribute("month_count", month_count);
+        return "review-bombing";
+    }
+
+    @GetMapping("/admin-panel/mostReviewUser")
+    public String  mostReviewUser(Model model,
+                                  HttpSession session){
+        if(!(session.getAttribute("credentials") instanceof AdminDTO)){
+            return "login";
+        }
+        AdminService adminService = new AdminService();
+        model.addAttribute("credentials", session.getAttribute("credentials"));
+        model.addAttribute("userList", adminService.getMostReviewUser());
+
+        return "mostReviewUser";
+    }
+
+    @GetMapping("/admin-panel/mostFollowTopCritic")
+    public String  mostFollowTopCritic(Model model,
+                                  HttpSession session){
+        if(!(session.getAttribute("credentials") instanceof AdminDTO)){
+            return "login";
+        }
+        AdminService adminService = new AdminService();
+        model.addAttribute("credentials", session.getAttribute("credentials"));
+        model.addAttribute("userList", adminService.getFollowTopCritic());
+
+        return "mostReviewUser";
+
+    }
 }

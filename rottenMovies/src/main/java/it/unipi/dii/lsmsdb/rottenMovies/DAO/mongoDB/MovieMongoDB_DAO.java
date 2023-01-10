@@ -49,6 +49,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
     public MovieMongoDB_DAO() {
         super();
     }
+    /**
+     * <method>executeSearchQuery</method> executes a serch query in movie collection
+     * @param page, sort_opt, proj_opt
+     * @return an Arraylist of MovieDTO
+     * @throws DAOException
+     */
 
     public ArrayList<MovieDTO> executeSearchQuery(int page, SortOptions sort_opt, ReviewProjectionOptions proj_opt){
         MongoCollection<Document>  collection = getMovieCollection();
@@ -90,7 +96,11 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return movie_list;
     }
-
+    /**
+     * <method>executeDeleteQuery</method> executes a delete query in movie collection
+     * @return true in case of success, false otherwise
+     * @throws DAOException
+     */
     public boolean executeDeleteQuery(){
         ArrayList<MovieDTO> movies_to_delete = executeSearchQuery(-1,
                 new SortOptions(SortOptionsEnum.NO_SORT, -1),
@@ -134,7 +144,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query=null;
         return returnvalue;
     }
-
+    /**
+     * <method>queryBuildSearchByTitleExact</method> builds a new query for finding a movie by its exact primaryTitle if none exists
+     * or keeps concatenating the new query to the previous one
+     * @param title
+     * @throws DAOException
+     */
     public void queryBuildSearchByTitleExact(String title){
         System.out.println("SEARCH BY TITLE EXACT: " + title);
         Bson new_query = Filters.eq("primaryTitle", title);
@@ -145,6 +160,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query = Filters.and(query, new_query);
     }
 
+    /**
+     * <method>queryBuildSearchByTitle</method> builds a new query for finding a movie by its primaryTitle if none exists
+     * or keeps concatenating the new query to the previous one
+     * @param title
+     * @throws DAOException
+     */
     public void queryBuildSearchByTitle(String title){
         System.out.println("SEARCH BY TITLE: " + title);
         Bson new_query = Filters.regex("primaryTitle", title, "i");
@@ -154,6 +175,13 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         query = Filters.and(query, new_query);
     }
+
+    /**
+     * <method>queryBuildSearchById</method> builds a new query for finding a movie by its id if none exists
+     * or keeps concatenating the new query to the previous one
+     * @param id
+     * @throws DAOException
+     */
 
     public void queryBuildSearchById(ObjectId id){
         System.out.println("SEARCH BY ID: " + id);
@@ -165,6 +193,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query = Filters.and(query, new_query);
     }
 
+    /**
+     * <method>queryBuildSearchPersonnel</method> builds a new query for finding a movie by its personnel if none exists
+     * or keeps concatenating the new query to the previous one
+     * @param workers, includeAll
+     * @throws DAOException
+     */
     public void queryBuildSearchPersonnel(String[] workers, boolean includeAll){
         System.out.println("SEARCH BY personnel: " + String.join(", ", workers));
         if (workers.length==0){
@@ -190,6 +224,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query = Filters.and(query, new_query);
     }
 
+    /**
+     * <method>queryBuildSearchGenres</method> builds a new query for finding a movie by its genres if none exists
+     * or keeps concatenating the new query to the previous one
+     * @param genres, includeAll
+     * @throws DAOException
+     */
     public void queryBuildSearchGenres(String[] genres, boolean includeAll){
         System.out.println("SEARCH BY GENRES: " + String.join(", ", genres));
         if (genres.length==0){
@@ -215,6 +255,13 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query = Filters.and(query, new_query);
     }
 
+    /**
+     * <method>queryBuildSearchByYear</method> builds a new query for finding a movie by its year of release if none exists
+     * or keeps concatenating the new query to the previous one
+     * @param year, afterYear
+     * @throws DAOException
+     */
+
     public void queryBuildSearchByYear(int year, boolean afterYear){
         System.out.println("SEARCH BY YEAR: " + year + ((afterYear)?" AFTER":" BEFORE"));
         Bson new_query = null;
@@ -230,6 +277,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query = Filters.and(query, new_query);
     }
 
+    /**
+     * <method>queryBuildSearchByTopRatings</method> builds a new query for finding a movie based on top critic rating if none exists
+     * or keeps concatenating the new query to the previous one
+     * @param rating, type
+     * @throws DAOException
+     */
     public void queryBuildSearchByTopRatings(int rating, boolean type){
         System.out.println("SEARCH BY TOP RATINGS: " + rating + ((type)?" GREATER":" LOWER"));
         Bson new_query;
@@ -244,6 +297,13 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         query = Filters.and(query, new_query);
     }
+
+    /**
+     * <method>queryBuildsearchByUserRatings</method> builds a new query for finding a movie based on user rating if none exists
+     * or keeps concatenating the new query to the previous one
+     * @param rating, type
+     * @throws DAOException
+     */
     public void queryBuildsearchByUserRatings(int rating, boolean type){
         System.out.println("SEARCH BY USER RATING: " + rating + ((type)?" GREATER":" LOWER"));
         Bson new_query;
@@ -287,6 +347,13 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return personnelDBList;
     }
+
+    /**
+     * <method>update</method> updates the information of a movie inside the collection
+     * @return true in case of success, false otherwise
+     * @param updated is the movie model
+     * @throws DAOException
+     */
     public boolean update(Movie updated){
         MongoCollection<Document>  collection = getMovieCollection();
         ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(updated);
@@ -296,22 +363,8 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                 Updates.set("runtimeMinutes", updated.getRuntimeMinutes()),
                 Updates.set("production_company", updated.getProductionCompany()),
                 Updates.set("genres", updated.getGenres()),
-//                Updates.set("top_critic_status", updated.getTop_critic_status()),
-//                Updates.set("top_critic_rating", updated.getTop_critic_rating()),
-//                Updates.set("user_status", updated.getUser_status()),
-//                Updates.set("user_rating", updated.getUser_rating()),
-//                Updates.set("user_fresh_count", updated.getUser_fresh_count()),
-//                Updates.set("user_rotten_count", updated.getUser_rotten_count()),
-//                Updates.set("top_critic_fresh_count", updated.getTop_critic_fresh_count()),
-//                Updates.set("top_critic_rotten_count", updated.getTop_critic_rotten_count()),
+                Updates.set("poster_url", updated.getPosterUrl()),
                 Updates.set("personnel",personnelDBList));
-        /*
-        if(updated.getCriticConsensus()!=null){ // not all movies have critic_consensus
-            updates=Updates.combine(updates,Updates.set("critics_consensus", updated.getCriticConsensus()));
-        }
-
-         */
-
         try {
             query = null;
             queryBuildSearchById(updated.getId());
@@ -324,6 +377,13 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         query=null;
         return returnvalue;
     }
+
+    /**
+     * <method>insert</method> insert a new movie inside the collection
+     * @return the ObjectId of the inserted movie
+     * @param newOne is the movie model
+     * @throws DAOException
+     */
     public ObjectId insert(Movie newOne){
         MongoCollection<Document>  collection = getMovieCollection();
         ArrayList<BasicDBObject> personnelDBList = buildPersonnelField(newOne);
@@ -336,7 +396,6 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
                     .append("runtimeMinutes", newOne.getRuntimeMinutes())
                     .append("production_company", newOne.getProductionCompany())
                     .append("genres", newOne.getGenres())
-                    //.append("critics_consensus", "")
                     .append("top_critic_status", "")
                     .append("top_critic_rating", 0)
                     .append("user_status", "")
@@ -358,6 +417,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return returnvalue;
     }
 
+    /**
+     * <method>delete</method> delete a specific movie inside the collection
+     * @return true in case of success, false otherwise
+     * @param movie is the movie model
+     * @throws DAOException
+     */
     public boolean delete(Movie movie) throws DAOException{
         queryBuildSearchById(movie.getId());
         boolean result = true;
@@ -371,6 +436,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         return result;
     }
 
+    /**
+     * <method>mostSuccesfullProductionHouses</method>  implement the aggregation for finding most succesfull production houses
+     * @return an ArrayList of HallOfFameDTO
+     * @param numberOfMovies is minimum number of movies produced by the production house, opt is the SortOptions
+     * @throws DAOException
+     */
     public ArrayList<HallOfFameDTO> mostSuccesfullProductionHouses(int numberOfMovies, SortOptions opt){
         MongoCollection<Document>  collection = getMovieCollection();
         AggregateIterable<Document> aggregateResult = collection.aggregate(
@@ -398,6 +469,12 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return resultSet;
     }
+    /**
+     * <method>mostSuccesfullGenres</method> implement the aggregation for finding most successful genres
+     * @return an ArrayList of HallOfFameDTO
+     * @param numberOfMovies is minimum number of movies per genre, opt is the SortOptions
+     * @throws DAOException
+     */
     public ArrayList<HallOfFameDTO> mostSuccesfullGenres(int numberOfMovies, SortOptions opt){
         MongoCollection<Document>  collection = getMovieCollection();
         AggregateIterable<Document> aggregateResult = collection.aggregate(
@@ -426,6 +503,13 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return resultSet;
     }
+
+    /**
+     * <method>bestYearsBasedOnRatings</method> implement the aggregation for finding most successful years
+     * @return an ArrayList of HallOfFameDTO
+     * @param numberOfMovies is minimum number of movies per year, opt is the SortOptions
+     * @throws DAOException
+     */
     public ArrayList<HallOfFameDTO> bestYearsBasedOnRatings (int numberOfMovies, SortOptions opt){
         MongoCollection<Document>  collection = getMovieCollection();
         AggregateIterable<Document> aggregateResult = collection.aggregate(
@@ -453,6 +537,13 @@ public class MovieMongoDB_DAO extends BaseMongoDAO implements MovieDAO {
         }
         return resultSet;
     }
+
+    /**
+     * <method>getYearAndMonthReviewActivity</method> implement the aggregation for finding the user review activities
+     * @return an ArrayList of YearMonthReviewDTO
+     * @param id is the user id
+     * @throws DAOException
+     */
     public ArrayList<YearMonthReviewDTO> getYearAndMonthReviewActivity(ObjectId id) {
         MongoCollection<Document>  collection = getMovieCollection();
         Document yearDoc = new Document("year",new Document("$year","$review.review_date"));
