@@ -166,4 +166,7 @@ BucketOptions opt = new BucketOptions();
                 )
         );
 \end{lstlisting}
+
+\section{Sharding consideration}
+We consider the possibility of sharding the movie collection, with the benefit of much less space occupation, using id as a possible sharding key. However we realized that we search movie not only by id but also with their primary titles, their years, etc. With these range of queries we ended up in a query flooding scenario, where every replica must be consulted in order to find the document.
  %\end{document}

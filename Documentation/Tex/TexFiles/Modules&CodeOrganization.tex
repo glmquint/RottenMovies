@@ -47,7 +47,27 @@ First of all we follow the reverse-domain convention for the root package, befor
 	\caption{DTO}
 	\end{center}
 	\end{figure}
-	
+	\item \emph{Models} presents all the classes that are mapped with the database organization. They all contains private field and have getters/setters. 
+	 \begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=1]{/images/PNG/Models.png}
+	\caption{Models}
+	\end{center}
+	\end{figure}
+	\item \emph{Services} contains the middleware of our application. It is called in AppController function and interfaces with DAO classes.
+	 \begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=1]{/images/PNG/Services.png}
+	\caption{Services}
+	\end{center}
+	\end{figure}
+	\item \emph{Utils} provides utility methods to all packages. It includes password hashing, different possibility to sort/project results in Neo4j and MongoDB
+	 \begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=1]{/images/PNG/Utils.png}
+	\caption{Utils}
+	\end{center}
+	\end{figure}
 \end{itemize}
 
 \section{Managing consistency between MongoDB and Neo4j}
