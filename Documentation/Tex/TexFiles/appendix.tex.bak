@@ -32,9 +32,46 @@
 \subsection{Create a new collection for the user based on the data present in the movie collection}\label{subsec:userCreation}
 \lstinputlisting[language=JavaScript]{./../code/userCreation.js}
 
-\section{matematica}\label{eq:pippo}
-\begin{equation}\label{pippo}
-x^2-5x+6=0
-\end{equation}
+\section{MongoDB indexes:Movie collection}\label{mongoindexes}
+\subsection{primaryTitle}
+Before the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_primaryTitle_no_index}
+After the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_primaryTitle_with_index}
+\subsection{year}
+Before the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_year_no_index}
+After the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_year_with_index}
+\subsection{top critic rating}
+Before the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_sort_top_critic_raing_no_index}
+After the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_sort_top_critic_raing_with_index}
+\subsection{user rating}
+Before the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_sort_user_raing_no_index}
+After the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_sort_user_raing_with_index}
+\subsection{personnel.primaryName}
+Before the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_personnelPrimaryName_no_index}
+After the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_personnelPrimaryName_with_index}
+\section{MongoDB indexes:User collection}
+\subsection{username}
+Before the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_username_no_index}
+After the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_username_with_index}
+\subsection{date of birth}
+Before the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_date_of_birth_no_index}
+After the index
+\lstinputlisting[language=JavaScript]{./../code/executionStats/find_date_of_birth_with_index}
+
+\section{Application code}
+\subsection{Pom.xml}\label{subsec:pom}
+\lstinputlisting[language=xml]{./../code/pom.xml}
 \end{alphasection}
 \end{document}

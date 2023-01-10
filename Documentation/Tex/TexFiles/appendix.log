@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2023.1.7)  9 JAN 2023 19:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2023.1.7)  10 JAN 2023 12:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -542,10 +542,85 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 Package: xr 2020-05-10 v5.06 eXternal References (DPC)
 )
 Package xr Info: IMPORTING LABELS FROM ./appendix.aux on input line 80.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
 Package xr Info: IMPORTING LABELS FROM ./Feasibility_Study.aux on input line 81
 .
 \c@alphasect=\count318
+(C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
+File: lstlang1.sty 2020/03/24 1.8d listings language file
 )
+(C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
+File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
+))
 (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdft
 ex.def
 File: l3backend-pdftex.def 2022-09-28 L3 backend support: PDF output (pdfTeX)
@@ -559,34 +634,106 @@ LaTeX Warning: Label `sec:pycode' multiply defined.
 LaTeX Warning: Label `subsec:datasetGeneratorImdb' multiply defined.
 
 
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
 LaTeX Warning: Label `subsec:datasetGeneratorRotten' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
 
 
 LaTeX Warning: Label `subsec:datasetMerge' multiply defined.
 
 
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
 LaTeX Warning: Label `subsec:datasetPersonnelCollapse' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
 
 
 LaTeX Warning: Label `subsec:createUserPassword' multiply defined.
 
 
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
 LaTeX Warning: Label `subsec:createGraphDB' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
 
 
 LaTeX Warning: Label `subsec:theOne' multiply defined.
 
 
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
 LaTeX Warning: Label `subsec:dateNormalization' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
 
 
 LaTeX Warning: Label `subsec:userCreation' multiply defined.
 
 
-LaTeX Warning: Label `eq:pippo' multiply defined.
+LaTeX Warning: Label `code:sample' multiply defined.
 
 
-LaTeX Warning: Label `pippo' multiply defined.
+LaTeX Warning: Label `mongoindexes' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
+
+
+LaTeX Warning: Label `subsec:pom' multiply defined.
+
+
+LaTeX Warning: Label `code:sample' multiply defined.
 
 )
 \openout1 = `appendix.aux'.
@@ -692,67 +839,61 @@ File: lstlang1.sty 2020/03/24 1.8d listings language file
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
 nput line 8.
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 8
-.
 
-(C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/base\t1cmtt.fd
-File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
-)
-(../code/datasetgenerator.py
-LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 2.
-) (../code/rottengenerator.py [1
+(../code/datasetgenerator.py) (../code/rottengenerator.py [1
 
 {C:/Users/fp99/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}])
 (../code/mergeimdbrottendataset.py [2]) (../code/personelljson.py [3])
 (../code/createUserPassword.py [4]) (../code/createGraphDB.py [5] [6]) [7]
-(../code/theOne.js [8]) (../code/dateNormalization.js) (../code/userCreation.js
-[9])
-LaTeX Font Info:    Trying to load font information for U+msa on input line 36.
+(../code/theOne.js
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 6
+.
 
- (C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 36.
-
-
-(C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-[10] [11] (appendix.aux)
+(C:\Users\fp99\AppData\Local\Programs\MiKTeX\tex/latex/base\t1cmtt.fd
+File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+) [8])
+(../code/dateNormalization.js) (../code/userCreation.js [9]) [10]
+(../code/executionStats/find_primaryTitle_no_index [11])
+(../code/executionStats/find_primaryTitle_with_index [12] [13])
+(../code/executionStats/find_year_no_index [14])
+(../code/executionStats/find_year_with_index [15] [16])
+(../code/executionStats/find_sort_top_critic_raing_no_index [17])
+(../code/executionStats/find_sort_top_critic_raing_with_index [18] [19])
+(../code/executionStats/find_sort_user_raing_no_index [20] [21])
+(../code/executionStats/find_sort_user_raing_with_index [22] [23])
+(../code/executionStats/find_personnelPrimaryName_no_index [24])
+(../code/executionStats/find_personnelPrimaryName_with_index [25] [26])
+(../code/executionStats/find_username_no_index [27])
+(../code/executionStats/find_username_with_index [28] [29])
+(../code/executionStats/find_date_of_birth_no_index [30] [31])
+(../code/executionStats/find_date_of_birth_with_index [32] [33])
+(../code/pom.xml [34]) [35] (appendix.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
-
-Package rerunfilecheck Warning: File `appendix.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `appendix.out':
-(rerunfilecheck)             Before: EFEA678ABCB572674CF81FD0C1AA7CC5;3707
-(rerunfilecheck)             After:  A89D24F74521246B22080218FC46F89D;3463.
+Package rerunfilecheck Info: File `appendix.out' has not changed.
+(rerunfilecheck)             Checksum: 65F3C6D226545FDDA6E89269BBA1C9CF;4891.
  ) 
 Here is how much of TeX's memory you used:
- 16644 strings out of 475385
- 262760 string characters out of 2777380
- 1467609 words of memory out of 3000000
- 37257 multiletter control sequences out of 15000+600000
- 478938 words of font info for 54 fonts, out of 8000000 for 9000
+ 18664 strings out of 475385
+ 299173 string characters out of 2777380
+ 1735569 words of memory out of 3000000
+ 37803 multiletter control sequences out of 15000+600000
+ 476468 words of font info for 40 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 115i,6n,111p,589b,2231s stack positions out of 10000i,1000n,20000p,200000b,80000s
- <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1
-200.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
-ectt1000.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dp
-i600\ecrm1000.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/
-ec/dpi600\ecbx1440.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jkna
-ppen/ec/dpi600\ecbx1728.pk><C:/Users/fp99/AppData/Local/Programs/MiKTeX/fonts/t
-ype1/public/amsfonts/cm/cmmi12.pfb><C:/Users/fp99/AppData/Local/Programs/MiKTeX
-/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/fp99/AppData/Local/Programs
-/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/fp99/AppData/Local/Pr
-ograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on appendix.pdf (11 pages, 198755 bytes).
+ 115i,6n,111p,589b,2301s stack positions out of 10000i,1000n,20000p,200000b,80000s
+ <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1
+000.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
+tcrm1000.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dp
+i600\ecrm1200.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/
+ec/dpi600\ecrm1000.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour/jkna
+ppen/ec/dpi600\ecbx1000.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/ljfour
+/jknappen/ec/dpi600\ecrm0600.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts/pk/l
+jfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\fp99\AppData\Local\MiKTeX\fonts
+/pk/ljfour/jknappen/ec/dpi600\ecbx1728.pk>
+Output written on appendix.pdf (35 pages, 584599 bytes).
 PDF statistics:
- 862 PDF objects out of 1000 (max. 8388607)
- 480 named destinations out of 1000 (max. 500000)
- 97 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 2811 PDF objects out of 2984 (max. 8388607)
+ 1918 named destinations out of 2073 (max. 500000)
+ 177 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -3,9 +3,23 @@
 \begin{document}
 \section{MongoDB aggregation}
 In this section we shall discuss on the different aggregation that the application will implement, the values between <<>> represent a values passed by an above level.
-\subsection{Return the best years in terms of top critic and user ratings}\label{subsec:bestYear}
+\subsection{Return the best years by top critic and user ratings}\label{subsec:bestYear}
 \lstinputlisting[language=JavaScript]{./../code/bestYear.js}
 
-\subsection{Return the best genres by top }\label{subsec:userCreation}
+\subsection{Return the best genres by top critic and user ratings}\label{subsec:HOFGenres}
 \lstinputlisting[language=JavaScript]{./../code/HOFGenres.js}
+
+\subsection{Return the best production houses by top critic and user ratings}\label{subsec:productionHouses}
+\lstinputlisting[language=JavaScript]{./../code/productionHouses.js}
+
+\subsection{Given a movie count the review it has received by each month}\label{subsec:reviewByYearMonth}
+\lstinputlisting[language=JavaScript]{./../code/reviewByYearMonth.js}
+
+\subsection{Given a user count the review he/she has made divided by genres}\label{subsec:preferredGenres}
+\lstinputlisting[language=JavaScript]{./../code/preferredGenres.js}
+
+\subsection{Return the number of user divided by an age bucket}\label{subsec:userPopulationBucket}
+\lstinputlisting[language=JavaScript]{./../code/userPopulationBucket.js}
+
+
 \end{document}

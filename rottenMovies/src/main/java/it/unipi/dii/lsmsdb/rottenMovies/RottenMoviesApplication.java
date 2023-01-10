@@ -20,7 +20,6 @@ import java.util.List;
 public class RottenMoviesApplication {
 
 	public  static void main(String[] args) throws JsonProcessingException {
-		PersonalTestClass test = new PersonalTestClass();
-		test.testMain();
+		SpringApplication.run(AppController.class);
 	}
 }
