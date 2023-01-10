@@ -5,7 +5,8 @@
 
 \chapter{Feasibility Study}
 \justifying
-The very first step was to perform is to look up for what type of data we need to create the application and how to handle it by performing a feasibility study.
+The very first step was to perform a look up for what type of data we needed to create the application and how to handle it by performing a feasibility study.
+
 \section{Dataset analysis and creation}
 Initially we searched online for available dataset, we ended up with six different files coming from Kaggle and imdb with a combined storage of 4.18 GB:
 \begin{itemize}
@@ -13,27 +14,30 @@ Initially we searched online for available dataset, we ended up with six differe
   \item name\textunderscore basic.tsv 
   \item title\textunderscore basic.tsv 
   \item title\textunderscore crew.tsv
+  \item poster\textunderscore URL.csv
   \item rotten\textunderscore movies.csv
   \item rotten\textunderscore reviews.csv 
-  \item poster\textunderscore URL.csv
+  
 \end{itemize} 
 \paragraph{}
-The first three were found on the imdb site containing general data about the title of the entries, type (not all were movies), cast, crew and other useful information. The last two came from Kaggle and they contain data scraped from the rotten tomatoes site regarding the movies rating and their reviews. All of these dataset were organized in a relational manner.
+The first three were found on the imdb site containing general data about the title of the entries, type (not all were movies), cast, crew and other useful information. The fourth one came from Kaggle, and contains movies posters urls. The last two also came from Kaggle and they contain data scraped from the rotten tomatoes site regarding movie rating and their reviews. All of these dataset were organized in a relational manner.
+
 \subparagraph{Initial steps and creation of the movie collection}
-After a general look it was clear that we needed to process the data to obtain a less bloated dataset by deciding what to keep in base of our needs and specification; we decided to use python as programming language to trim the original file, this was also achieved through the use of Google Colab.
+After a general look it was clear that we needed to process the data to obtain a lighter dataset by deciding what to keep based on our needs and specifications; we decided to use Python as programming language to trim the original files, this was also achieved through the use of Google Colab.
 
-We started by taking all the tsv file and transforming them into a single file, we performed a join operation on all of them based on their id and then discarded the useless information. For the code see  \cref{subsec:datasetGeneratorImdb}. After that we performed the same operation on the csv file coming from Rotten Tomatoes \cref{subsec:datasetGeneratorRotten}. We then proceed to join the two files based on the title of the movies \cref{subsec:datasetMerge}.
+We started by taking all the tsv files and transforming them into a single file, we performed a join operation on all of them based on their id and then discarded the useless information \cref{subsec:datasetGeneratorImdb}. After that we performed the same operation on the csv files coming from Rotten Tomatoes \cref{subsec:datasetGeneratorRotten}. We then proceeded to join the two files based on the title of the movies \cref{subsec:datasetMerge}.
 
-Unfortunately we noticed that after the join there were more rows for the same movie, in fact, due to the relational nature of the first dataset, we had a different entry for personnel on each row, so we rollback to the start, but this time we collapsed all the information in a single row \cref{subsec:datasetPersonnelCollapse}.
+Unfortunately we noticed that after the join there were more rows for the same movie, in fact, due to the relational nature of the first dataset, we had a different entry for personnel on each row, so we rollback to before the join, but this time we collapsed all the information in a single row \cref{subsec:datasetPersonnelCollapse}.
 
-Due to the variability of the data in the string fields, like the content of the reviews, we decided to perform an escape on various elements to avoid crashes and failure during the import into the DBSM \cref{subsec:theOne}. We also had to do a similar process of normalization for the date fields \cref{subsec:dateNormalization}
+Due to the variability of the data in the string fields, like the content of the reviews, we decided to perform an escape on various elements to avoid crashes and failures during the import into the DBSM \cref{subsec:theOne}. We also had to do a similar process of normalization for the date fields \cref{subsec:dateNormalization}
 
 
-Finally we achieved our goal of having a json file for the movie collection, the file occupied a space of 270MB.
+Finally we achieved our goal of having a JSON file for the movie collection, the file occupied a space of 270MB.
 
 \subparagraph{Creation of the user collection}
-The following step was to generate a collection for the user, this was achieved by starting from the movie one and for each different review author we generated a document later to be placed in a single json file of which the total storage size was 86,6 MB, this step was performed directly on the mongo shell \cref{subsec:userCreation}. 
+The following step was to generate a collection for the user. This was achieved by starting from the movie collection: for each different review author we generated a document, later to be placed in a single JSON file of which the total storage size was 86,6 MB. This step was performed directly on the Mongo shell \cref{subsec:userCreation}. 
 
 \section{Analysis result}\label{sec:result}
-With the dataset for the document database ready we finally had a better understanding on how to shape the models and the relative functionality in the application code. We will discuss later of the design of the collections and the methods used to interact with them. The same goes for the graph database of whom the structure was heavily influenced by the one in the MongoDB
+With the dataset for the document database ready we finally had a better understanding on how to shape the models and the relative functionality in the application code. We will discuss later of the design of the collections and the methods used to interact with them. The same goes for the graph database of which the structure was heavily influenced by the one in the MongoDB
+
 %\end{document}

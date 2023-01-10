@@ -1,33 +1,35 @@
 %\include{./preamble}
 %\begin{document}
+
 \chapter{Design}
 \justifying
 \section{Main actors}
-As already mentioned in the introduction we have mainly three major actors: guest user and register user, the latter can be divided between normal user and top critic. In addition there is an admin actor who's main role is to oversee the entire service.
+As already mentioned in the introduction we have mainly three actors: guest users and registered users. The latter can be divided between normal users and top critics. In addition there is an admin actor whose main role is to oversee the entire service.
+
 \section{Functional requirements}
-This section describes the functional requirements that need to be provided by the application in regards of the actor:
+This section describes the functional requirements that need to be provided by the application in regards of the actors:
 \begin{itemize}
-	\item Guest (Unregistered) User can:
+	\item Guest (Unregistered) Users can:
 	\begin{itemize}
 		\item login/register into the service
-		\item search movies by search bar and other filters
+		\item search movies via the search bar and other filters
 		\item view movies, their details and relative reviews
 		\item view the personal page of the author of a selected \emph{top critic} review
 		\item view the different halls of fame
 	\end{itemize}
 
 	
-	\item Normal use can:
+	\item Normal users can:
 	\begin{itemize}
 		\item logout from the service
-		\item search movies by search bar and other filters
+		\item search movies via the search bar and other filters
 		\item view movies, their details and relative reviews
 		\item write a review for a selected film
 		\item view the personal page of the author of a selected \emph{top critic} review
 		\item view the different halls of fame
 		\item follow\slash unfollow a \emph{top critic} user
-		\item view the feed of latest reviews from the followed \emph{top critic}
-		\item view a suggestion feed for top critic to follow
+		\item view the feed of latest reviews from the followed \emph{top critics}
+		\item view a suggestion feed for \emph{top critics} to follow
 		\item view the history of its own reviews
 		\item modify its own reviews
 		\item delete its own reviews
@@ -38,46 +40,45 @@ This section describes the functional requirements that need to be provided by t
 	\item Top Critics can:
 	\begin{itemize}
 		\item logout from the service
-		\item search movies by search bar and other filters
+		\item search movies via the search bar and other filters
 		\item view movies, their details and relative reviews
 		\item write a top critic review for a selected film
 		\item view the different halls of fame
-		\item view the history of its own top critics reviews
-		\item modify its own top critics reviews
-		\item delete its own top critics reviews
+		\item view the history of its own top critic reviews
+		\item modify its own top critic reviews
+		\item delete its own top critic reviews
 		\item change its account information
 		\item see the number of its followers
 		
 	\end{itemize}
-	\item Admin user can:
+	\item Admin users can:
 	\begin{itemize}
 		\item logout from the service
-		\item search movies by search bar and other filters
+		\item search movies via the search bar and other filters
 		\item view movies, their details and relative reviews
 		\item view the different halls of fame
-		\item modify films details
+		\item modify film details
 		\item add/remove films
-		\item browse \emph{user} and \emph{top critic}
-		\item ban \emph{user} and \emph{top critic}
-		\item register new \emph{top critic}
-		\item perform analytic on the user population
+		\item browse \emph{users} and \emph{top critics}
+		\item ban \emph{users} and \emph{top critics}
+		\item register new \emph{top critics}
+		\item perform analytics on the user base
 		
 	\end{itemize}
 \end{itemize}
 
 \section{Non functional requirements}
-In the following section are listed the non functional requirements for the application.
+The following section lists non functional requirements for the application.
 \begin{itemize}
-	\item the system must encrypt users password
-	\item the service must be built with OOP language
-	\item user must have 16 or more years to register into the service
-	\item service must be implemented through a responsive website
-	\item avoid single point of failure in data storage
-	\item high availability, accepting data displayed temporarily in an older version
+	\item The system must encrypt users' passwords
+	\item The service must be built with the OOP paradigm
+	\item The service must be implemented through a responsive website
+	\item Avoidance of single point of failure in data storage
+	\item High availability, accepting data displayed temporarily in an older version
 \end{itemize}
 
 \section{Implementation regarding the CAP theorem}
-We will now discuss on how we decided to tackle the CAP theorem issue. In our minds the application is a read-heavy one where we expect that the number of read transaction are by far more numerous than the write operation, so we decided that our application would prioritize high availability of and low latency capable of withstanding network partitions. In reference of figure \ref{fig:CAP} it is clear that we moved towards a AP approach in spite of data consistency.
+We will now discuss on how we decided to tackle the CAP theorem issue. We determined that the application is a read-heavy one where we expect that the number of read transactions are by far more frequent than write operations, so we decided that our application should prioritize high availability, low latency and should be capable of withstanding network partitions. In reference of figure \ref{fig:CAP} it is clear that we moved towards a AP approach in spite of temporarily data inconsistency.
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.25]{/images/PNG/capTheorem}
@@ -85,7 +86,7 @@ We will now discuss on how we decided to tackle the CAP theorem issue. In our mi
 \label{fig:CAP}
 \end{center}
 \end{figure}
-In order to guarantee the requirements of high availability, we decided to accept the cases in witch the data shown to the user could be not updated to the latest version in the database.
+In order to guarantee the requirements of high availability, we decided to accept the cases in witch data shown to the user could be not up to date to the latest version in the database.
 
 \section{Use cases}
 \begin{figure}[H]
@@ -95,9 +96,15 @@ In order to guarantee the requirements of high availability, we decided to accep
 \label{fig:UseCases}
 %\end{center}
 \end{figure}
-\blindtext
+The \emph{perform analytics} use case groups all of the following direct use cases:
+\begin{itemize}
+\item Group user base by age
+\item Most active users and top critics
+\item Most followed top critics
+\end{itemize}
+
 \section{Class analysis}
-In this section we shall discuss of the design of the various class and how are they related
+In this section we shall discuss the design of the various classes and how they relate to each other
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.5]{/images/PNG/LatexClassDiagram}
@@ -105,11 +112,11 @@ In this section we shall discuss of the design of the various class and how are 
 \label{fig:UseCases}
 \end{center}
 \end{figure}
-The diagram express the following relationship between the entities.
+The diagram expresses the following relationships between the entities.
 \begin{itemize}
 	\item a BaseUser can write from zero to many reviews
 	\item a Review can be written by a single BaseUser for a single Movie
 	\item a Movie can have zero to many reviews and can have from 1 to many Personnel working in it
-	\item a Personnel can work in 1 to many Movie
+	\item a Personnel can work in 1 to many movies
 \end{itemize}
 %\end{document}
