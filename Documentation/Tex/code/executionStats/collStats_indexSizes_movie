@@ -1,0 +1,10 @@
+// Dimension is expressed in Kb
+{
+  _id_: 228,
+  primaryTitle_1: 292,
+  year_1: 92,
+  genres_1: 180,
+  'personnel.primaryName_1': 1680,
+  top_critic_rating_1: 80,
+  user_rating_1: 80
+}

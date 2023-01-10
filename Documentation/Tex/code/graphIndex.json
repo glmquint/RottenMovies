@@ -1,0 +1,38 @@
+﻿[
+  {
+    "id": 3,
+    "name": "movie_id_index",
+    "type": "RANGE",
+    "entityType": "NODE",
+    "labelsOrTypes": [
+      "Movie"
+    ],
+    "properties": [
+      "id"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "topcritic_id_index",
+    "type": "RANGE",
+    "entityType": "NODE",
+    "labelsOrTypes": [
+      "TopCritic"
+    ],
+    "properties": [
+      "id"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "user_id_index",
+    "type": "RANGE",
+    "entityType": "NODE",
+    "labelsOrTypes": [
+      "User"
+    ],
+    "properties": [
+      "id"
+    ]
+  }
+]

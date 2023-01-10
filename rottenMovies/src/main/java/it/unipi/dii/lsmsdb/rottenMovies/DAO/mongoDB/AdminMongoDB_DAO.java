@@ -37,7 +37,11 @@ public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
         BucketOptions opt = new BucketOptions();
         ArrayList<Integer> buck=new ArrayList<>();
         opt.output(new BsonField("population",new Document("$sum",1)));
+<<<<<<< rottenMovies/src/main/java/it/unipi/dii/lsmsdb/rottenMovies/DAO/mongoDB/AdminMongoDB_DAO.java
+        int bucketYear=1970;
+=======
         int bucketYear=1970; // start year
+>>>>>>> rottenMovies/src/main/java/it/unipi/dii/lsmsdb/rottenMovies/DAO/mongoDB/AdminMongoDB_DAO.java
         buck.add(bucketYear);
         while(bucketYear<=2010){ // add the offset until you reach 2010
             bucketYear=(bucketYear+offset);

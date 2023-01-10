@@ -1,0 +1,48 @@
+{
+    "_id"               : ObjectId(<<id_field>>),
+    "username"          :"AntonyE",
+    "password"          :"hashed_password",
+    "firstName"         :"Anton",
+    "lastName  "        :"Ego",
+    "registration_date"  :"2019-06-29",
+    "date_of_birth"     :"2002-07-16",
+    "last3Reviews":  
+        [ 
+            {
+                "_id"               : ObjectId(<<id_field>>),
+                "primaryTitle"      : "Star Wars: A new Hope",
+                "review_date"       : "2018-12-07",
+                "review_type"       : "fresh",
+                "top_critic"        : false,
+                "review_content"    : "I really liked it!",
+                "vote"              : "8/10"
+            },
+            {
+                "_id"               : ObjectId(<<id_field>>),
+                "primaryTitle"      : "Ratatouille",
+                "review_date"       : "2019-02-17",
+                "review_type"       : "rotten",
+                "top_critic"        : false,
+                "review_content"    : "The director was also controlled by a rat",
+                "vote"              : "D+"
+            },
+            {
+                "_id"               : ObjectId(<<id_field>>),
+                "primaryTitle"      : "300",
+                "review_date"       : "2020-02-15",
+                "review_type"       : "fresh",
+                "top_critic"        : false,
+                "review_content"    : "Too much slow motion",
+                "vote"              : "3.5/5"
+            }
+        ],
+    "reviews":[
+        {
+            "movie_id" : ObjectId(<<id_field>>),
+            "primaryTitle" : "Evidence",
+            "review_index": 11
+        },
+        ...
+    ]
+    
+}

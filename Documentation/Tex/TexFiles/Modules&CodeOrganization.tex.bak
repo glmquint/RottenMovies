@@ -1,0 +1,110 @@
+%\include{./preamble}
+%\begin{document}
+\chapter{Application Structure}
+
+\section{Modules and code organization}
+\justifying
+The picture below represent the packages in which the application is organized.
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=1.5]{/images/PNG/modules.png}
+\caption{module organization}
+\end{center}
+\end{figure}
+First of all we follow the reverse-domain convention for the root package, before passing to analyzing the source code, we put in the Appendix the pom.xml file for the dependency \cref{subsec:pom}.
+
+\begin{itemize}
+	\item \emph{controller} is responsible for handling the request to the various endpoint with the use of Spring
+	\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=1.5]{/images/PNG/controller.png}
+	\caption{controller}
+	\end{center}
+	\end{figure}
+	
+	\item \emph{DAO} (Data Access Object) is responsible for accessing the databases and retrieving the necessary object
+	\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=1]{/images/PNG/DAO.png}
+	\caption{DAO}
+	\end{center}
+	\end{figure}
+	\begin{itemize}
+		\item \emph{base} contains the classes responsible for handling the base connection the DBs, \emph{enums} is used as packet to differentiate the connection type in base of an enum for higher calls
+	
+		\item \emph{exception} is responsible for generating and handling a custom exception invoked when trying to access the wrong database
+	
+		\item \emph{interfaces} contains the various interfaces that map all the method for accessing the databases differentiated in base of the general field for the operation, they extends the \emph{AutoClosable} interface
+		\item \emph{mongoDB} handles the operation on the MongoDB for the different entities
+		\item \emph{neo4j} is the same as \emph{mongoDB} but for the Neo4j database
+	
+	\end{itemize}
+	\item \emph{DTO} (Data Transfer Object) presents all the classes that are used as container of the data passed between the service layer and the presentation layer
+	
+	\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=1]{/images/PNG/DTO.png}
+	\caption{DTO}
+	\end{center}
+	\end{figure}
+	\item \emph{Models} presents all the classes that are mapped with the database organization. They all contains private field and have getters/setters. 
+	 \begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=1]{/images/PNG/Models.png}
+	\caption{Models}
+	\end{center}
+	\end{figure}
+	\item \emph{Services} contains the middleware of our application. It is called in AppController function and interfaces with DAO classes.
+	 \begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=1]{/images/PNG/Services.png}
+	\caption{Services}
+	\end{center}
+	\end{figure}
+	\item \emph{Utils} provides utility methods to all packages. It includes password hashing, different possibility to sort/project results in Neo4j and MongoDB
+	 \begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=1]{/images/PNG/Utils.png}
+	\caption{Utils}
+	\end{center}
+	\end{figure}
+\end{itemize}
+
+\section{Managing consistency between MongoDB and Neo4j}
+Because we use two databases we need to manage consistency among them. An example on how it is managed is the addMovie method in MovieService. Here first we try to add a movie in MongoDB, if the Mongo operation is successfull we try to add the movie in Neo4j. If Neo4j fails we decided to roll-back the insert on MongoDB, deleting the movie added previously. This strategy is also adopted in add/update/delete operations.
+\subsection{Insert movie}
+\begin{lstlisting}[language=Java]
+public ObjectId addMovie(String title) {
+        if (title == null || title.isEmpty()) {
+            return null;
+        }
+        Movie newMovie = new Movie();
+        newMovie.setPrimaryTitle(title);
+        ObjectId id = null;
+        try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
+            id = moviedao.insert(newMovie);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        if (id == null) {
+            return null;
+        }
+        newMovie.setId(id);
+        try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j)) {
+            id = moviedao.insert(newMovie);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        if (id == null){ // roll back di mongo
+            try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
+                moviedao.delete(newMovie);
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+            return null;
+        }
+        return id;
+    }
+\end{lstlisting}
+
+%\end{document}
