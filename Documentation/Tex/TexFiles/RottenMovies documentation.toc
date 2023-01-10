@@ -27,39 +27,51 @@
 \contentsline {section}{\numberline {3 }Partition and replicas}{14}{section.4.3}%
 \contentsline {section}{\numberline {4 }Aggregations}{15}{section.4.4}%
 \contentsline {subsection}{\numberline {4 .1}Return the best years by top critic and user ratings}{15}{subsection.4.4.1}%
+\contentsline {subsubsection}{Mongo shell}{15}{subsection.4.4.1}%
+\contentsline {subsubsection}{Java implementation}{15}{lstnumber.4.5.13}%
 \contentsline {subsection}{\numberline {4 .2}Return the best genres by top critic and user ratings}{15}{subsection.4.4.2}%
-\contentsline {subsection}{\numberline {4 .3}Return the best production houses by top critic and user ratings}{15}{subsection.4.4.3}%
-\contentsline {subsection}{\numberline {4 .4}Given a movie count the review it has received by each month}{16}{subsection.4.4.4}%
-\contentsline {subsection}{\numberline {4 .5}Given a user count the review he/she has made divided by genres}{16}{subsection.4.4.5}%
-\contentsline {subsection}{\numberline {4 .6}Return the number of user divided by an age bucket}{16}{subsection.4.4.6}%
-\contentsline {chapter}{\numberline {5}Graph database}{18}{chapter.5}%
-\contentsline {section}{\numberline {1 }Index}{20}{section.5.1}%
-\contentsline {section}{\numberline {2 }Queries}{22}{section.5.2}%
-\contentsline {chapter}{\numberline {6}Software Architecture}{23}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Application Structure}{24}{chapter.7}%
-\contentsline {section}{\numberline {1 }Modules and code organization}{24}{section.7.1}%
-\contentsline {section}{\numberline {2 }Managing consistency between MongoDB and Neo4j}{26}{section.7.2}%
-\contentsline {subsection}{\numberline {2 .1}Insert movie}{26}{subsection.7.2.1}%
-\contentsline {chapter}{\numberline {8}Instruction Manual}{28}{chapter.8}%
-\contentsline {section}{\numberline {A }Python Code}{29}{section.8.1}%
-\contentsline {subsection}{\numberline {A .1}Creation of one single dataset from the tsv imdb file}{29}{subsection.8.1.1}%
-\contentsline {subsection}{\numberline {A .2}Creation of one single dataset from the csv kaggle file}{29}{subsection.8.1.2}%
-\contentsline {subsection}{\numberline {A .3}Merging of the file generated in the previous script}{30}{subsection.8.1.3}%
-\contentsline {subsection}{\numberline {A .4}Collapsing different rows in a single one generating an array for personnel field}{31}{subsection.8.1.4}%
-\contentsline {subsection}{\numberline {A .5}Generates a hashed password for all the users}{32}{subsection.8.1.5}%
-\contentsline {subsection}{\numberline {A .6}Generates the graph database}{33}{subsection.8.1.6}%
-\contentsline {section}{\numberline {B }Mongosh scripts}{36}{section.8.2}%
-\contentsline {subsection}{\numberline {B .1}Perform the escape on the string fields}{36}{subsection.8.2.1}%
-\contentsline {subsection}{\numberline {B .2}Normalize the date field in the DB}{37}{subsection.8.2.2}%
-\contentsline {subsection}{\numberline {B .3}Create a new collection for the user based on the data present in the movie collection}{37}{subsection.8.2.3}%
-\contentsline {section}{\numberline {C }MongoDB indexes:Movie collection}{39}{section.8.3}%
-\contentsline {subsection}{\numberline {C .1}primaryTitle}{39}{subsection.8.3.1}%
-\contentsline {subsection}{\numberline {C .2}year}{42}{subsection.8.3.2}%
-\contentsline {subsection}{\numberline {C .3}top critic rating}{45}{subsection.8.3.3}%
-\contentsline {subsection}{\numberline {C .4}user rating}{48}{subsection.8.3.4}%
-\contentsline {subsection}{\numberline {C .5}personnel.primaryName}{52}{subsection.8.3.5}%
-\contentsline {section}{\numberline {D }MongoDB indexes:User collection}{55}{section.8.4}%
-\contentsline {subsection}{\numberline {D .1}username}{55}{subsection.8.4.1}%
-\contentsline {subsection}{\numberline {D .2}date of birth}{58}{subsection.8.4.2}%
-\contentsline {section}{\numberline {E }Application code}{62}{section.8.5}%
-\contentsline {subsection}{\numberline {E .1}Pom.xml}{62}{subsection.8.5.1}%
+\contentsline {subsubsection}{Mongo shell}{15}{subsection.4.4.2}%
+\contentsline {subsubsection}{Java implementation}{16}{lstnumber.4.7.16}%
+\contentsline {subsection}{\numberline {4 .3}Return the best production houses by top critic and user ratings}{16}{subsection.4.4.3}%
+\contentsline {subsubsection}{Mongo shell}{16}{subsection.4.4.3}%
+\contentsline {subsubsection}{Java implementation}{16}{lstnumber.4.9.13}%
+\contentsline {subsection}{\numberline {4 .4}Given a movie count the review it has received by each month}{17}{subsection.4.4.4}%
+\contentsline {subsubsection}{Mongo shell}{17}{subsection.4.4.4}%
+\contentsline {subsubsection}{Java implementation}{17}{lstnumber.4.11.15}%
+\contentsline {subsection}{\numberline {4 .5}Given a user count the review he/she has made divided by genres}{18}{subsection.4.4.5}%
+\contentsline {subsubsection}{Mongo shell}{18}{subsection.4.4.5}%
+\contentsline {subsubsection}{Java implementation}{18}{lstnumber.4.13.9}%
+\contentsline {subsection}{\numberline {4 .6}Return the number of user divided by an age bucket}{18}{subsection.4.4.6}%
+\contentsline {subsubsection}{Mongo shell}{18}{subsection.4.4.6}%
+\contentsline {subsubsection}{Java implementation}{19}{lstnumber.4.15.17}%
+\contentsline {chapter}{\numberline {5}Graph database}{20}{chapter.5}%
+\contentsline {section}{\numberline {1 }Index}{22}{section.5.1}%
+\contentsline {section}{\numberline {2 }Queries}{24}{section.5.2}%
+\contentsline {chapter}{\numberline {6}Software Architecture}{25}{chapter.6}%
+\contentsline {chapter}{\numberline {7}Application Structure}{26}{chapter.7}%
+\contentsline {section}{\numberline {1 }Modules and code organization}{26}{section.7.1}%
+\contentsline {section}{\numberline {2 }Managing consistency between MongoDB and Neo4j}{28}{section.7.2}%
+\contentsline {subsection}{\numberline {2 .1}Insert movie}{28}{subsection.7.2.1}%
+\contentsline {chapter}{\numberline {8}Instruction Manual}{30}{chapter.8}%
+\contentsline {section}{\numberline {A }Python Code}{31}{section.8.1}%
+\contentsline {subsection}{\numberline {A .1}Creation of one single dataset from the tsv imdb file}{31}{subsection.8.1.1}%
+\contentsline {subsection}{\numberline {A .2}Creation of one single dataset from the csv kaggle file}{31}{subsection.8.1.2}%
+\contentsline {subsection}{\numberline {A .3}Merging of the file generated in the previous script}{32}{subsection.8.1.3}%
+\contentsline {subsection}{\numberline {A .4}Collapsing different rows in a single one generating an array for personnel field}{33}{subsection.8.1.4}%
+\contentsline {subsection}{\numberline {A .5}Generates a hashed password for all the users}{34}{subsection.8.1.5}%
+\contentsline {subsection}{\numberline {A .6}Generates the graph database}{35}{subsection.8.1.6}%
+\contentsline {section}{\numberline {B }Mongosh scripts}{38}{section.8.2}%
+\contentsline {subsection}{\numberline {B .1}Perform the escape on the string fields}{38}{subsection.8.2.1}%
+\contentsline {subsection}{\numberline {B .2}Normalize the date field in the DB}{39}{subsection.8.2.2}%
+\contentsline {subsection}{\numberline {B .3}Create a new collection for the user based on the data present in the movie collection}{39}{subsection.8.2.3}%
+\contentsline {section}{\numberline {C }MongoDB indexes:Movie collection}{41}{section.8.3}%
+\contentsline {subsection}{\numberline {C .1}primaryTitle}{41}{subsection.8.3.1}%
+\contentsline {subsection}{\numberline {C .2}year}{44}{subsection.8.3.2}%
+\contentsline {subsection}{\numberline {C .3}top critic rating}{47}{subsection.8.3.3}%
+\contentsline {subsection}{\numberline {C .4}user rating}{50}{subsection.8.3.4}%
+\contentsline {subsection}{\numberline {C .5}personnel.primaryName}{54}{subsection.8.3.5}%
+\contentsline {section}{\numberline {D }MongoDB indexes:User collection}{57}{section.8.4}%
+\contentsline {subsection}{\numberline {D .1}username}{57}{subsection.8.4.1}%
+\contentsline {subsection}{\numberline {D .2}date of birth}{60}{subsection.8.4.2}%
+\contentsline {section}{\numberline {E }Application code}{64}{section.8.5}%
+\contentsline {subsection}{\numberline {E .1}Pom.xml}{64}{subsection.8.5.1}%
