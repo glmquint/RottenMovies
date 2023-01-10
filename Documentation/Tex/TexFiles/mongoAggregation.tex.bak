@@ -1,0 +1,11 @@
+\include{./preamble}
+
+\begin{document}
+\section{MongoDB aggregation}
+In this section we shall discuss on the different aggregation that the application will implement, the values between <<>> represent a values passed by an above level.
+\subsection{Return the best years in terms of top critic and user ratings}\label{subsec:bestYear}
+\lstinputlisting[language=JavaScript]{./../code/bestYear.js}
+
+\subsection{Return the best genres by top }\label{subsec:userCreation}
+\lstinputlisting[language=JavaScript]{./../code/HOFGenres.js}
+\end{document}

@@ -27,6 +27,7 @@ This section describes the functional requirements that need to be provided by t
 		\item view the different halls of fame
 		\item follow\slash unfollow a \emph{top critic} user
 		\item view the feed of latest reviews from the followed \emph{top critic}
+		\item view a suggestion feed for top critic to follow
 		\item view the history of its own reviews
 		\item modify its own reviews
 		\item delete its own reviews

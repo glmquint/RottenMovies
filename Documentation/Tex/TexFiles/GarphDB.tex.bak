@@ -3,7 +3,7 @@
 \chapter{Graph database}
 \justifying
 The DBSM chosen for the graph database is Neo4j, it was use to manege the social part of the site and also to keep track of the reviews made for the feed and suggestion functionality.
-%ADD SUGGESTION FUNTIONALITY IN DESIGN CHAPTER
+
 
 The entities used in the database are:
 \begin{itemize}
@@ -58,9 +58,17 @@ Below the information in a json format from the Neo4j DBSM about the new index (
 We then proceed to confront the profile of the queries with and without the above indexes, here we can see the result of this analysis: 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[scale=0.45]{/images/neo4j_stats/find_movie_by_id.png}
-\caption{search by id without and with movie\textundescore id}
+\includegraphics[scale=0.33]{/images/neo4j_stats/find_movie_by_id.png}
+\caption{search by id without and with movie\textunderscore id \textunderscore index}
 \label{fig:movieId}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.33]{/images/neo4j_stats/find_user_by_id.png}
+\caption{search by id without and with user\textunderscore id \textunderscore index}
+\label{fig:userId}
 \end{center}
 \end{figure}
 
