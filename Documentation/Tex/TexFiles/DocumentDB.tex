@@ -1,5 +1,5 @@
-\include{./preamble}
-\begin{document}
+%\include{./preamble}
+%\begin{document}
 \chapter{Document database}
 \justifying
 In this chapter we will discuss of the organization of the document database and how we handled the replicas. We decided to use MongoDB as DBMS for the document database for the purpose of storing the main information for movies, users, reviews and personnel. In MongoDB we created the following three collection: 
@@ -51,21 +51,119 @@ We decided to use \textbf{nearest read preference} and \textbf{W2 write preferen
 
 \section{Aggregations}
 In this section we shall discuss on the different aggregation that the application will implement, the values between <<>> represent a values passed by an above level.
+
 \subsection{Return the best years by top critic and user ratings}\label{subsec:bestYear}
+\subsubsection{Mongo shell}
 \lstinputlisting[language=JavaScript]{./../code/bestYear.js}
+\subsubsection{Java implementation}
+\begin{lstlisting}[language=Java]
+AggregateIterable<Document> aggregateResult = collection.aggregate(
+                Arrays.asList(
+                        Aggregates.group("$year",
+                                avg("top_critic_rating", "$top_critic_rating"),
+                                avg("user_rating", "$user_rating"),
+                                sum("count",1)),
+                        Aggregates.match(gte("count",numberOfMovies)),
+                        Aggregates.sort(opt.getBsonAggregationSort()),
+                        Aggregates.limit(Constants.HALL_OF_FAME_ELEMENT_NUMBERS)
+                )
+        );
+\end{lstlisting}
 
 \subsection{Return the best genres by top critic and user ratings}\label{subsec:HOFGenres}
+\subsubsection{Mongo shell}
 \lstinputlisting[language=JavaScript]{./../code/HOFGenres.js}
+\subsubsection{Java implementation}
+\begin{lstlisting}[language=Java]
+AggregateIterable<Document> aggregateResult = collection.aggregate(
+                Arrays.asList(
+                        Aggregates.unwind("$genres"),
+                        Aggregates.group("$genres",
+                                avg("top_critic_rating", "$top_critic_rating"),
+                                avg("user_rating", "$user_rating"),
+                                sum("count",1)),
+                        Aggregates.match(gte("count",numberOfMovies)),
+                        Aggregates.sort(opt.getBsonAggregationSort()),
+                        Aggregates.limit(Constants.HALL_OF_FAME_ELEMENT_NUMBERS)
+                )
+        );
+\end{lstlisting}
 
 \subsection{Return the best production houses by top critic and user ratings}\label{subsec:productionHouses}
+\subsubsection{Mongo shell}
 \lstinputlisting[language=JavaScript]{./../code/productionHouses.js}
+\subsubsection{Java implementation}
+\begin{lstlisting}[language=Java]
+AggregateIterable<Document> aggregateResult = collection.aggregate(
+                Arrays.asList(
+                        Aggregates.group("$production_company",
+                                avg("top_critic_rating", "$top_critic_rating"),
+                                avg("user_rating", "$user_rating"),
+                                sum("count",1)),
+                        Aggregates.match(gte("count",numberOfMovies)),
+                        Aggregates.sort(opt.getBsonAggregationSort()),
+                        Aggregates.limit(Constants.HALL_OF_FAME_ELEMENT_NUMBERS)
+                )
+        );
+\end{lstlisting}
 
 \subsection{Given a movie count the review it has received by each month}\label{subsec:reviewByYearMonth}
+\subsubsection{Mongo shell}
 \lstinputlisting[language=JavaScript]{./../code/reviewByYearMonth.js}
+\subsubsection{Java implementation}
+\begin{lstlisting}[language=Java]
+Document yearDoc = new Document("year",new Document("$year","$review.review_date"));
+        Document monthDoc = new Document("month",new Document("$month","$review.review_date"));
+        ArrayList<Document> test=new ArrayList<>();
+        test.add(yearDoc);
+        test.add(monthDoc);
+        AggregateIterable<Document> aggregateResult = collection.aggregate(
+                Arrays.asList(
+                        Aggregates.match(eq("_id",id)),
+                        Aggregates.unwind("$review"),
+                        Aggregates.group(test,
+                                sum("count",1)),
+                        Aggregates.sort(Sorts.ascending("_id"))
+                )
+        );
+\end{lstlisting}
 
 \subsection{Given a user count the review he/she has made divided by genres}\label{subsec:preferredGenres}
+\subsubsection{Mongo shell}
 \lstinputlisting[language=JavaScript]{./../code/preferredGenres.js}
+\subsubsection{Java implementation}
+\begin{lstlisting}[language=Java]
+AggregateIterable<Document> aggregateResult = collectionMovie.aggregate(
+                Arrays.asList(
+                        Aggregates.match(eq("review.critic_name",username)),
+                        Aggregates.unwind("$genres"),
+                        Aggregates.group("$genres",
+                                sum("count",1)),
+                        Aggregates.sort(Sorts.descending("count")),
+                        Aggregates.limit(Constants.HALL_OF_FAME_ELEMENT_NUMBERS)
+                )
+        );
+\end{lstlisting}
 
 \subsection{Return the number of user divided by an age bucket}\label{subsec:userPopulationBucket}
+\subsubsection{Mongo shell}
 \lstinputlisting[language=JavaScript]{./../code/userPopulationBucket.js}
- \end{document}
+\subsubsection{Java implementation}
+\begin{lstlisting}[language=Java]
+BucketOptions opt = new BucketOptions();
+        ArrayList<Integer> buck=new ArrayList<>();
+        opt.output(new BsonField("population",new Document("$sum",1)));
+        int bucketYear=1970;
+        buck.add(bucketYear);
+        while(bucketYear<=2010){
+            bucketYear=(bucketYear+offset);
+            buck.add(bucketYear);
+        }
+        AggregateIterable<Document> aggregateResult = collectionUser.aggregate(
+                Arrays.asList(
+                        Aggregates.match(exists("date_of_birth")),
+                        Aggregates.bucket(new Document("$year","$date_of_birth"),buck,opt)
+                )
+        );
+\end{lstlisting}
+ %\end{document}

@@ -79,6 +79,7 @@
 \usepackage{xr}
 \externaldocument{./appendix}
 \externaldocument{./Feasibility_Study}
+\externaldocument{./DocumentDB}
 \newcommand{\cref}[1]{(Appendix \ref{#1})}
 
 
