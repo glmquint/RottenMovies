@@ -1,7 +1,7 @@
-\include{./preamble.tex}
+% \include{./preamble.tex}
 
 
-\begin{document}
+%\begin{document}
 
 \chapter{Introduction}
 \justifying
@@ -11,5 +11,5 @@ Rotten Movies is a web service where user can keep track of the general liking f
 Guest user, as well as all other, can browse or search movies based on filters like: title, year of release and actor who worked in it. They can also view a Hall of Fame for the most positive review genres, production houses and years in which the best movie were released.
 \paragraph{}
 For this project, the application has been developed in Java with the Spring framework and as Thymeleaf as engine to implement a web GUI. The application use a document database to store the main information about the movies, user, review and actor; a graph database is instead used to keep track of the relationship between normal user and top critic in terms of who follows who and between the movie and the user who reviewed it.
-\end{document}
+%\end{document}
 

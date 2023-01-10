@@ -1,7 +1,7 @@
 \include{./preamble.tex}
 
 \author{Fabio Piras, Giacomo Volpi, Guillaume Quint}
-\title{Large-Scale adn Multi-structured Databases - Project: Rotten Movies}
+\title{Large-Scale and Multi-structured Databases - Project: Rotten Movies}
 \date{}
 \begin{document}
 \begin{figure}
@@ -20,12 +20,23 @@
 
 
 
-%\include{./Intruduction.tex}
+\include{./Intruduction.tex}
 
-%\include{./Feasibility_Study.tex}
+\include{./Feasibility_Study.tex}
 
-%\include{./appendix.tex}
+\include{./Design.tex}
 
-%\include{./Design}
+\include{./DocumentDB.tex}
+
+\include{./GarphDB.tex}
+
+\include{./SoftwareArchitecture.tex}
+
+\include{./Modules&CodeOrganization.tex}
+
+\include{./InstructionManual.tex}
+
+\include{./appendix.tex}
+
 
 \end{document}
