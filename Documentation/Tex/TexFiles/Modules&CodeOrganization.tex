@@ -1,5 +1,7 @@
 %\include{./preamble}
 %\begin{document}
+\chapter{Application Structure}
+
 \section{Modules and code organization}
 \justifying
 The picture below represent the packages in which the application is organized.
@@ -47,4 +49,42 @@ First of all we follow the reverse-domain convention for the root package, befor
 	\end{figure}
 	
 \end{itemize}
+
+\section{Managing consistency between MongoDB and Neo4j}
+Because we use two databases we need to manage consistency among them. An example on how it is managed is the addMovie method in MovieService. Here first we try to add a movie in MongoDB, if the Mongo operation is successfull we try to add the movie in Neo4j. If Neo4j fails we decided to roll-back the insert on MongoDB, deleting the movie added previously. This strategy is also adopted in add/update/delete operations.
+\subsection{Insert movie}
+\begin{lstlisting}[language=Java]
+public ObjectId addMovie(String title) {
+        if (title == null || title.isEmpty()) {
+            return null;
+        }
+        Movie newMovie = new Movie();
+        newMovie.setPrimaryTitle(title);
+        ObjectId id = null;
+        try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
+            id = moviedao.insert(newMovie);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        if (id == null) {
+            return null;
+        }
+        newMovie.setId(id);
+        try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.NEO4j)) {
+            id = moviedao.insert(newMovie);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        if (id == null){ // roll back di mongo
+            try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
+                moviedao.delete(newMovie);
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+            return null;
+        }
+        return id;
+    }
+\end{lstlisting}
+
 %\end{document}

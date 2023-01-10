@@ -1,65 +1,65 @@
 \babel@toc {english}{}\relax 
-\contentsline {chapter}{\numberline {1}Introduction}{2}{chapter.1}%
-\contentsline {paragraph}{}{2}{chapter.1}%
-\contentsline {paragraph}{}{2}{chapter.1}%
-\contentsline {paragraph}{}{2}{chapter.1}%
-\contentsline {chapter}{\numberline {2}Feasibility Study}{3}{chapter.2}%
-\contentsline {section}{\numberline {1 }Dataset analysis and creation}{3}{section.2.1}%
-\contentsline {paragraph}{}{3}{section.2.1}%
-\contentsline {subparagraph}{Initial steps and creation of the movie collection}{3}{section.2.1}%
-\contentsline {subparagraph}{Creation of the user collection}{4}{section.2.1}%
-\contentsline {section}{\numberline {2 }Analysis result}{4}{section.2.2}%
-\contentsline {chapter}{\numberline {3}Design}{5}{chapter.3}%
-\contentsline {section}{\numberline {1 }Main actors}{5}{section.3.1}%
-\contentsline {section}{\numberline {2 }Functional requirements}{5}{section.3.2}%
-\contentsline {section}{\numberline {3 }Non functional requirements}{6}{section.3.3}%
-\contentsline {section}{\numberline {4 }Implementation regarding the CAP theorem}{7}{section.3.4}%
-\contentsline {section}{\numberline {5 }Use cases}{8}{section.3.5}%
-\contentsline {section}{\numberline {6 }Class analysis}{9}{section.3.6}%
-\contentsline {chapter}{\numberline {4}Document database}{10}{chapter.4}%
-\contentsline {section}{\numberline {1 }Collection composition}{10}{section.4.1}%
-\contentsline {subsection}{\numberline {1 .1}Movie collection}{10}{subsection.4.1.1}%
-\contentsline {paragraph}{}{11}{lstnumber.4.1.49}%
-\contentsline {subsection}{\numberline {1 .2}User collection}{11}{subsection.4.1.2}%
-\contentsline {section}{\numberline {2 }Indexes}{12}{section.4.2}%
-\contentsline {subsection}{\numberline {2 .1}Movie collection}{13}{subsection.4.2.1}%
-\contentsline {subsection}{\numberline {2 .2}User collection}{13}{subsection.4.2.2}%
-\contentsline {section}{\numberline {3 }Partition and replicas}{13}{section.4.3}%
-\contentsline {section}{\numberline {4 }Aggregations}{14}{section.4.4}%
-\contentsline {subsection}{\numberline {4 .1}Return the best years by top critic and user ratings}{14}{subsection.4.4.1}%
-\contentsline {subsection}{\numberline {4 .2}Return the best genres by top critic and user ratings}{14}{subsection.4.4.2}%
-\contentsline {subsection}{\numberline {4 .3}Return the best production houses by top critic and user ratings}{14}{subsection.4.4.3}%
-\contentsline {subsection}{\numberline {4 .4}Given a movie count the review it has received by each month}{15}{subsection.4.4.4}%
-\contentsline {subsection}{\numberline {4 .5}Given a user count the review he/she has made divided by genres}{15}{subsection.4.4.5}%
-\contentsline {subsection}{\numberline {4 .6}Return the number of user divided by an age bucket}{15}{subsection.4.4.6}%
-\contentsline {chapter}{\numberline {5}Graph database}{17}{chapter.5}%
-\contentsline {section}{\numberline {1 }Index}{19}{section.5.1}%
-\contentsline {section}{\numberline {2 }Queries}{21}{section.5.2}%
-\contentsline {chapter}{\numberline {6}Software Architecture}{22}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Repository Structure}{23}{chapter.7}%
-\contentsline {chapter}{\numberline {8}Instruction Manual}{24}{chapter.8}%
-\contentsline {section}{\numberline {1 }Modules and code organization}{25}{section.8.1}%
-\contentsline {section}{\numberline {A }Python Code}{28}{section.8.2}%
-\contentsline {subsection}{\numberline {A .1}Creation of one single dataset from the tsv imdb file}{28}{subsection.8.2.1}%
-\contentsline {subsection}{\numberline {A .2}Creation of one single dataset from the csv kaggle file}{28}{subsection.8.2.2}%
-\contentsline {subsection}{\numberline {A .3}Merging of the file generated in the previous script}{29}{subsection.8.2.3}%
-\contentsline {subsection}{\numberline {A .4}Collapsing different rows in a single one generating an array for personnel field}{30}{subsection.8.2.4}%
-\contentsline {subsection}{\numberline {A .5}Generates a hashed password for all the users}{31}{subsection.8.2.5}%
-\contentsline {subsection}{\numberline {A .6}Generates the graph database}{32}{subsection.8.2.6}%
-\contentsline {section}{\numberline {B }Mongosh scripts}{35}{section.8.3}%
-\contentsline {subsection}{\numberline {B .1}Perform the escape on the string fields}{35}{subsection.8.3.1}%
-\contentsline {subsection}{\numberline {B .2}Normalize the date field in the DB}{36}{subsection.8.3.2}%
-\contentsline {subsection}{\numberline {B .3}Create a new collection for the user based on the data present in the movie collection}{36}{subsection.8.3.3}%
-\contentsline {section}{\numberline {C }MongoDB indexes:Movie collection}{38}{section.8.4}%
-\contentsline {subsection}{\numberline {C .1}primaryTitle}{38}{subsection.8.4.1}%
-\contentsline {subsection}{\numberline {C .2}year}{41}{subsection.8.4.2}%
-\contentsline {subsection}{\numberline {C .3}top critic rating}{44}{subsection.8.4.3}%
-\contentsline {subsection}{\numberline {C .4}user rating}{47}{subsection.8.4.4}%
-\contentsline {subsection}{\numberline {C .5}personnel.primaryName}{51}{subsection.8.4.5}%
-\contentsline {section}{\numberline {D }MongoDB indexes:User collection}{54}{section.8.5}%
-\contentsline {subsection}{\numberline {D .1}username}{54}{subsection.8.5.1}%
-\contentsline {subsection}{\numberline {D .2}date of birth}{57}{subsection.8.5.2}%
-\contentsline {section}{\numberline {E }Managing consistency between MongoDB and Neo4j}{61}{section.8.6}%
-\contentsline {subsection}{\numberline {E .1}Insert movie}{61}{subsection.8.6.1}%
-\contentsline {section}{\numberline {F }Application code}{62}{section.8.7}%
-\contentsline {subsection}{\numberline {F .1}Pom.xml}{62}{subsection.8.7.1}%
+\contentsline {chapter}{\numberline {1}Introduction}{3}{chapter.1}%
+\contentsline {paragraph}{}{3}{chapter.1}%
+\contentsline {paragraph}{}{3}{chapter.1}%
+\contentsline {paragraph}{}{3}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Feasibility Study}{4}{chapter.2}%
+\contentsline {section}{\numberline {1 }Dataset analysis and creation}{4}{section.2.1}%
+\contentsline {paragraph}{}{4}{section.2.1}%
+\contentsline {subparagraph}{Initial steps and creation of the movie collection}{4}{section.2.1}%
+\contentsline {subparagraph}{Creation of the user collection}{5}{section.2.1}%
+\contentsline {section}{\numberline {2 }Analysis result}{5}{section.2.2}%
+\contentsline {chapter}{\numberline {3}Design}{6}{chapter.3}%
+\contentsline {section}{\numberline {1 }Main actors}{6}{section.3.1}%
+\contentsline {section}{\numberline {2 }Functional requirements}{6}{section.3.2}%
+\contentsline {section}{\numberline {3 }Non functional requirements}{7}{section.3.3}%
+\contentsline {section}{\numberline {4 }Implementation regarding the CAP theorem}{8}{section.3.4}%
+\contentsline {section}{\numberline {5 }Use cases}{9}{section.3.5}%
+\contentsline {section}{\numberline {6 }Class analysis}{10}{section.3.6}%
+\contentsline {chapter}{\numberline {4}Document database}{11}{chapter.4}%
+\contentsline {section}{\numberline {1 }Collection composition}{11}{section.4.1}%
+\contentsline {subsection}{\numberline {1 .1}Movie collection}{11}{subsection.4.1.1}%
+\contentsline {paragraph}{}{12}{lstnumber.4.1.49}%
+\contentsline {subsection}{\numberline {1 .2}User collection}{12}{subsection.4.1.2}%
+\contentsline {section}{\numberline {2 }Indexes}{13}{section.4.2}%
+\contentsline {subsection}{\numberline {2 .1}Movie collection}{14}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {2 .2}User collection}{14}{subsection.4.2.2}%
+\contentsline {section}{\numberline {3 }Partition and replicas}{14}{section.4.3}%
+\contentsline {section}{\numberline {4 }Aggregations}{15}{section.4.4}%
+\contentsline {subsection}{\numberline {4 .1}Return the best years by top critic and user ratings}{15}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4 .2}Return the best genres by top critic and user ratings}{15}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4 .3}Return the best production houses by top critic and user ratings}{15}{subsection.4.4.3}%
+\contentsline {subsection}{\numberline {4 .4}Given a movie count the review it has received by each month}{16}{subsection.4.4.4}%
+\contentsline {subsection}{\numberline {4 .5}Given a user count the review he/she has made divided by genres}{16}{subsection.4.4.5}%
+\contentsline {subsection}{\numberline {4 .6}Return the number of user divided by an age bucket}{16}{subsection.4.4.6}%
+\contentsline {chapter}{\numberline {5}Graph database}{18}{chapter.5}%
+\contentsline {section}{\numberline {1 }Index}{20}{section.5.1}%
+\contentsline {section}{\numberline {2 }Queries}{22}{section.5.2}%
+\contentsline {chapter}{\numberline {6}Software Architecture}{23}{chapter.6}%
+\contentsline {chapter}{\numberline {7}Application Structure}{24}{chapter.7}%
+\contentsline {section}{\numberline {1 }Modules and code organization}{24}{section.7.1}%
+\contentsline {section}{\numberline {2 }Managing consistency between MongoDB and Neo4j}{26}{section.7.2}%
+\contentsline {subsection}{\numberline {2 .1}Insert movie}{26}{subsection.7.2.1}%
+\contentsline {chapter}{\numberline {8}Instruction Manual}{28}{chapter.8}%
+\contentsline {section}{\numberline {A }Python Code}{29}{section.8.1}%
+\contentsline {subsection}{\numberline {A .1}Creation of one single dataset from the tsv imdb file}{29}{subsection.8.1.1}%
+\contentsline {subsection}{\numberline {A .2}Creation of one single dataset from the csv kaggle file}{29}{subsection.8.1.2}%
+\contentsline {subsection}{\numberline {A .3}Merging of the file generated in the previous script}{30}{subsection.8.1.3}%
+\contentsline {subsection}{\numberline {A .4}Collapsing different rows in a single one generating an array for personnel field}{31}{subsection.8.1.4}%
+\contentsline {subsection}{\numberline {A .5}Generates a hashed password for all the users}{32}{subsection.8.1.5}%
+\contentsline {subsection}{\numberline {A .6}Generates the graph database}{33}{subsection.8.1.6}%
+\contentsline {section}{\numberline {B }Mongosh scripts}{36}{section.8.2}%
+\contentsline {subsection}{\numberline {B .1}Perform the escape on the string fields}{36}{subsection.8.2.1}%
+\contentsline {subsection}{\numberline {B .2}Normalize the date field in the DB}{37}{subsection.8.2.2}%
+\contentsline {subsection}{\numberline {B .3}Create a new collection for the user based on the data present in the movie collection}{37}{subsection.8.2.3}%
+\contentsline {section}{\numberline {C }MongoDB indexes:Movie collection}{39}{section.8.3}%
+\contentsline {subsection}{\numberline {C .1}primaryTitle}{39}{subsection.8.3.1}%
+\contentsline {subsection}{\numberline {C .2}year}{42}{subsection.8.3.2}%
+\contentsline {subsection}{\numberline {C .3}top critic rating}{45}{subsection.8.3.3}%
+\contentsline {subsection}{\numberline {C .4}user rating}{48}{subsection.8.3.4}%
+\contentsline {subsection}{\numberline {C .5}personnel.primaryName}{52}{subsection.8.3.5}%
+\contentsline {section}{\numberline {D }MongoDB indexes:User collection}{55}{section.8.4}%
+\contentsline {subsection}{\numberline {D .1}username}{55}{subsection.8.4.1}%
+\contentsline {subsection}{\numberline {D .2}date of birth}{58}{subsection.8.4.2}%
+\contentsline {section}{\numberline {E }Application code}{62}{section.8.5}%
+\contentsline {subsection}{\numberline {E .1}Pom.xml}{62}{subsection.8.5.1}%
