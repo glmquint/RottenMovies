@@ -18,7 +18,18 @@ import java.util.stream.Collectors;
 
 import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.MAXIMUM_NUMBER_OF_PERSONNEL;
 
+/**
+ * <class>MovieService</class> contains all the utility method to pass the modification
+ * from front-end to back-end regarding the movie entities and its reviews
+ */
 public class MovieService {
+    /**
+     * <method>listMoviePage</method> allows to build pages in the explorer where the movies,
+     * according to the filters, are shown
+     * @param page is the page use for pagination
+     * @param request contains the filters for which movie to search for
+     * @return a PageDTO of MovieDTO for visualization
+     */
     public PageDTO<MovieDTO> listMoviePage(int page, HashMap<String, String> request){
         PageDTO<MovieDTO> movie_page = new PageDTO<>();
         try(MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
@@ -76,6 +87,13 @@ public class MovieService {
         return movie_page;
     }
 
+    /**
+     * <method>getMovie</method> allows to get a movie from the back-end and transport it to the visualization layer
+     * @param page is the page use for pagination
+     * @param movie_id is the id of the target movie
+     * @param comment_index is the index a specific review to visualize
+     * @return a MovieDTO for visualization
+     */
     public MovieDTO getMovie(int page, String movie_id, int comment_index) {
         MovieDTO movie = new MovieDTO();
         try (MovieDAO moviedao = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)) {
@@ -95,6 +113,12 @@ public class MovieService {
         return movie;
     }
 
+    /**
+     * <method>getHOFProductionHouses</method> builds the HoF for the production houses after querying the back-end
+     * @param sort is the type of sort requested
+     * @param min_movie_count is the minimum movie produced count to be a part of the HoF
+     * @return a PageDTO of HallOfFameDTO for visualization
+     */
     public PageDTO<HallOfFameDTO> getHOFProductionHouses(String sort, int min_movie_count){
         PageDTO<HallOfFameDTO> hallOfFameDTO= new PageDTO<>();
         ArrayList<HallOfFameDTO> listHOF = new ArrayList<>();
@@ -113,6 +137,13 @@ public class MovieService {
         }
         return hallOfFameDTO;
     }
+
+    /**
+     * <method>getHOFGenres</method> builds the HoF for genres after querying the back-end
+     * @param sort is the type of sort requested
+     * @param min_movie_count is the minimum movie produced count to be a part of the HoF
+     * @return a PageDTO of HallOfFameDTO for visualization
+     */
     public PageDTO<HallOfFameDTO> getHOFGenres(String sort, int min_movie_count){
         PageDTO<HallOfFameDTO> hallOfFameDTO= new PageDTO<>();
         ArrayList<HallOfFameDTO> listHOF = new ArrayList<>();
@@ -131,6 +162,13 @@ public class MovieService {
         }
         return hallOfFameDTO;
     }
+
+    /**
+     * <method>getHOFYears</method> builds the HoF for years after querying the back-end
+     * @param sort is the type of sort requested
+     * @param min_movie_count is the minimum movie produced count to be a part of the HoF
+     * @return a PageDTO of HallOfFameDTO for visualization
+     */
     public PageDTO<HallOfFameDTO> getHOFYears(String sort, int min_movie_count) {
         PageDTO<HallOfFameDTO> hallOfFameDTO = new PageDTO<>();
         ArrayList<HallOfFameDTO> listHOF = new ArrayList<>();
@@ -149,6 +187,13 @@ public class MovieService {
         }
         return hallOfFameDTO;
     }
+
+    /**
+     * <method>buildMovieFromForm</method> creates a new Movie model from the data passed from the front-end
+     * @param mid is the new id of the movie
+     * @param hm contains all the information passed from the front-end
+     * @return a Movie model
+     */
     private Movie buildMovieFromForm(String mid, HashMap<String, String> hm){
         Movie newMovie = new Movie();
         newMovie.setId(new ObjectId(mid));
@@ -221,6 +266,13 @@ public class MovieService {
         return newMovie;
     }
 
+    /**
+     * <method>modifyMovie</method> allows the update of a movie already present in the back-end with data
+     * passed from the front-end
+     * @param mid is the movie id
+     * @param hm contains the new data
+     * @return true if the modification were completed successfully
+     */
     public boolean modifyMovie(String mid, HashMap<String, String> hm) {
         String op = hm.get("admin_operation");
         Movie movie = buildMovieFromForm(mid, hm);
@@ -263,6 +315,11 @@ public class MovieService {
         return true;
     }
 
+    /**
+     * <method>addMovie</method> insert a new movie into the DBs
+     * @param title is the title of the new movie
+     * @return the ObjectId of the newly inserted movie
+     */
     public ObjectId addMovie(String title) {
         if (title == null || title.isEmpty()) {
             return null;
@@ -299,6 +356,14 @@ public class MovieService {
 // critic_operation=update,
 // content=Overcomes its artificial contrivances to become a touching psychological drama about despair and loneliness.,
 // isFresh=on}
+
+    /**
+     * <method>buildReviewFromForm</method> builds a new review form data passed from the front-end
+     * @param mid is the id of the reviewed movie
+     * @param hm contains the data of the new review
+     * @param credentials contains the information on the author of the review
+     * @return a Review model
+     */
     private Review buildReviewFromForm(String mid, HashMap<String, String> hm, RegisteredUserDTO credentials) {
         Review newReview = new Review();
         newReview.setMovie_id(new ObjectId(mid));
@@ -324,6 +389,14 @@ public class MovieService {
         newReview.setReviewDate_date(new Date());
         return newReview;
     }
+
+    /**
+     * <method>modifyReview</method> allows the modification of a review with data passed from the front-end
+     * @param mid is the id of the reviewed movie
+     * @param hm contains the information for completing the modification
+     * @param credentials is the author of the review
+     * @return true if the modification were applied successfully
+     */
     public boolean modifyReview(String mid, HashMap<String, String> hm, RegisteredUserDTO credentials) {
         String op = hm.get("critic_operation");
         Review review = buildReviewFromForm(mid, hm, credentials);
@@ -366,6 +439,13 @@ public class MovieService {
         return false;
     }
 
+    /**
+     * <method>reviewMovie</method> allows the creation of a new review in the DB with data passed from the front-end
+     * @param credentials contains information on the author of the review
+     * @param movieId is the id of the reviewed movie
+     * @param movieTitle is the title of the reviewed movie
+     * @return true if the insert of the review was completed successfully
+     */
     public boolean reviewMovie(RegisteredUserDTO credentials, String movieId, String movieTitle) {
         BaseUser user = (credentials instanceof TopCriticDTO) ?
                 new TopCritic((TopCriticDTO) credentials) :
