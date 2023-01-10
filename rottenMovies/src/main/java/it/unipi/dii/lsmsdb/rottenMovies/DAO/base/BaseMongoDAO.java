@@ -10,7 +10,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 /**
- * @author Fabio
  * <class>MongoDBConnector</class>
  *  is the base connector for the MongoDB,
  * it offers methods to create a connection to the server (getClient),

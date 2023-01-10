@@ -5,7 +5,9 @@ import it.unipi.dii.lsmsdb.rottenMovies.DTO.SimplyfiedReviewDTO;
 import org.bson.types.ObjectId;
 
 import java.util.LinkedHashMap;
-
+/**
+ * <class>SimplyfiedReview</class> is the container in which data from the backend for SimplyfiedReview is mapped
+ */
 public class SimplyfiedReview {
     @JsonProperty("movie_id")
     private ObjectId movieID;

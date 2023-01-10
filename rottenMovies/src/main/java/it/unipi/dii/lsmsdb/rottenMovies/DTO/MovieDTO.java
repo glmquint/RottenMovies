@@ -6,7 +6,10 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
-
+/**
+ * <class>MovieDTO</class> is the container used to pass data regarding movie information between
+ * the service and presentation layer
+ */
 public class MovieDTO {
         private ObjectId id;
         private String primaryTitle;
@@ -39,7 +42,6 @@ public class MovieDTO {
 
         private ArrayList<ReviewMovieDTO> reviews;
 
-        //private String criticConsensus;
 
         private String posterUrl;
     public MovieDTO() {
@@ -61,7 +63,6 @@ public class MovieDTO {
         this.top_critic_fresh_count=movie.getTop_critic_fresh_count();
         this.top_critic_rotten_count= movie.getTop_critic_rotten_count();
         this.posterUrl=movie.getPosterUrl();
-        //this.criticConsensus=movie.getCriticConsensus();
         ArrayList<Review> reviews=movie.getReviews();
         ArrayList<ReviewMovieDTO> reviewsdto = null;
         if (reviews != null) {
@@ -220,13 +221,5 @@ public class MovieDTO {
     public void setPosterUrl(String posterUrl) {
         this.posterUrl = posterUrl;
     }
-    /*
-    public String getCriticConsensus() {
-        return criticConsensus;
-    }
 
-    public void setCriticConsensus(String criticConsensus) {
-        this.criticConsensus = criticConsensus;
-    }
-    */
 }

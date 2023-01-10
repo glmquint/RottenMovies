@@ -7,6 +7,10 @@ import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 
+/**
+ * <interface>AdminDao</interface> is the base interface that offers the methods below
+ *  to the AdminMongoDB_DAO and AdminNeo4j_DAO classes that implement them
+ */
 public interface AdminDAO extends AutoCloseable{
     ArrayList<PopulationByGenerationDTO> userPopulationByGeneration (int offset) throws DAOException;
     ArrayList<PopulationByGenerationDTO> userPopulationByGeneration () throws DAOException;

@@ -20,16 +20,30 @@ import java.util.Arrays;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
 
+/**
+ * <class>AdminMongoDB_DAO</class> is responsible for the admin-field operation in
+ * the MongoDB
+ */
 public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
+    /**
+     * <method>userPopulationByGeneration</method> calculate the population distribution in buckets
+     * @param offset is the number of years on which the buckets are created
+     * @return an Arraylist of PopulationByGenerationDTO
+     * @throws DAOException
+     */
     @Override
     public ArrayList<PopulationByGenerationDTO> userPopulationByGeneration(int offset) throws DAOException {
         MongoCollection<Document> collectionUser = getUserCollection();
         BucketOptions opt = new BucketOptions();
         ArrayList<Integer> buck=new ArrayList<>();
         opt.output(new BsonField("population",new Document("$sum",1)));
+<<<<<<< rottenMovies/src/main/java/it/unipi/dii/lsmsdb/rottenMovies/DAO/mongoDB/AdminMongoDB_DAO.java
         int bucketYear=1970;
+=======
+        int bucketYear=1970; // start year
+>>>>>>> rottenMovies/src/main/java/it/unipi/dii/lsmsdb/rottenMovies/DAO/mongoDB/AdminMongoDB_DAO.java
         buck.add(bucketYear);
-        while(bucketYear<=2010){
+        while(bucketYear<=2010){ // add the offset until you reach 2010
             bucketYear=(bucketYear+offset);
             buck.add(bucketYear);
         }
@@ -55,6 +69,13 @@ public class AdminMongoDB_DAO extends BaseMongoDAO implements AdminDAO {
         return userPopulationByGeneration(5);
     }
 
+    /**
+     * <method>changeUserStatus</method> change the status of a user from unbanned to banned and vice-versa
+     * @param userId is the id of the user targeted by the operation
+     * @param ban indicates if the operation is a ban one (true) or an unban one (false)
+     * @return true the target user document has been update
+     * @throws DAOException
+     */
     @Override
     public boolean changeUserStatus(ObjectId userId,boolean ban) throws DAOException {
         MongoCollection<Document>  collection = getUserCollection();

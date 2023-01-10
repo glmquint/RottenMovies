@@ -12,7 +12,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
-
+/**
+ * <class>Review</class> is the container in which data from the backend for Review is mapped
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Review {
     @JsonProperty("_id")

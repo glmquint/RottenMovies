@@ -18,7 +18,17 @@ import java.util.ArrayList;
 
 import static it.unipi.dii.lsmsdb.rottenMovies.utils.Constants.NEO4J_DATABASE_STRING;
 
+/**
+ * <class>AdminNeo4j_DAO</class> is responsible for the admin-field operation in
+ * the Neo4j
+ */
 public class AdminNeo4j_DAO extends BaseNeo4jDAO implements AdminDAO {
+    /**
+     * <method>getMostReviewUser</method> queries the graphdb to get most active user
+     * based on how many reviews they have written
+     * @return an ArrayList of UserLeaderboardDTO
+     * @throws DAOException
+     */
     @Override
     public ArrayList<UserLeaderboardDTO> getMostReviewUser() throws DAOException {
         Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));
@@ -43,6 +53,11 @@ public class AdminNeo4j_DAO extends BaseNeo4jDAO implements AdminDAO {
         return userList;
     }
 
+    /**
+     * <method>getMostFollowedCritic</method> queries the graph DB to get the most followed top critic
+     * @return an ArrayList of UserLeaderboardDTO
+     * @throws DAOException
+     */
     @Override
     public ArrayList<UserLeaderboardDTO> getMostFollowedCritic() throws DAOException{
         Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE_STRING));

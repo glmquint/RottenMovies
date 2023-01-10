@@ -2,7 +2,16 @@ package it.unipi.dii.lsmsdb.rottenMovies.models;
 
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.TopCriticDTO;
 
-
+/**
+ * <class>TopCritic</class> is the container in which data from the backend for TopCritic is mapped
+ *                     RegisteredUser
+ *                     /            \
+ *                    /              \
+ *                  Admin           BaseUser
+ *                                  /       \
+ *                                 /         \
+ *                              User        TopCritic
+ */
 public class TopCritic extends BaseUser {
     private int follower_count;
     public TopCritic (){}

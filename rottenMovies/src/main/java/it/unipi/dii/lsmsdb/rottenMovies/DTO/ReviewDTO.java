@@ -3,7 +3,10 @@ package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 import it.unipi.dii.lsmsdb.rottenMovies.models.Review;
 
 import java.util.Date;
-
+/**
+ * <class>ReviewDTO</class> is the container used to pass review information between
+ * the service and presentation layer
+ */
 public abstract class ReviewDTO {
     protected boolean topCritic;
     protected String reviewType;

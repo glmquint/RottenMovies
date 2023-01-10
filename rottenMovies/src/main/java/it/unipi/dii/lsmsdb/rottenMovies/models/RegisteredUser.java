@@ -7,6 +7,16 @@ import org.bson.types.ObjectId;
 
 import java.util.LinkedHashMap;
 
+/**
+ * <class>RegisteredUser</class> is the container in which data from the backend for RegisteredUser is mapped
+ *                     RegisteredUser
+ *                     /            \
+ *                    /              \
+ *                  Admin           BaseUser
+ *                                  /       \
+ *                                 /         \
+ *                              User        TopCritic
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class RegisteredUser {
     @JsonProperty("_id")

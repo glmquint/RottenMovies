@@ -8,6 +8,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
+/**
+ * <class>User</class> is the container in which data from the backend for User is mapped
+ *
+ *                     RegisteredUser
+ *                     /            \
+ *                    /              \
+ *                  Admin           BaseUser
+ *                                  /       \
+ *                                 /         \
+ *                              User        TopCritic
+ */
 public class User extends BaseUser {
     @JsonProperty("date_of_birth")
     private Date birthdayDate;

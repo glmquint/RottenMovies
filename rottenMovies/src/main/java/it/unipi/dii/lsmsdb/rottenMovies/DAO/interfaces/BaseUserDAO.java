@@ -8,7 +8,10 @@ import it.unipi.dii.lsmsdb.rottenMovies.models.TopCritic;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
-
+/**
+ * <interface>BaseUserDAO</interface> is the base interface that offers the methods below
+ *  to the BaseUserMongoDB_DAO and BaseUserNeo4j_DAO classes that implement them
+ */
 public interface BaseUserDAO extends AutoCloseable{
     void queryBuildSearchByUsername(String username) throws DAOException;
     void queryBuildSearchByUsernameExact(String username) throws DAOException;

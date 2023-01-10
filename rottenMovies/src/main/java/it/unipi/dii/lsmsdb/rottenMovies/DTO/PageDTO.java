@@ -1,7 +1,10 @@
 package it.unipi.dii.lsmsdb.rottenMovies.DTO;
 
 import java.util.List;
-
+/**
+ * <class>MovieReviewBombingDTO</class> is the container used to pass data in a paginated style between
+ * the service and presentation layer
+ */
 public class PageDTO <T>{
 
     private List<T> entries;
