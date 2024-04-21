@@ -67,7 +67,6 @@
 
     }
 </script>
-<!--TODO: should delete this: use redirect.html instead-->
 <div th:if="${redirect}">
     <script th:inline="javascript">
             window.location.assign([[${redirect}]]);
@@ -126,6 +125,8 @@
                                   <button class="w-10 mx-2 btn btn-lg btn-primary" type="submit" name="admin_operation" value="update">Update</button>
                                   <button class="w-10 mx-2 btn btn-lg btn-danger" type="submit" name="admin_operation" value="delete">Delete</button>
                                   <a class="w-10 mx-2 btn btn-lg btn-warning" th:href="|/review-bombing/${movie.id}|">Check Review Bombing</a>
+                                  <a class="btn" th:href="|/movie-stat/${movie.id}?title=${movie.primaryTitle}|">View Review Statistics</a>
+
                               </form>
                           </div>
                           <div th:unless="${(credentials.class.name == 'it.unipi.dii.lsmsdb.rottenMovies.DTO.AdminDTO')}">
@@ -171,6 +172,9 @@
                                       <input type="hidden" name="movieId" th:value="${movie.id}">
                                       <button class="btn btn-success col-md-2 offset-md-5" type="submit" name="user_operation" value="user_operation">Review</button>
                                   </div>
+                                  <div class="row">
+                                      <a class="btn" th:href="|/movie-stat/${movie.id}?title=${movie.primaryTitle}|">View Review Statistics</a>
+                                  </div>
                               </form>
                           </div>
                       </div>
@@ -213,6 +217,9 @@
                           </div>
                           <div class="row">
                             <a class="btn btn-outline-success col-md-4 offset-md-4 mb-2" href="/login">login to review this movie</a>
+                          </div>
+                          <div class="row">
+                              <a class="btn" th:href="|/movie-stat/${movie.id}?title=${movie.primaryTitle}|">View Review Statistics</a>
                           </div>
                       </div>
 

@@ -36,9 +36,9 @@ public abstract class BaseMongoDAO implements AutoCloseable{
         query = null;
     }
 
-    private MongoCollection<Document> returnCollection(String connectionString){
+    private MongoCollection<Document> returnCollection(String collectionString){
         MongoDatabase db = myClient.getDatabase(Constants.MONGO_DATABASE_STRING);
-        MongoCollection<Document> collection = db.getCollection(connectionString);
+        MongoCollection<Document> collection = db.getCollection(collectionString);
         return collection;
     }
     public MongoCollection<Document> getMovieCollection(){

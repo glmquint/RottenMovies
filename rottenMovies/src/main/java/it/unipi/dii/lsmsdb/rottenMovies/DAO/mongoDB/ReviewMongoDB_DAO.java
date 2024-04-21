@@ -67,7 +67,8 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
     }
     /**
      * <method>reviewMovie</method> add the user review in a movie
-     * @param usr, review
+     * @param usr
+     * @param review
      * @return true in case of success, false otherwise
      * @throws DAOException
      */
@@ -158,7 +159,7 @@ public class ReviewMongoDB_DAO extends BaseMongoDAO implements ReviewDAO {
                     updates = Updates.combine(updates, Updates.set("user_rotten_count", user_rotten));
                 }
             }
-            else { // it is a top critic review
+            else { // it is a rotten review
                 user_rotten++;
                 updates=Updates.set("user_rotten_count",user_rotten);
                 if(!isNew) { // it's an old review

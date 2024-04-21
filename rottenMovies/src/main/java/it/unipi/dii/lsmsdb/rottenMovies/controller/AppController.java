@@ -68,7 +68,7 @@ public class AppController {
         System.out.println("credentials: " + session.getAttribute("credentials"));
         if (session.getAttribute("credentials")!=null) {
             model.addAttribute("info", "you're already logged in");
-            return "login"; // TODO: change to feed
+            return "login";
         }
         UserService userService = new UserService();
         HashMap<String, String> hm = extractRequest(request);
@@ -87,7 +87,7 @@ public class AppController {
         session.setAttribute("credentials", registeredUserDTO);
         System.out.println(registeredUserDTO.getClass());
         model.addAttribute("success", "login successful");
-        return "login"; // TODO: change to feed
+        return "login";
     }
 
     @PostMapping("/register")
@@ -186,6 +186,19 @@ public class AppController {
         PageDTO<MovieDTO> movieList = movieService.listMoviePage(page, hm);
         model.addAttribute("movieList", movieList.getEntries());
         return "exploreMovies";
+    }
+
+    @RequestMapping("/movie-stat/{mid}")
+    public String get_movie_stat(Model model,
+                                 @RequestParam(value = "title", defaultValue = "") String title,
+                                 @PathVariable(value = "mid") String mid,
+                                 HttpSession session){
+        MovieService movieService = new MovieService();
+        model.addAttribute("yearMonthReviews", movieService.getMovieStat(mid));
+        model.addAttribute("months", new String[]{"January", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"});
+        model.addAttribute("title", title);
+        model.addAttribute("credentials", session.getAttribute("credentials"));
+        return "movie-stat";
     }
 
     @RequestMapping("/movie/{mid}")

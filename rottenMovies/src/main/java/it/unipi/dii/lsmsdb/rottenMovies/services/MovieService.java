@@ -267,7 +267,7 @@ public class MovieService {
     }
 
     /**
-     * <method>modifyMovie</method> allows the update of a movie already present in the back-end with data
+     * <method>modifyMovie</method> allows the update of a movie already present in the db with data
      * passed from the front-end
      * @param mid is the movie id
      * @param hm contains the new data
@@ -316,7 +316,7 @@ public class MovieService {
     }
 
     /**
-     * <method>addMovie</method> insert a new movie into the DBs
+     * <method>addMovie</method> insert a new movie into the DBs with default values
      * @param title is the title of the new movie
      * @return the ObjectId of the newly inserted movie
      */
@@ -352,13 +352,9 @@ public class MovieService {
         return id;
     }
 
-// {score=Review Score: �A�,
-// critic_operation=update,
-// content=Overcomes its artificial contrivances to become a touching psychological drama about despair and loneliness.,
-// isFresh=on}
 
     /**
-     * <method>buildReviewFromForm</method> builds a new review form data passed from the front-end
+     * <method>buildReviewFromForm</method> builds a new review with data passed from the front-end
      * @param mid is the id of the reviewed movie
      * @param hm contains the data of the new review
      * @param credentials contains the information on the author of the review
@@ -483,5 +479,16 @@ public class MovieService {
             return true;
         }
         return false;
+    }
+
+    public ArrayList<YearMonthReviewDTO> getMovieStat(String mid) {
+        ArrayList<YearMonthReviewDTO> yearMonthReviewDTOS = new ArrayList<YearMonthReviewDTO>();
+        try(MovieDAO movieDAO = DAOLocator.getMovieDAO(DataRepositoryEnum.MONGO)){
+            yearMonthReviewDTOS = movieDAO.getYearAndMonthReviewActivity(new ObjectId(mid));
+        } catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+        return yearMonthReviewDTOS;
     }
 }

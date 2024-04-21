@@ -32,9 +32,6 @@ import static com.mongodb.client.model.Filters.*;
 
 
 /**
- * @author Fabio
- * @author Guillaume
- * @author Giacomo
  * <class>BaseUserMongoDB_DAO</class> queries the DB for BaseUser
  *  * based on different parameters like:
  *      - UserName
@@ -271,7 +268,7 @@ public class BaseUserMongoDB_DAO extends BaseMongoDAO implements BaseUserDAO {
     }
 
     /**
-     * <method>update</method> is responsable for updating user information inside the collection
+     * <method>update</method> is responsible for updating user information inside the collection
      * @param usr is the model representing a BaseUser
      * @return true in case of success, false otherwise
      * @throws DAOException

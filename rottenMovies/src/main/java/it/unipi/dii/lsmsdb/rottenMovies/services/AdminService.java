@@ -4,6 +4,7 @@ import it.unipi.dii.lsmsdb.rottenMovies.DAO.DAOLocator;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.base.enums.DataRepositoryEnum;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.AdminDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.BaseUserDAO;
+import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.MovieDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DAO.interfaces.ReviewDAO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.MovieReviewBombingDTO;
 import it.unipi.dii.lsmsdb.rottenMovies.DTO.PageDTO;
@@ -118,4 +119,6 @@ public class AdminService {
         }
         return list;
     }
+
+
 }

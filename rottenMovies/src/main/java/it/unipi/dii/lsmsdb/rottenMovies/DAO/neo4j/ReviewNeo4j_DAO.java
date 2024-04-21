@@ -33,8 +33,6 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
      */
     @Override
     public boolean reviewMovie(BaseUser usr, Review review)  throws DAOException{
-        // TODO: change this query to work with movie_id instead of movie_title
-
         if(usr.getId().toString().isEmpty() || review.getMovie().isEmpty() || review.getReviewDate()==null){
             return false;
         }
@@ -84,7 +82,7 @@ public class ReviewNeo4j_DAO extends BaseNeo4jDAO implements ReviewDAO {
     /**
      * <method>checkReviewBombing</method> check if a particular film was reviewed bombed
      * @param movie is the target movie to check for review bombing
-     * @param month is the number of month from today's date in whith to check for review bombing
+     * @param month is the number of month from today's date in which to check for review bombing
      * @return a MovieReviewBombingDTO used to visualize the result of the query
      * @throws DAOException
      */

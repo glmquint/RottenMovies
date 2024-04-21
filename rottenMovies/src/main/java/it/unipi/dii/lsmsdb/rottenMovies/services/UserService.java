@@ -263,7 +263,7 @@ public class UserService {
     }
 
     /**
-     * <method>getReviewIndex</method> get the position of a review of user in the review array of a movie stored in the
+     * <method>getReviewIndex</method> get the position of a review of user in the review array of a user stored in the
      * db
      * @param userid is the id of the author of the review
      * @param primaryTitle is the title of the movie
